@@ -319,8 +319,7 @@ try{initReminders()}catch(e){}
   window.openProReal = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal show'; };
   window.closePay = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal'; };
   window.startCheckout = function(){
-    var s=document.getElementById('payStatus');
-    if(s)s.innerHTML='<b style="color:#b45309">Pagamento ainda não conectado.</b><br>Quando tivermos o link do checkout ou a configuração da Google Play, este botão levará o usuário para a cobrança real.';
+    window.open('https://mpago.la/1dE9KSM','_blank');
   };
   window.activateDemoPro = function(){
     try { localStorage.setItem('mm_pro','1'); } catch(e) {}
@@ -329,4 +328,4 @@ try{initReminders()}catch(e){}
 })();
 </script>
  </body>
-       </html>
+</html>
