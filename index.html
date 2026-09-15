@@ -286,7 +286,8 @@ try{initReminders()}catch(e){}
   <div class="pay-modal" id="payModal" onclick="if(event.target===this)closePay()">
    <div class="pay-box">
     <h3>⭐ Ativar Minha Meta PRO</h3>
-    <div id="payStatus" style="color:#64748b;font-size:13px;margin-bottom:14px">Escolha seu plano para continuar.</div>
+    <div id="payStatus" style="color:#64748b;font-size:13px;margin-bottom:14px">Digite o e-mail usado no Mercado Pago para verificar sua assinatura.</div>
+    <input class="input" id="proEmail" type="email" inputmode="email" autocomplete="email" placeholder="seu@email.com" style="margin-bottom:10px">
     <div class="pro-plan">
      <span class="best">MAIS ECONÔMICO</span>
      <h3>PRO Anual</h3>
@@ -309,7 +310,7 @@ try{initReminders()}catch(e){}
     </div>
     <button class="pay-real" onclick="startCheckout()">Continuar para pagamento</button>
     <button class="pay-close" onclick="closePay()">Agora não</button>
-    <div class="pro-note">Esta versão HTML prepara toda a experiência de assinatura, mas o pagamento real ainda precisa ser conectado a um provedor/Google Play Billing. Não há cobrança real neste arquivo.</div>
+    <div class="pro-note">Pagamento e assinatura pelo Mercado Pago. Após assinar, volte ao Minha Meta e use o mesmo e-mail para verificar e ativar o PRO.</div>
    </div>
   </div>
   <script>
@@ -318,8 +319,26 @@ try{initReminders()}catch(e){}
   try { window.mmPro = localStorage.getItem('mm_pro') === '1'; } catch(e) {}
   window.openProReal = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal show'; };
   window.closePay = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal'; };
-  window.startCheckout = function(){
-    window.open('https://mpago.la/1dE9KSM','_blank');
+  window.startCheckout = async function(){
+    var email = (document.getElementById("proEmail") || {}).value || "";
+    if(!email) { alert("Digite o e-mail usado no Mercado Pago."); return; }
+    email=email.trim().toLowerCase();
+    try{
+      var r=await fetch("https://minha-meta-pro-api.onrender.com/verificar-pro?email="+encodeURIComponent(email));
+      var d=await r.json();
+      if(d.pro===true){
+        localStorage.setItem("mm_pro","1");
+        window.mmPro=true;
+        alert("🎉 Minha Meta PRO ativado com sucesso!");
+        location.reload();
+      }else{
+        var go=confirm("Não encontramos uma assinatura PRO ativa neste e-mail.\n\nDeseja assinar agora por R$ 9,90/mês?");
+        if(go) window.open("https://mpago.la/1dE9KSM","_blank");
+      }
+    }catch(e){
+      alert("Não foi possível verificar sua assinatura agora. Tente novamente.");
+      console.error(e);
+    }
   };
   window.activateDemoPro = function(){
     try { localStorage.setItem('mm_pro','1'); } catch(e) {}
@@ -328,4 +347,4 @@ try{initReminders()}catch(e){}
 })();
 </script>
  </body>
-       </html> 
+ </html>
