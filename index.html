@@ -319,26 +319,8 @@ try{initReminders()}catch(e){}
   try { window.mmPro = localStorage.getItem('mm_pro') === '1'; } catch(e) {}
   window.openProReal = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal show'; };
   window.closePay = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal'; };
-  window.startCheckout = async function(){
-    var email = (document.getElementById("proEmail") || {}).value || "";
-    if(!email) { alert("Digite o e-mail usado no Mercado Pago."); return; }
-    email=email.trim().toLowerCase();
-    try{
-      var r=await fetch("https://minha-meta-pro-api.onrender.com/verificar-pro?email="+encodeURIComponent(email));
-      var d=await r.json();
-      if(d.pro===true){
-        localStorage.setItem("mm_pro","1");
-        window.mmPro=true;
-        alert("🎉 Minha Meta PRO ativado com sucesso!");
-        location.reload();
-      }else{
-        var go=confirm("Não encontramos uma assinatura PRO ativa neste e-mail.\n\nDeseja assinar agora por R$ 9,90/mês?");
-        if(go) window.open("https://mpago.la/1dE9KSM","_blank");
-      }
-    }catch(e){
-      alert("Não foi possível verificar sua assinatura agora. Tente novamente.");
-      console.error(e);
-    }
+  window.startCheckout = function(){
+    window.open("https://mpago.la/1dE9KSM", "_blank");
   };
   window.activateDemoPro = function(){
     try { localStorage.setItem('mm_pro','1'); } catch(e) {}
@@ -347,4 +329,4 @@ try{initReminders()}catch(e){}
 })();
 </script>
  </body>
- </html>
+      </html>
