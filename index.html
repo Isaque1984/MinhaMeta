@@ -164,6 +164,27 @@
       <p class="sub">O celular precisa permitir notificações para o Minha Meta. Em um HTML aberto apenas por um leitor, o aviso pode depender de o app estar aberto. Para notificações confiáveis mesmo fechado, a próxima etapa é instalar o Minha Meta como PWA/APK.</p>
      </div>
     </section>
+    <section id="ranking" class="screen">
+     <h2 class="sectiontitle">🏆 Ranking</h2>
+     <div class="sub">Uma competição saudável para incentivar você a continuar guardando.</div>
+     <div class="card">
+      <b>👤 Seu apelido</b>
+      <div class="sub">Use um nome que não revele sua identidade.</div>
+      <input class="input" id="rankingNick" maxlength="20" placeholder="Ex.: FocoTotal" style="margin-top:10px">
+      <button class="btn primary full" onclick="saveRankingNick()">Salvar apelido</button>
+     </div>
+     <div class="card">
+      <div class="row">
+       <div>
+        <h3 style="margin:0">💰 Ranking de quem mais guardou</h3>
+        <div class="sub">Veja quanto cada participante já conseguiu guardar.</div>
+       </div>
+       <span style="font-size:28px">🎯</span>
+      </div>
+      <div id="rankingList" style="margin-top:12px"></div>
+      <div class="notice success">💡 Os valores exibidos no ranking são demonstrativos nesta versão. Para mostrar usuários reais, vamos conectar o ranking ao banco de dados.</div>
+     </div>
+    </section>
     <section id="achievements" class="screen">
      <h2 class="sectiontitle">🏆 Conquistas</h2>
      <div class="sub">Cada depósito conta. Vá desbloqueando seus marcos.</div>
@@ -182,6 +203,7 @@
     <button id="navChallenges" onclick="show('challenges')"><span>🔥</span>Desafios</button>
     <button id="navReminders" onclick="show('reminders')"><span>🔔</span>Lembretes</button>
     <button id="navAchievements" onclick="show('achievements')"><span>🏆</span>Conquistas</button>
+    <button id="navRanking" onclick="show('ranking')"><span>🏅</span>Ranking</button>
     <button onclick="openCreate()"><span>➕</span>Nova</button>
    </nav>
   </div>
@@ -210,7 +232,7 @@ let goals=[];try{goals=JSON.parse(localStorage.getItem('mm_goals')||'[]')}catch(
 const money=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const $=id=>document.getElementById(id);
 function save(){try{localStorage.setItem('mm_goals',JSON.stringify(goals))}catch(e){}}
 function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1900)}
-function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='home')renderHome();if(id==='goals')renderGoals();if(id==='create')renderChoices();if(id==='detail'&&window.currentId)renderDetail();if(id==='challenges')renderChallenges();if(id==='achievements')renderAchievements();document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));({home:'navHome',goals:'navGoals',challenges:'navChallenges',achievements:'navAchievements'})[id]&&$( ({home:'navHome',goals:'navGoals',challenges:'navChallenges',achievements:'navAchievements'})[id]).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='home')renderHome();if(id==='goals')renderGoals();if(id==='create')renderChoices();if(id==='detail'&&window.currentId)renderDetail();if(id==='challenges')renderChallenges();if(id==='achievements')renderAchievements();if(id==='ranking')renderRanking();document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));({home:'navHome',goals:'navGoals',challenges:'navChallenges',achievements:'navAchievements',ranking:'navRanking'})[id]&&$( ({home:'navHome',goals:'navGoals',challenges:'navChallenges',achievements:'navAchievements',ranking:'navRanking'})[id]).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
 function openCreate(){editingId=null;show('create');$('createTitle').textContent='Criar uma meta';$('saveGoalBtn').textContent='Criar minha meta';$('goalName').value='';$('goalTarget').value='';$('goalInitial').value='';const d=new Date();d.setDate(d.getDate()+90);$('goalDate').value=d.toISOString().slice(0,10);selected=types[0][0];renderChoices();previewPlan()}
 function editGoal(id){const g=goals.find(x=>x.id===id);if(!g)return;editingId=id;show('create');$('createTitle').textContent='Editar meta';$('saveGoalBtn').textContent='Salvar alterações';$('goalName').value=g.name;$('goalTarget').value=g.target;$('goalInitial').value=g.saved;$('goalDate').value=g.deadline;selected=g.emoji;renderChoices();previewPlan()}
 function renderChoices(){$('choices').innerHTML=types.map(t=>`<button class="${selected===t[0]?'sel':''}" onclick="pick('${t[0]}','${t[1]}')">${t[0]} ${t[1]}</button>`).join('')}
@@ -237,6 +259,10 @@ function deleteGoal(id){if(confirm('Excluir esta meta? O histórico dela será a
 function renderChallenges(){const total=totalSaved();$('challengeList').innerHTML=challenges.map((c,i)=>{const key='challenge_'+i,done=safeGet(key,'0')==='1';return `<div class="challenge ${done?'done':''}" onclick="toggleChallenge(${i})"><span style="font-size:27px">${done?'✅':'🔥'}</span><div><b>${c[0]}</b><div class="sub">${c[1]}</div></div><b>${done?'Feito':'Iniciar'}</b></div>`}).join('')+`<div class="card"><b>Você já guardou ${money(total)} no total.</b><div class="sub" style="margin-top:5px">O importante é manter o hábito.</div></div>`}
 function toggleChallenge(i){const key='challenge_'+i,done=safeGet(key,'0')==='1';safeSet(key,done?'0':'1');toast(done?'Desafio pausado':'Desafio iniciado! 🔥');renderChallenges()}
 function renderAchievements(){const total=totalSaved(),allHistory=goals.flatMap(g=>g.history),count=allHistory.length,complete=goals.filter(g=>g.saved>=g.target).length,max=Math.max(0,...goals.map(streak)),p=goals.length?goals.reduce((s,g)=>s+pct(g),0)/goals.length:0;$('overallRing').style.setProperty('--p',p+'%');$('overallRingTxt').textContent=p.toFixed(0)+'%';const b=[['💰','Primeiro R$ 1',total>=1],['🪙','R$ 100',total>=100],['💵','R$ 1.000',total>=1000],['📚','10 depósitos',count>=10],['🔥','7 dias seguidos',max>=7],['🏆','Primeira meta',complete>=1],['🚀','3 metas',goals.length>=3],['💎','R$ 10.000',total>=10000],['👑','5 metas',goals.length>=5]];$('badges').innerHTML=b.map(x=>`<div class="badge ${x[2]?'':'locked'}"><span class="ico">${x[0]}</span><b>${x[1]}</b><div class="small">${x[2]?'Desbloqueada':'Bloqueada'}</div></div>`).join('')}
+function getRankingNick(){try{return localStorage.getItem('mm_ranking_nick')||''}catch(e){return ''}}
+function saveRankingNick(){var n=(($('rankingNick')||{}).value||'').trim();if(!n)return toast('Digite um apelido');try{localStorage.setItem('mm_ranking_nick',n)}catch(e){}toast('Apelido salvo! 🏆');renderRanking()}
+function rankingTotalSaved(){return goals.reduce(function(s,g){return s+Number(g.saved||0)},0)}
+function renderRanking(){var n=getRankingNick();if($('rankingNick'))$('rankingNick').value=n;var r=[['FocoTotal',2850,'🔥'],['MetaForte',2430,'💪'],['Disciplina',1980,'🎯'],['Guardião',1750,'💰'],['RumoAoSonho',1420,'🚀']];if(n)r.push([n,rankingTotalSaved(),'⭐']);r.sort(function(a,b){return b[1]-a[1]});var seen={};r=r.filter(function(x){var k=x[0].toLowerCase();if(seen[k])return false;seen[k]=1;return true});var l=$('rankingList');if(!l)return;l.innerHTML=r.map(function(x,i){var p=i+1,m=p===1?'🥇':p===2?'🥈':p===3?'🥉':p+'º',me=n&&x[0]===n;return '<div class="hist" style="'+(me?'background:#ecfdf3;border-radius:12px;padding:10px 8px;margin:4px 0':'')+'"><span><b style="display:inline-block;width:34px">'+m+'</b>'+x[2]+' '+x[0]+(me?' <span class="pill">Você</span>':'')+'</span><b>R$ '+Number(x[1]).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'</b></div>'}).join('')}
 function openAbout(){$('modal').style.display='flex'}function closeAbout(){$('modal').style.display='none'}
 
 try{renderHome();}catch(e){document.body.innerHTML='<div style="padding:30px;font-family:Arial;text-align:center"><h2>Minha Meta</h2><p>O app encontrou um erro ao iniciar.</p><p style="font-size:12px;color:#666">'+String(e)+'</p></div>';}setTimeout(()=>{$('splash').classList.add('hide');try{if(!localStorage.getItem('mm_intro_done'))$('welcome').classList.add('show')}catch(e){}},900);
@@ -329,4 +355,4 @@ try{initReminders()}catch(e){}
 })();
 </script>
  </body>
-      </html>
+ </html>
