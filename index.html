@@ -315,28 +315,20 @@ try{initReminders()}catch(e){}
     <div id="payStatus" style="color:#64748b;font-size:13px;margin-bottom:14px">Digite o e-mail usado no Mercado Pago para verificar sua assinatura.</div>
     <input class="input" id="proEmail" type="email" inputmode="email" autocomplete="email" placeholder="seu@email.com" style="margin-bottom:10px">
     <div class="pro-plan">
-     <span class="best">MAIS ECONÔMICO</span>
-     <h3>PRO Anual</h3>
-     <div class="pro-plan-price">
-      R$ 59,90 <small>/ano</small>
-     </div>
-     <div style="font-size:13px;color:#475569">Equivale a R$ 4,99/mês</div>
-    </div>
-    <div class="pro-plan" style="margin-top:10px;border-color:#dbe4df">
+     <span class="best">7 DIAS GRÁTIS</span>
      <h3>PRO Mensal</h3>
      <div class="pro-plan-price">
       R$ 9,90 <small>/mês</small>
      </div>
+     <div style="font-size:13px;color:#475569">Cobrança recorrente pelo Mercado Pago.</div>
     </div>
     <div class="pay-method">
      <b>💳 Cartão</b><span>Pagamento recorrente e renovação automática.</span>
     </div>
-    <div class="pay-method">
-     <b>📱 Google Play</b><span>Ideal quando o Minha Meta estiver publicado como aplicativo Android.</span>
-    </div>
     <button class="pay-real" onclick="startCheckout()">Continuar para pagamento</button>
+    <button class="pay-real" style="background:#0f766e;margin-top:8px" onclick="verifyPro()">Já assinei — verificar PRO</button>
     <button class="pay-close" onclick="closePay()">Agora não</button>
-    <div class="pro-note">Pagamento e assinatura pelo Mercado Pago. Após assinar, volte ao Minha Meta e use o mesmo e-mail para verificar e ativar o PRO.</div>
+    <div class="pro-note">Pagamento e assinatura pelo Mercado Pago. Após assinar, volte ao Minha Meta, informe o mesmo e-mail e toque em “Já assinei — verificar PRO”.</div>
    </div>
   </div>
   <script>
@@ -347,6 +339,25 @@ try{initReminders()}catch(e){}
   window.closePay = function(){ var m=document.getElementById('payModal'); if(m)m.className='pay-modal'; };
   window.startCheckout = function(){
     window.open("https://mpago.la/1dE9KSM", "_blank");
+  };
+  window.verifyPro = async function(){
+    var input=document.getElementById('proEmail');
+    var status=document.getElementById('payStatus');
+    var email=(input&&input.value||'').trim();
+    if(!email){ if(status)status.textContent='Digite o e-mail usado no Mercado Pago.'; return; }
+    if(status)status.textContent='Verificando sua assinatura...';
+    try{
+      var r=await fetch('https://minha-meta-pro-api.onrender.com/verificar-pro?email='+encodeURIComponent(email));
+      var data=await r.json();
+      if(data.pro){
+        try{localStorage.setItem('mm_pro','1');localStorage.setItem('mm_pro_email',email.toLowerCase());}catch(e){}
+        window.mmPro=true; closePay(); if(window.toast)window.toast('PRO ativado com sucesso! 🎉');
+      }else{
+        if(status)status.textContent='Assinatura não encontrada ou ainda não está ativa. Confira o e-mail usado no Mercado Pago.';
+      }
+    }catch(e){
+      if(status)status.textContent='Não foi possível verificar agora. Tente novamente em alguns segundos.';
+    }
   };
   window.activateDemoPro = function(){
     try { localStorage.setItem('mm_pro','1'); } catch(e) {}
