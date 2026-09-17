@@ -1,345 +1,479 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#16834a">
 
-    <meta name="theme-color" content="#07152e">
-    <meta name="description" content="Minha Meta PRO">
+  <title>Minha Meta PRO</title>
 
-    <title>Minha Meta PRO</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f8f5;
+      color: #17221b;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(160deg, #07152e, #0b2450);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    .top {
+      background: linear-gradient(135deg, #0d1b2a, #16834a);
+      color: white;
+      padding: 28px 20px;
+      text-align: center;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 430px;
-        }
+    .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
 
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 24px;
-            padding: 30px 24px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-        }
+    h1 {
+      margin: 5px 0;
+      font-size: 28px;
+    }
 
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 18px;
-            border-radius: 22px;
-            background: linear-gradient(135deg, #1479ff, #00c6ff);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 38px;
-            font-weight: bold;
-        }
+    .subtitle {
+      margin: 8px 0 0;
+      opacity: .9;
+    }
 
-        h1 {
-            margin: 0 0 8px;
-            font-size: 32px;
-        }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
 
-        .pro {
-            color: #37a7ff;
-        }
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 5px 18px rgba(0,0,0,.08);
+    }
 
-        .subtitle {
-            color: #c7d2e3;
-            line-height: 1.5;
-            margin-bottom: 25px;
-        }
+    .card h2 {
+      margin-top: 0;
+      color: #16834a;
+    }
 
-        .features {
-            text-align: left;
-            margin: 20px 0 25px;
-            padding: 0;
-            list-style: none;
-        }
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ccd5cf;
+      border-radius: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      outline: none;
+    }
 
-        .features li {
-            margin: 13px 0;
-            color: #e8eef8;
-        }
+    input:focus {
+      border-color: #16834a;
+    }
 
-        .features li::before {
-            content: "✓";
-            color: #38d39f;
-            font-weight: bold;
-            margin-right: 10px;
-        }
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
 
-        input {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            outline: none;
-            margin-bottom: 12px;
-        }
+    .btn-green {
+      background: #16834a;
+      color: white;
+    }
 
-        button {
-            width: 100%;
-            border: none;
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 8px;
-        }
+    .btn-dark {
+      background: #0d1b2a;
+      color: white;
+    }
 
-        .subscribe {
-            background: #20c77a;
-            color: white;
-        }
+    .btn-light {
+      background: #e8f0eb;
+      color: #16834a;
+    }
 
-        .verify {
-            background: #1479ff;
-            color: white;
-        }
+    .status {
+      text-align: center;
+      padding: 14px;
+      border-radius: 12px;
+      margin-top: 12px;
+      background: #eef3ef;
+      font-size: 14px;
+    }
 
-        .back {
-            background: transparent;
-            color: #b8c7dc;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+    .success {
+      background: #e5f7eb;
+      color: #126b3b;
+    }
 
-        button:active {
-            transform: scale(0.98);
-        }
+    .error {
+      background: #fdeaea;
+      color: #a32222;
+    }
 
-        .price {
-            font-size: 30px;
-            font-weight: bold;
-            margin: 15px 0;
-        }
+    .loading {
+      text-align: center;
+      padding: 35px 10px;
+    }
 
-        .price small {
-            font-size: 14px;
-            color: #b8c7dc;
-            font-weight: normal;
-        }
+    .pro-content {
+      display: none;
+    }
 
-        #mensagem {
-            margin-top: 18px;
-            color: #d8e5f5;
-            line-height: 1.5;
-            min-height: 24px;
-        }
+    .feature {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf1ee;
+    }
 
-        #areaPro {
-            display: none;
-        }
+    .feature:last-child {
+      border-bottom: 0;
+    }
 
-        .pro-box {
-            background: rgba(32, 199, 122, 0.12);
-            border: 1px solid rgba(32, 199, 122, 0.35);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-        }
+    .icon {
+      font-size: 25px;
+    }
 
-        .pro-box h2 {
-            margin-top: 0;
-        }
-    </style>
+    .feature strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .back {
+      text-align: center;
+      margin: 25px 0;
+    }
+
+    .back a {
+      color: #16834a;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <div class="top">
+    <img
+      src="./icon-192.png"
+      class="logo"
+      alt="Minha Meta"
+      onerror="this.style.display='none'"
+    >
 
-    <div class="card">
+    <h1>Minha Meta PRO</h1>
+    <div class="subtitle">Seu plano para alcançar seus objetivos.</div>
+  </div>
 
-        <div class="logo">🎯</div>
+  <div class="container">
 
-        <h1>Minha Meta <span class="pro">PRO</span></h1>
+    <!-- VERIFICAÇÃO -->
+    <div id="checking" class="card loading">
+      <h2>🔐 Verificando seu acesso</h2>
+      <p id="checkingText">
+        Aguarde enquanto verificamos sua assinatura...
+      </p>
+    </div>
 
-        <div id="areaAssinatura">
+    <!-- ÁREA PARA INFORMAR E-MAIL -->
+    <div id="loginArea" class="card" style="display:none;">
 
-            <p class="subtitle">
-                Desbloqueie os recursos PRO do Minha Meta
-                e acompanhe suas metas de forma mais completa.
-            </p>
+      <h2>Seu acesso PRO</h2>
 
-            <ul class="features">
-                <li>Recursos exclusivos PRO</li>
-                <li>Acompanhamento avançado das suas metas</li>
-                <li>Mais ferramentas para organizar seus objetivos</li>
-                <li>Acesso contínuo enquanto sua assinatura estiver ativa</li>
-            </ul>
+      <p>
+        Digite o mesmo e-mail utilizado na assinatura do Minha Meta PRO.
+      </p>
 
-            <div class="price">
-                R$ 9,90 <small>/ mês</small>
-            </div>
+      <input
+        type="email"
+        id="email"
+        placeholder="seu@email.com"
+        autocomplete="email"
+      >
 
-            <input
-                type="email"
-                id="email"
-                placeholder="Digite seu e-mail"
-                autocomplete="email"
-            >
+      <button class="btn-green" onclick="verificarPro()">
+        🔎 VERIFICAR MINHA ASSINATURA
+      </button>
 
-            <button class="subscribe" onclick="assinar()">
-                ASSINAR POR R$ 9,90/MÊS
-            </button>
-
-            <button class="verify" onclick="verificarPro()">
-                JÁ SOU PRO — VERIFICAR
-            </button>
-
-            <button class="back" onclick="voltar()">
-                VOLTAR PARA MINHA META
-            </button>
-
-            <div id="mensagem"></div>
-
-        </div>
-
-        <div id="areaPro">
-
-            <div class="pro-box">
-                <h2>🚀 Minha Meta PRO</h2>
-
-                <p>
-                    Sua assinatura foi reconhecida.
-                </p>
-
-                <p>
-                    Os recursos PRO estão liberados.
-                </p>
-            </div>
-
-            <button class="back" onclick="voltar()">
-                VOLTAR PARA MINHA META
-            </button>
-
-        </div>
+      <div id="status" class="status">
+        Informe seu e-mail para verificar.
+      </div>
 
     </div>
 
-</div>
+    <!-- CONTEÚDO PRO -->
+    <div id="proContent" class="pro-content">
+
+      <div class="card">
+        <h2>🎉 PRO ativado!</h2>
+
+        <p>
+          Sua assinatura foi confirmada. Agora você tem acesso aos recursos
+          PRO do Minha Meta.
+        </p>
+
+        <div class="status success">
+          ✓ Assinatura ativa
+        </div>
+      </div>
+
+      <div class="card">
+
+        <h2>🚀 Recursos PRO</h2>
+
+        <div class="feature">
+          <div class="icon">🎯</div>
+          <div>
+            <strong>Metas avançadas</strong>
+            Organize seus objetivos financeiros com mais detalhes.
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="icon">📊</div>
+          <div>
+            <strong>Acompanhamento completo</strong>
+            Visualize melhor sua evolução até atingir cada meta.
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="icon">🔥</div>
+          <div>
+            <strong>Sequência de economia</strong>
+            Acompanhe seus dias consecutivos economizando.
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="icon">🏆</div>
+          <div>
+            <strong>Conquistas</strong>
+            Desbloqueie conquistas conforme avança.
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="icon">💰</div>
+          <div>
+            <strong>Desafios de economia</strong>
+            Crie desafios para acelerar suas metas.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card">
+        <h2>📧 Sua conta</h2>
+
+        <p id="accountEmail"></p>
+
+        <button class="btn-light" onclick="verificarPro()">
+          🔄 ATUALIZAR ASSINATURA
+        </button>
+      </div>
+
+    </div>
+
+    <div class="back">
+      <a href="./index.html">← Voltar para Minha Meta</a>
+    </div>
+
+  </div>
 
 <script>
 
-    // Link da assinatura do Mercado Pago
-    const MERCADO_PAGO_LINK = "https://mpago.la/1dE9KSM";
+const API_URL =
+  "https://minha-meta-pro-api.onrender.com";
 
-    // Backend será conectado depois
-    const API_URL = "";
+const EMAIL_KEY =
+  "minha_meta_email";
 
-    const emailInput = document.getElementById("email");
-    const mensagem = document.getElementById("mensagem");
+const PRO_KEY =
+  "minha_meta_pro";
 
-    // Recupera o e-mail salvo anteriormente
-    const emailSalvo = localStorage.getItem("minha_meta_email");
 
-    if (emailSalvo) {
-        emailInput.value = emailSalvo;
+function normalizarEmail(email) {
+  return String(email || "")
+    .trim()
+    .toLowerCase();
+}
+
+
+function salvarEmail(email) {
+  try {
+    localStorage.setItem(
+      EMAIL_KEY,
+      normalizarEmail(email)
+    );
+  } catch (e) {
+    console.log("Não foi possível salvar o e-mail.");
+  }
+}
+
+
+function obterEmail() {
+  try {
+    return normalizarEmail(
+      localStorage.getItem(EMAIL_KEY)
+    );
+  } catch (e) {
+    return "";
+  }
+}
+
+
+function mostrarLogin() {
+
+  document.getElementById("checking").style.display =
+    "none";
+
+  document.getElementById("loginArea").style.display =
+    "block";
+
+  const email = obterEmail();
+
+  if (email) {
+    document.getElementById("email").value = email;
+  }
+}
+
+
+function liberarPro(email) {
+
+  document.getElementById("checking").style.display =
+    "none";
+
+  document.getElementById("loginArea").style.display =
+    "none";
+
+  document.getElementById("proContent").style.display =
+    "block";
+
+  document.getElementById("accountEmail").textContent =
+    "E-mail da assinatura: " + email;
+
+  try {
+    localStorage.setItem(
+      PRO_KEY,
+      "true"
+    );
+  } catch (e) {}
+}
+
+
+async function verificarPro() {
+
+  const input =
+    document.getElementById("email");
+
+  const status =
+    document.getElementById("status");
+
+  const email =
+    normalizarEmail(input.value);
+
+  if (!email) {
+
+    status.className =
+      "status error";
+
+    status.textContent =
+      "Digite o e-mail usado na assinatura.";
+
+    return;
+  }
+
+  salvarEmail(email);
+
+  status.className =
+    "status";
+
+  status.textContent =
+    "Verificando sua assinatura...";
+
+  try {
+
+    const resposta =
+      await fetch(
+        API_URL +
+        "/verificar-pro?email=" +
+        encodeURIComponent(email)
+      );
+
+    const dados =
+      await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(
+        dados.detail ||
+        "Erro na verificação."
+      );
     }
 
-    function assinar() {
+    if (dados.pro === true) {
 
-        const email = emailInput.value.trim();
+      liberarPro(email);
 
-        if (!email || !email.includes("@")) {
-            mensagem.innerText = "Digite um e-mail válido antes de continuar.";
-            return;
-        }
+    } else {
 
-        // Salva o e-mail para usar quando a pessoa voltar do Mercado Pago
-        localStorage.setItem("minha_meta_email", email);
+      status.className =
+        "status error";
 
-        mensagem.innerText = "Abrindo o Mercado Pago...";
-
-        // Envia o usuário para a assinatura
-        setTimeout(function() {
-            window.location.href = MERCADO_PAGO_LINK;
-        }, 500);
-    }
-
-
-    async function verificarPro() {
-
-        const email = emailInput.value.trim();
-
-        if (!email || !email.includes("@")) {
-            mensagem.innerText = "Digite o e-mail usado na assinatura.";
-            return;
-        }
-
-        localStorage.setItem("minha_meta_email", email);
-
-        if (!API_URL) {
-            mensagem.innerText =
-                "A verificação automática da assinatura ainda está sendo conectada.";
-            return;
-        }
-
-        mensagem.innerText = "Verificando sua assinatura...";
-
-        try {
-
-            const resposta = await fetch(
-                API_URL + "/verificar-pro?email=" +
-                encodeURIComponent(email)
-            );
-
-            const dados = await resposta.json();
-
-            if (dados.ativo === true) {
-                liberarPro();
-            } else {
-                mensagem.innerText =
-                    "Não encontramos uma assinatura PRO ativa para este e-mail.";
-            }
-
-        } catch (erro) {
-
-            console.error(erro);
-
-            mensagem.innerText =
-                "Não foi possível verificar agora. Tente novamente.";
-
-        }
-    }
-
-
-    function liberarPro() {
-
-        document.getElementById("areaAssinatura").style.display = "none";
-
-        document.getElementById("areaPro").style.display = "block";
-
-        localStorage.setItem("minha_meta_pro", "true");
-    }
-
-
-    function voltar() {
-
-        window.location.href = "index.html";
+      status.textContent =
+        "Não encontramos uma assinatura PRO ativa para este e-mail. Se você acabou de pagar, aguarde alguns instantes e tente novamente.";
 
     }
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    status.className =
+      "status error";
+
+    status.textContent =
+      "Não foi possível verificar agora. Tente novamente em alguns segundos.";
+
+  }
+}
+
+
+window.addEventListener(
+  "DOMContentLoaded",
+  function() {
+
+    const email =
+      obterEmail();
+
+    if (email) {
+
+      document.getElementById("email").value =
+        email;
+
+      verificarPro();
+
+    } else {
+
+      mostrarLogin();
+
+    }
+
+  }
+);
 
 </script>
 
