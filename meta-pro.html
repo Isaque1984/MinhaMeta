@@ -352,19 +352,12 @@ function mostrarLogin() {
 }
 
 
+/* ÚNICA ALTERAÇÃO: após confirmar o PRO,
+   o usuário vai para a área PRO completa. */
+
 function liberarPro(email) {
 
-  document.getElementById("checking").style.display =
-    "none";
-
-  document.getElementById("loginArea").style.display =
-    "none";
-
-  document.getElementById("proContent").style.display =
-    "block";
-
-  document.getElementById("accountEmail").textContent =
-    "E-mail da assinatura: " + email;
+  salvarEmail(email);
 
   try {
     localStorage.setItem(
@@ -372,6 +365,8 @@ function liberarPro(email) {
       "true"
     );
   } catch (e) {}
+
+  window.location.href = "./area-pro.html";
 }
 
 
