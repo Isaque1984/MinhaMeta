@@ -1,2155 +1,865 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#16a34a">
-<meta name="description" content="Minha Meta: guarde um pouco por dia e acompanhe seus sonhos.">
-<link rel="manifest" href="manifest.json">
-<title>Minha Meta</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Minha Meta PRO</title>
 
 <style>
-:root{--green:#16a34a;--green2:#15803d;--dark:#10251b;--bg:#f3f7f4;--card:#fff;--muted:#64748b;--line:#e5e7eb;--gold:#f59e0b;--red:#b91c1c}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:#172033}
-.app{max-width:600px;margin:auto;min-height:100vh}
-.top{background:linear-gradient(145deg,#0b2116,#16a34a);color:#fff;padding:24px 18px 28px;border-radius:0 0 30px 30px}
-.toprow{display:flex;justify-content:space-between;align-items:center}
-.brand{font-size:25px;font-weight:850}
-.tag{font-size:12px;color:#dcfce7;margin-top:4px}
-.iconbtn{border:0;background:#ffffff20;color:#fff;width:42px;height:42px;border-radius:14px;font-size:19px}
-.wrap{padding:16px}
-.screen{display:none}
-.screen.active{display:block}
-.sectiontitle{font-size:20px;margin:8px 0 12px}
-.sub{color:var(--muted);font-size:13px}
-.heroCard{background:#fff;border-radius:22px;padding:18px;box-shadow:0 8px 28px #10251b0c;margin-top:-2px}
-.big{font-size:31px;font-weight:850}
-.progress{height:13px;background:#e9f0eb;border-radius:99px;overflow:hidden;margin:13px 0 8px}
-.bar{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#15803d);border-radius:99px;transition:.4s}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px}
-.stat{background:#f7faf8;border-radius:14px;padding:11px}
-.stat b{display:block;margin-top:4px;font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
-.goal{background:#fff;border:1px solid #e4e9e5;border-radius:19px;padding:16px;text-align:left;min-height:112px;box-shadow:0 3px 14px #10251b08;cursor:pointer}
-.goal:active,.btn:active{transform:scale(.98)}
-.goal span{font-size:31px}
-.goal strong{display:block;margin-top:9px}
-.goal small{color:var(--muted)}
-.card{background:#fff;border-radius:19px;padding:16px;margin:11px 0;box-shadow:0 4px 16px #10251b09}
-.goalrow{display:flex;align-items:center;gap:12px}
-.emoji{width:48px;height:48px;border-radius:15px;background:#ecfdf3;display:grid;place-items:center;font-size:25px}
-.grow{flex:1;min-width:0}
-.percent{font-weight:800;color:var(--green2)}
-.mini{height:8px;margin:10px 0 0}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.btn{border:0;border-radius:14px;padding:14px 16px;font-size:15px;font-weight:750;cursor:pointer}
-.primary{background:var(--green);color:#fff}
-.secondary{background:#e8eee9;color:#173021}
-.full{width:100%;margin-top:10px}
-.danger{color:#b91c1c;background:#fee2e2}
-.input,select,textarea{width:100%;padding:14px;border:1px solid #b9c7bd;border-radius:13px;font-size:16px;background:#fff;outline:none;color:#172033;font-weight:600}
-input::placeholder,textarea::placeholder{color:#52606d;opacity:1}
-select{color:#172033}
-option{color:#172033;background:#fff}
-label{color:#172033;font-weight:700}
-.input:focus{border-color:var(--green);box-shadow:0 0 0 3px #16a34a18}
-.label{font-size:13px;font-weight:750;margin:14px 0 6px;display:block}
-.pill{font-size:11px;padding:6px 9px;border-radius:99px;background:#ecfdf3;color:#166534;font-weight:700}
-.history{border-top:1px solid var(--line);margin-top:13px;padding-top:8px}
-.hist{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f2f1}
-.hist:last-child{border:0}
-.hist button{border:0;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:5px 8px}
-.empty{text-align:center;padding:28px 12px;color:var(--muted)}
-.nav{position:sticky;bottom:0;background:#ffffffef;backdrop-filter:blur(12px);border-top:1px solid #e5e7eb;display:grid;grid-template-columns:repeat(3,1fr);padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:5}
-.nav button{border:0;background:none;padding:8px 2px;color:#64748b;font-weight:700}
-.nav button.active{color:var(--green2)}
-.nav span{display:block;font-size:20px}
-.modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end}
-.sheet{width:min(600px,100%);background:#fff;border-radius:26px 26px 0 0;padding:20px;max-height:90vh;overflow:auto}
-.sheet h2{margin:0 0 5px}
-.choice{display:flex;gap:8px;flex-wrap:wrap}
-.choice button{border:1px solid #dfe7e1;background:#fff;border-radius:12px;padding:10px 12px}
-.choice button.sel{background:#dcfce7;border-color:#16a34a}
-.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);background:#10251b;color:#fff;padding:12px 16px;border-radius:13px;opacity:0;pointer-events:none;transition:.3s;z-index:30;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.ring{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(var(--green) var(--p),#e8eee9 0)}
-.ring:after{content:"";width:82px;height:82px;background:#fff;border-radius:50%;position:absolute}
-.ringtxt{position:relative;z-index:1;text-align:center;font-weight:850}
-.badgegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.badge{padding:12px 7px;text-align:center;background:#f7faf8;border-radius:14px;font-size:12px}
-.badge .ico{font-size:25px;display:block;margin-bottom:4px}
-.locked{opacity:.38}
-.notice{padding:12px;border-radius:14px;background:#fff7ed;color:#9a3412;font-size:13px;margin-top:10px}
-.success{background:#ecfdf3;color:#166534}
-.mutedbtn{border:0;background:none;color:var(--muted);font-weight:700;padding:4px}
-.small{font-size:12px}
-.actions{display:flex;gap:8px}
-.actions .btn{flex:1}
-.challenge{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid #e4e9e5;border-radius:14px;margin-top:8px;cursor:pointer}
-.challenge b{margin-left:auto}
-.done{background:#ecfdf3;border-color:#86efac}
-.formrow{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.splash{position:fixed;inset:0;background:linear-gradient(145deg,#071b10,#16a34a 72%,#22c55e);color:#fff;z-index:100;display:grid;place-items:center;text-align:center;padding:24px;transition:opacity .5s,visibility .5s}
-.splash.hide{opacity:0;visibility:hidden;pointer-events:none}
-.logoMark{width:92px;height:92px;border-radius:28px;background:#ffffff18;border:1px solid #ffffff35;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 15px 40px #0003;font-size:48px}
-.splash h1{font-size:42px;letter-spacing:-1.5px;margin:0;font-weight:900}
-.splash p{margin:8px 0 0;color:#dcfce7}
-.splash .loader{width:90px;height:4px;background:#ffffff25;border-radius:9px;margin:28px auto 0;overflow:hidden}
-.splash .loader i{display:block;height:100%;width:45%;background:#fff;border-radius:9px;animation:load 1.2s infinite}
-@keyframes load{from{transform:translateX(-100%)}to{transform:translateX(230%)}}
-.welcome{position:fixed;inset:0;background:#0009;z-index:90;display:none;align-items:flex-end}
-.welcome.show{display:flex}
-.welcome .sheet{animation:up .35s ease}
-@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
-.planbox{margin-top:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,#ecfdf3,#f7faf8);border:1px solid #bbf7d0}
-.planbox b{color:#166534}
-.planline{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #dcefe1}
-.planline:last-child{border:0}
-.planbig{font-size:24px;font-weight:900;color:#15803d}
-.checklist{display:grid;gap:8px;margin-top:12px}
-.check{padding:10px 12px;border-radius:12px;background:#f7faf8;font-size:13px}
-.ready #splash{display:none!important}
-.reminderbox{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border:1px solid #d1d5db;border-radius:16px;background:#f8fafc;margin-top:12px}
-.reminderbox b{color:#0f172a}
-.reminderbox .sub{color:#334155}
-.switch{width:52px;height:30px;border-radius:30px;border:0;background:#94a3b8;position:relative;flex:0 0 auto}
-.switch.on{background:#16a34a}
-.switch:after{content:'';position:absolute;width:24px;height:24px;top:3px;left:3px;border-radius:50%;background:#fff;transition:.2s}
-.switch.on:after{left:25px}
-.timeinput{font-size:18px;font-weight:800;color:#111827;background:#fff;border:2px solid #cbd5e1;border-radius:12px;padding:10px 12px}
-.reminderstatus{font-size:13px;font-weight:700;color:#166534;margin-top:8px}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-.pro-banner{margin:16px;padding:18px;border-radius:20px;background:linear-gradient(135deg,#0f7a45,#19a463);color:#fff;box-shadow:0 8px 24px rgba(15,122,69,.22)}
-.pro-banner h2{margin:0 0 6px;font-size:22px}
-.pro-banner p{margin:5px 0 14px;opacity:.96}
-.pro-price{font-size:28px;font-weight:800}
-.pro-btn{border:0;border-radius:14px;padding:13px 18px;background:#fff;color:#116b40;font-weight:800;font-size:15px;margin-top:12px}
-.pro-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:9999}
-.pro-modal.show{display:flex}
-.pro-card{width:min(560px,100%);background:#fff;border-radius:28px 28px 0 0;padding:24px;box-sizing:border-box;max-height:90vh;overflow:auto;color:#17231c}
-.pro-card h2{margin:0 0 8px;color:#116b40}
-.pro-feature{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #e7ece9}
-.pro-close{float:right;border:0;background:#eef3f0;border-radius:50%;width:34px;height:34px}
-.pro-cta{width:100%;border:0;border-radius:15px;padding:15px;background:#116b40;color:#fff;font-weight:800;font-size:16px;margin-top:16px}
-.pro-note{font-size:12px;color:#66736b;text-align:center;margin-top:10px}
+:root{
+    --bg:#07111f;
+    --bg2:#0b1728;
+    --card:#101e30;
+    --card2:#14253a;
+    --green:#28d17c;
+    --green2:#18a866;
+    --blue:#4da3ff;
+    --purple:#8d72ff;
+    --orange:#ffb84d;
+    --red:#ff667d;
+    --text:#f5f8fc;
+    --muted:#91a0b4;
+    --border:rgba(255,255,255,.08);
+    --shadow:0 15px 40px rgba(0,0,0,.25);
+}
 
-.pro-page{padding:18px 16px 110px}
-.pro-hero{background:linear-gradient(145deg,#0f3d27,#16a34a);color:#fff;border-radius:24px;padding:24px;box-shadow:0 14px 35px rgba(22,163,74,.22);position:relative;overflow:hidden}
-.pro-hero:after{content:"★";position:absolute;right:-8px;top:-18px;font-size:110px;opacity:.10}
-.pro-badge{display:inline-block;background:rgba(255,255,255,.16);padding:7px 11px;border-radius:999px;font-weight:800;font-size:12px}
-.pro-hero h2{margin:14px 0 7px;font-size:28px}
-.pro-hero p{margin:0;opacity:.92;line-height:1.45}
-.pro-price{font-size:34px;font-weight:900;margin:18px 0 3px}
-.pro-price small{font-size:14px;font-weight:600;opacity:.85}
-.pro-btn{width:100%;border:0;border-radius:14px;padding:15px;font-weight:900;font-size:16px;background:#fff;color:#116b35;margin-top:14px}
-.pro-trial{text-align:center;font-size:12px;margin-top:9px;opacity:.85}
-.pro-section-title{font-size:18px;font-weight:900;color:#10251b;margin:22px 2px 12px}
-.pro-features{display:grid;gap:10px}
-.pro-feature{background:#fff;border:1px solid #dfe8e2;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center}
-.pro-feature b{display:block;color:#10251b}
-.pro-feature span{color:#475569;font-size:13px}
-.pro-icon{width:42px;height:42px;border-radius:12px;background:#e8f7ed;display:grid;place-items:center;font-size:21px;flex:none}
-.pro-plan{background:#fff;border:2px solid #16a34a;border-radius:18px;padding:18px;position:relative}
-.pro-plan .best{position:absolute;right:12px;top:12px;background:#16a34a;color:#fff;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:900}
-.pro-plan h3{margin:0;color:#10251b}
-.pro-plan-price{font-size:27px;font-weight:900;color:#10251b;margin:8px 0}
-.pro-plan-price small{font-size:12px;color:#64748b}
-.pro-note{font-size:12px;color:#64748b;line-height:1.45;margin-top:12px}
-.pay-modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.60);z-index:9999;align-items:flex-end;justify-content:center}
-.pay-modal.show{display:flex}
-.pay-box{background:#fff;width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:22px;max-height:88vh;overflow:auto}
-.pay-box h3{margin:0 0 5px;color:#10251b}
-.pay-method{border:1px solid #dbe4df;border-radius:14px;padding:14px;margin:9px 0;color:#10251b}
-.pay-method b{display:block;margin-bottom:3px}
-.pay-method span{font-size:12px;color:#64748b}
-.pay-close{border:0;background:#eef2f0;border-radius:12px;padding:12px;width:100%;font-weight:800;margin-top:8px}
-.pay-real{border:0;background:#16a34a;color:#fff;border-radius:14px;padding:15px;width:100%;font-weight:900;margin-top:8px}
-.pro-active{background:#eaf8ef;border:1px solid #b9e4c5;color:#116b35;border-radius:16px;padding:14px;font-weight:800;margin-top:16px}
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 80% -10%,rgba(40,209,124,.15),transparent 30%),
+        radial-gradient(circle at 10% 10%,rgba(77,163,255,.12),transparent 30%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding-bottom:90px;
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.app{
+    max-width:700px;
+    margin:auto;
+    padding:18px 16px 100px;
+}
+
+/* HEADER */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.brand-icon{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#1b2e48,#07111f);
+    border:1px solid rgba(255,255,255,.1);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:21px;
+}
+
+.brand-text strong{
+    display:block;
+    font-size:17px;
+}
+
+.brand-text span{
+    display:block;
+    font-size:11px;
+    color:var(--green);
+    font-weight:bold;
+    letter-spacing:1.5px;
+}
+
+.user-circle{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--green),#08784b);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+}
+
+/* SECTIONS */
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+    animation:fade .25s ease;
+}
+
+@keyframes fade{
+    from{opacity:0;transform:translateY(5px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.section-title{
+    margin:22px 0 12px;
+}
+
+.section-title h2{
+    font-size:20px;
+}
+
+.section-title p{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+}
+
+/* HERO */
+
+.hero{
+    background:
+        radial-gradient(circle at 100% 0%,rgba(40,209,124,.25),transparent 40%),
+        linear-gradient(145deg,#12263c,#0c192a);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:25px;
+    padding:22px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+}
+
+.pro-label{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    color:#06140e;
+    background:var(--green);
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:bold;
+    letter-spacing:1px;
+    margin-bottom:15px;
+}
+
+.hero-small{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.hero-value{
+    font-size:38px;
+    font-weight:800;
+    margin:5px 0 3px;
+    letter-spacing:-1px;
+}
+
+.hero-sub{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.hero-progress{
+    margin-top:20px;
+}
+
+.progress-line{
+    width:100%;
+    height:9px;
+    background:rgba(255,255,255,.08);
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--green),#75e7aa);
+    border-radius:99px;
+    width:0%;
+    transition:width .7s ease;
+}
+
+.progress-info{
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+    font-size:12px;
+    color:var(--muted);
+}
+
+/* METRICS */
+
+.metrics{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-top:12px;
+}
+
+.metric{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:15px;
+}
+
+.metric-icon{
+    font-size:20px;
+    margin-bottom:9px;
+}
+
+.metric-label{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.metric-value{
+    font-size:18px;
+    font-weight:bold;
+    margin-top:3px;
+}
+
+/* CHART */
+
+.card{
+    background:rgba(16,30,48,.9);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:18px;
+    margin-top:12px;
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.card-title{
+    font-weight:bold;
+    font-size:16px;
+}
+
+.card-subtitle{
+    color:var(--muted);
+    font-size:11px;
+    margin-top:4px;
+}
+
+.periods{
+    display:flex;
+    gap:5px;
+    background:#0a1625;
+    border-radius:12px;
+    padding:4px;
+}
+
+.periods button{
+    background:transparent;
+    color:var(--muted);
+    padding:7px 8px;
+    border-radius:9px;
+    font-size:10px;
+}
+
+.periods button.active{
+    background:var(--green);
+    color:#04150d;
+    font-weight:bold;
+}
+
+.chart{
+    height:210px;
+    margin-top:18px;
+    position:relative;
+    border-left:1px solid rgba(255,255,255,.08);
+    border-bottom:1px solid rgba(255,255,255,.08);
+    overflow:hidden;
+}
+
+.chart-grid{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.chart-grid div{
+    border-top:1px dashed rgba(255,255,255,.06);
+    width:100%;
+}
+
+.chart svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    overflow:visible;
+}
+
+.chart-empty{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--muted);
+    font-size:12px;
+    text-align:center;
+    padding:30px;
+}
+
+/* GOALS */
+
+.goal-card{
+    background:linear-gradient(145deg,#122238,#0e1b2b);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:18px;
+    margin-top:12px;
+}
+
+.goal-top{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.goal-name{
+    font-size:17px;
+    font-weight:bold;
+}
+
+.goal-target{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:4px;
+}
+
+.goal-percent{
+    color:var(--green);
+    font-weight:bold;
+    font-size:17px;
+}
+
+.goal-values{
+    display:flex;
+    justify-content:space-between;
+    margin:18px 0 8px;
+    font-size:12px;
+}
+
+.goal-values span:first-child{
+    font-weight:bold;
+}
+
+.goal-details{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    margin-top:15px;
+}
+
+.goal-detail{
+    background:rgba(255,255,255,.035);
+    border-radius:12px;
+    padding:10px;
+}
+
+.goal-detail small{
+    display:block;
+    color:var(--muted);
+    font-size:9px;
+}
+
+.goal-detail strong{
+    display:block;
+    font-size:12px;
+    margin-top:3px;
+}
+
+.goal-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr 42px;
+    gap:8px;
+    margin-top:14px;
+}
+
+.btn{
+    border-radius:12px;
+    padding:12px;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.btn-green{
+    background:var(--green);
+    color:#04150d;
+}
+
+.btn-dark{
+    background:#18283d;
+    color:white;
+    border:1px solid var(--border);
+}
+
+.btn-icon{
+    background:#18283d;
+    color:white;
+}
+
+/* ANALYSIS */
+
+.analysis-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+.analysis-item{
+    background:#0c1929;
+    border-radius:15px;
+    padding:14px;
+}
+
+.analysis-item span{
+    display:block;
+    color:var(--muted);
+    font-size:10px;
+}
+
+.analysis-item strong{
+    display:block;
+    margin-top:5px;
+    font-size:16px;
+}
+
+/* CALENDAR */
+
+.calendar-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.calendar-head button{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+    background:#18283d;
+    color:white;
+}
+
+.calendar-week,
+.calendar-days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+}
+
+.calendar-week div{
+    text-align:center;
+    color:var(--muted);
+    font-size:9px;
+}
+
+.day{
+    min-height:42px;
+    background:#0c1929;
+    border-radius:9px;
+    padding:5px;
+    font-size:10px;
+    text-align:center;
+    position:relative;
+}
+
+.day.empty{
+    background:transparent;
+}
+
+.day.has-money{
+    border:1px solid rgba(40,209,124,.4);
+    background:rgba(40,209,124,.08);
+}
+
+.day.today{
+    box-shadow:inset 0 0 0 1px var(--blue);
+}
+
+.day-value{
+    color:var(--green);
+    font-size:8px;
+    margin-top:4px;
+    font-weight:bold;
+}
+
+/* CHALLENGES */
+
+.challenge{
+    background:#0d1b2c;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:15px;
+    margin-top:10px;
+}
+
+.challenge-top{
+    display:flex;
+    justify-content:space-between;
+}
+
+.challenge-name{
+    font-weight:bold;
+}
+
+.challenge-percent{
+    color:var(--green);
+    font-size:12px;
+    font-weight:bold;
+}
+
+.challenge-info{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:5px;
+}
+
+.challenge-progress{
+    height:7px;
+    background:#18283a;
+    border-radius:99px;
+    margin-top:12px;
+    overflow:hidden;
+}
+
+.challenge-progress div{
+    height:100%;
+    background:linear-gradient(90deg,var(--purple),var(--green));
+}
+
+/* ACHIEVEMENTS */
+
+.badges{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+}
+
+.badge{
+    background:#0c1929;
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:15px 7px;
+    text-align:center;
+    opacity:.35;
+}
+
+.badge.unlocked{
+    opacity:1;
+    border-color:rgba(40,209,124,.35);
+    background:linear-gradient(145deg,#102b25,#0c1929);
+}
+
+.badge-icon{
+    font-size:28px;
+}
+
+.badge-name{
+    font-size:9px;
+    margin-top:7px;
+    font-weight:bold;
+}
+
+.badge-status{
+    font-size:8px;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+/* SIMULATOR */
+
+.simulator-result{
+    margin-top:15px;
+    background:#0b1828;
+    border-radius:15px;
+    padding:15px;
+}
+
+.sim-row{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+}
+
+.sim-row:last-child{
+    border:0;
+}
+
+.sim-row strong{
+    color:var(--green);
+}
+
+/* FORMS */
+
+.form-group{
+    margin-top:13px;
+}
+
+.form-group label{
+    display:block;
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:6px;
+}
+
+.input{
+    width:100%;
+    padding:13px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#091625;
+    color:white;
+    outline:none;
+}
+
+.input:focus{
+    border-color:var(--green);
+}
+
+.form-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:17px;
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    padding:35px 15px;
+    color:var(--muted);
+}
+
+.empty-icon{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+/* NAV */
+
+.bottom-nav{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:0;
+    width:min(700px,100%);
+    padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+    background:rgba(5,13,23,.94);
+    backdrop-filter:blur(18px);
+    border-top:1px solid var(--border);
+    z-index:50;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+}
+
+.nav-btn{
+    background:transparent;
+    color:#718096;
+    padding:7px 2px;
+    border-radius:12px;
+    font-size:9px;
+}
+
+.nav-btn span{
+    display:block;
+    font-size:18px;
+    margin-bottom:3px;
+}
+
+.nav-btn.active{
+    color:var(--green);
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(5px);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(700px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#0c1929;
+    border:1px solid var(--border);
+    border-radius:25px 25px 0 0;
+    padding:22px;
+    animation:up .25s ease;
+}
+
+@keyframes up{
+    from{transform:translateY(100%)}
+    to{transform:translateY(0)}
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.close{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#17283c;
+    color:white;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:85px;
+    transform:translateX(-50%) translateY(20px);
+    background:#13263a;
+    border:1px solid rgba(255,255,255,.1);
+    color:white;
+    padding:12px 17px;
+    border-radius:13px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:200;
+    white-space:nowrap;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
+/* RESPONSIVE */
+
+@media(min-width:600px){
+    .metrics{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .analysis-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .goal-details{
+        grid-template-columns:repeat(4,1fr);
+    }
+}
 </style>
 </head>
 
 <body>
 
-<div class="pro-banner">
-  <h2>⭐ Minha Meta PRO</h2>
-  <p>Tenha mais controle, mais metas e um plano completo para chegar onde você quer.</p>
-  <div class="pro-price">
-    R$ 9,90 <span style="font-size:14px;font-weight:500">/mês</span>
-  </div>
-  <button class="pro-btn" onclick="openPro()">Conhecer o PRO</button>
-</div>
-
-<div class="pro-modal" id="proModal" onclick="if(event.target===this)closePro()">
-  <div class="pro-card">
-    <button class="pro-close" onclick="closePro()">✕</button>
-
-    <h2>⭐ Minha Meta PRO</h2>
-    <p>Desbloqueie o máximo do seu planejamento financeiro.</p>
-
-    <div class="pro-feature">♾️ <b>Metas ilimitadas</b></div>
-    <div class="pro-feature">📊 <b>Gráficos e relatórios completos</b></div>
-    <div class="pro-feature">🔔 <b>Lembretes personalizados</b></div>
-    <div class="pro-feature">🎯 <b>Planos automáticos adaptativos</b></div>
-    <div class="pro-feature">🏆 <b>Desafios e conquistas exclusivas</b></div>
-    <div class="pro-feature">☁️ <b>Backup e sincronização</b></div>
-    <div class="pro-feature">🚫 <b>Sem anúncios</b></div>
-
-    <button class="pro-cta" onclick="openPay()">
-      Começar meu PRO
-    </button>
-
-    <div class="pro-note">
-      7 dias grátis • assinatura pelo Mercado Pago
-    </div>
-  </div>
-</div>
-
-<script>
-function openPro(){
-  var m=document.getElementById('proModal');
-  if(m)m.className='pro-modal show';
-}
-
-function closePro(){
-  var m=document.getElementById('proModal');
-  if(m)m.className='pro-modal';
-}
-</script>
-
-<div class="splash" id="splash">
-  <div>
-    <div class="logoMark">🎯</div>
-    <h1>Minha Meta</h1>
-    <p>Transforme um sonho em um plano.</p>
-    <div class="loader"><i></i></div>
-  </div>
-</div>
-
-<div class="welcome" id="welcome">
-  <div class="sheet">
-    <div class="logoMark" style="background:#ecfdf3;border-color:#bbf7d0;color:#15803d;width:70px;height:70px;font-size:35px">🎯</div>
-
-    <h2>Seu dinheiro. Sua meta. Seu plano.</h2>
-
-    <p class="sub">
-      Escolha o que você quer conquistar, diga quanto precisa e até quando.
-      O Minha Meta calcula um caminho simples para você chegar lá.
-    </p>
-
-    <div class="checklist">
-      <div class="check">🎯 <b>Escolha sua meta</b> — moto, carro, casa, viagem e mais.</div>
-      <div class="check">🧮 <b>Receba seu plano</b> — saiba quanto guardar por dia e por mês.</div>
-      <div class="check">🔥 <b>Acompanhe o ritmo</b> — registre cada depósito e veja seu progresso.</div>
-    </div>
-
-    <button class="btn primary full" onclick="finishIntro()">
-      Começar minha primeira meta
-    </button>
-  </div>
-</div>
-
 <div class="app">
 
-<header class="top">
-  <div class="toprow">
-    <div>
-      <div class="brand">💰 Minha Meta</div>
-      <div class="tag">Um pouco por dia. Uma conquista de cada vez.</div>
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-icon">🎯</div>
+        <div class="brand-text">
+            <strong>Minha Meta</strong>
+            <span>PRO</span>
+        </div>
     </div>
-    <button class="iconbtn" onclick="openAbout()">?</button>
-  </div>
+    <div class="user-circle" id="userInitial">M</div>
 </header>
 
-<main class="wrap">
 
-<section id="home" class="screen active">
-  <div id="homeContent"></div>
-</section>
+<!-- ================= DASHBOARD ================= -->
 
-<section id="goals" class="screen">
-  <div class="row">
-    <div>
-      <h2 class="sectiontitle">Minhas metas</h2>
-      <div class="sub">Tudo o que você quer conquistar.</div>
-    </div>
-    <button class="btn primary" onclick="openCreate()">+ Meta</button>
-  </div>
-  <div id="goalsList"></div>
-</section>
+<section class="page active" id="page-dashboard">
 
-<section id="create" class="screen">
-  <h2 class="sectiontitle" id="createTitle">Criar uma meta</h2>
+    <div class="hero">
+        <div class="pro-label">✦ MINHA META PRO</div>
 
-  <div class="card">
-    <label class="label">Escolha o objetivo</label>
-    <div class="choice" id="choices"></div>
+        <div class="hero-small">Total guardado</div>
+        <div class="hero-value" id="totalSaved">R$ 0,00</div>
+        <div class="hero-sub" id="heroGoalText">Comece adicionando sua primeira meta.</div>
 
-    <label class="label">Nome da meta</label>
-    <input class="input" id="goalName" placeholder="Ex.: Minha moto">
-
-    <label class="label">Quanto você quer juntar?</label>
-    <input class="input" id="goalTarget" type="number" step="0.01" inputmode="decimal" placeholder="15000" oninput="previewPlan()">
-
-    <label class="label">Quanto já tem guardado?</label>
-    <input class="input" id="goalInitial" type="number" step="0.01" inputmode="decimal" placeholder="0" oninput="previewPlan()">
-
-    <label class="label">Até quando?</label>
-    <input class="input" id="goalDate" type="date" oninput="previewPlan()">
-
-    <div id="planPreview"></div>
-
-    <button class="btn primary full" onclick="saveGoal()" id="saveGoalBtn">
-      Criar minha meta
-    </button>
-
-    <button class="btn secondary full" onclick="show('goals')">
-      Cancelar
-    </button>
-  </div>
-</section>
-
-<section id="detail" class="screen">
-  <button class="btn secondary" onclick="show('goals')">← Voltar</button>
-  <div id="detailContent"></div>
-</section>
-
-<section id="challenges" class="screen">
-  <h2 class="sectiontitle">🔥 Desafios</h2>
-  <div class="sub">Escolha um ritmo e comece sem esperar sobrar dinheiro.</div>
-  <div id="challengeList"></div>
-
-  <div class="card">
-    <h3 style="margin-top:0">💡 Dica</h3>
-    <p class="sub">
-      Você não precisa começar alto. R$ 5 por dia já são R$ 150 em 30 dias.
-    </p>
-  </div>
-</section>
-
-<section id="reminders" class="screen">
-  <h2 class="sectiontitle">🔔 Lembretes</h2>
-  <div class="sub">
-    Receba um aviso para não esquecer de guardar dinheiro para sua meta.
-  </div>
-
-  <div class="card">
-    <div class="reminderbox">
-      <div>
-        <b>Lembrete diário</b>
-        <div class="sub">Ativar notificação no horário escolhido</div>
-      </div>
-      <button class="switch" id="reminderSwitch" onclick="toggleReminder()"></button>
-    </div>
-
-    <div style="margin-top:18px">
-      <label class="label">Horário do lembrete</label>
-      <input class="timeinput" id="reminderTime" type="time" value="20:00" onchange="saveReminderTime()">
-    </div>
-
-    <div class="reminderstatus" id="reminderStatus">Desativado</div>
-
-    <button class="btn primary full" style="margin-top:16px" onclick="requestReminder()">
-      Ativar lembrete
-    </button>
-
-    <p class="sub" style="margin-top:12px">
-      Mensagem: “Hora de cuidar da sua meta! 💰 Separe um pouco hoje e continue no seu plano.”
-    </p>
-  </div>
-
-  <div class="card">
-    <h3 style="margin-top:0">⚠️ Sobre as notificações</h3>
-    <p class="sub">
-      O celular precisa permitir notificações para o Minha Meta.
-      Em um HTML aberto apenas por um leitor, o aviso pode depender de o app estar aberto.
-      Para notificações confiáveis mesmo fechado, a próxima etapa é instalar o Minha Meta como PWA/APK.
-    </p>
-  </div>
-</section>
-
-<section id="ranking" class="screen">
-  <h2 class="sectiontitle">🏆 Ranking</h2>
-  <div class="sub">
-    Uma competição saudável para incentivar você a continuar guardando.
-  </div>
-
-  <div class="card">
-    <b>👤 Seu apelido</b>
-    <div class="sub">Use um nome que não revele sua identidade.</div>
-
-    <input class="input" id="rankingNick" maxlength="20" placeholder="Ex.: FocoTotal" style="margin-top:10px">
-
-    <button class="btn primary full" onclick="saveRankingNick()">
-      Salvar apelido
-    </button>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <div>
-        <h3 style="margin:0">💰 Ranking de quem mais guardou</h3>
-        <div class="sub">Veja quanto cada participante já conseguiu guardar.</div>
-      </div>
-      <span style="font-size:28px">🎯</span>
-    </div>
-
-    <div id="rankingList" style="margin-top:12px"></div>
-
-    <div class="notice success">
-      💡 Os valores exibidos no ranking são demonstrativos nesta versão.
-      Para mostrar usuários reais, vamos conectar o ranking ao banco de dados.
-    </div>
-  </div>
-</section>
-
-<section id="achievements" class="screen">
-  <h2 class="sectiontitle">🏆 Conquistas</h2>
-  <div class="sub">
-    Cada depósito conta. Vá desbloqueando seus marcos.
-  </div>
-
-  <div class="card">
-    <div class="ring" id="overallRing">
-      <div class="ringtxt" id="overallRingTxt">0%</div>
-    </div>
-    <p style="text-align:center;margin-bottom:0" class="sub">
-      Progresso de todas as suas metas
-    </p>
-  </div>
-
-  <div class="badgegrid" id="badges"></div>
-</section>
-
-</main>
-
-<nav class="nav">
-  <button id="navHome" onclick="show('home')"><span>🏠</span>Início</button>
-  <button id="navGoals" onclick="show('goals')"><span>🎯</span>Metas</button>
-  <button id="navChallenges" onclick="show('challenges')"><span>🔥</span>Desafios</button>
-  <button id="navReminders" onclick="show('reminders')"><span>🔔</span>Lembretes</button>
-  <button id="navAchievements" onclick="show('achievements')"><span>🏆</span>Conquistas</button>
-  <button id="navRanking" onclick="show('ranking')"><span>🏅</span>Ranking</button>
-  <button onclick="openCreate()"><span>➕</span>Nova</button>
-</nav>
-
-</div>
-
-<div class="modal" id="modal">
-  <div class="sheet">
-    <h2>Sobre o Minha Meta</h2>
-    <p class="sub">
-      Seu dinheiro fica registrado neste aparelho. Não há banco, login ou cobrança nesta versão.
-    </p>
-    <p class="sub">
-      A versão atual adiciona metas múltiplas, desafios, sequência de dias,
-      conquistas, edição, desfazer depósitos e cálculo adaptativo.
-    </p>
-    <button class="btn primary full" onclick="closeAbout()">Entendi</button>
-  </div>
-</div>
-
-<div class="modal" id="planModal">
-  <div class="sheet">
-    <div style="font-size:40px">🎯</div>
-    <h2 id="planTitle">Seu plano está pronto!</h2>
-    <p class="sub">
-      Agora você sabe exatamente qual ritmo precisa manter para buscar essa meta.
-    </p>
-    <div id="planResult"></div>
-    <button class="btn primary full" onclick="closePlan()">
-      Começar a guardar
-    </button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const types=[
-  ['🏍️','Moto'],
-  ['🚗','Carro'],
-  ['🏠','Casa'],
-  ['🎓','Faculdade'],
-  ['✈️','Viagem'],
-  ['🛟','Reserva'],
-  ['💻','Computador'],
-  ['🎯','Outra meta']
-];
-
-const challenges=[
-  ['R$ 1 por dia','Comece pequeno e crie o hábito.',1,30],
-  ['R$ 5 por dia','R$ 150 em 30 dias.',5,30],
-  ['R$ 10 por dia','R$ 300 em 30 dias.',10,30],
-  ['100 dias','Deposite qualquer valor durante 100 dias.',0,100]
-];
-
-let goals=[];
-try{
-  goals=JSON.parse(localStorage.getItem('mm_goals')||'[]')
-}catch(e){
-  goals=[]
-}
-
-let selected=types[0][0];
-let editingId=null;
-
-const money=n=>Number(n||0).toLocaleString('pt-BR',{
-  style:'currency',
-  currency:'BRL'
-});
-
-const $=id=>document.getElementById(id);
-
-function safeGet(key,defaultValue=''){
-  try{
-    return localStorage.getItem(key) ?? defaultValue;
-  }catch(e){
-    return defaultValue;
-  }
-}
-
-function safeSet(key,value){
-  try{
-    localStorage.setItem(key,value);
-  }catch(e){}
-}
-
-function save(){
-  try{
-    localStorage.setItem('mm_goals',JSON.stringify(goals))
-  }catch(e){}
-}
-
-function toast(t){
-  $('toast').textContent=t;
-  $('toast').classList.add('show');
-  setTimeout(()=>$('toast').classList.remove('show'),1900)
-}
-
-function show(id){
-  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-  $(id).classList.add('active');
-
-  if(id==='home')renderHome();
-  if(id==='goals')renderGoals();
-  if(id==='create')renderChoices();
-  if(id==='detail'&&window.currentId)renderDetail();
-  if(id==='challenges')renderChallenges();
-  if(id==='achievements')renderAchievements();
-  if(id==='ranking')renderRanking();
-
-  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-
-  const nav={
-    home:'navHome',
-    goals:'navGoals',
-    challenges:'navChallenges',
-    achievements:'navAchievements',
-    ranking:'navRanking'
-  };
-
-  if(nav[id]&&$(nav[id])){
-    $(nav[id]).classList.add('active');
-  }
-
-  window.scrollTo({top:0,behavior:'smooth'})
-}
-
-function openCreate(){
-  editingId=null;
-  show('create');
-  $('createTitle').textContent='Criar uma meta';
-  $('saveGoalBtn').textContent='Criar minha meta';
-  $('goalName').value='';
-  $('goalTarget').value='';
-  $('goalInitial').value='';
-
-  const d=new Date();
-  d.setDate(d.getDate()+90);
-
-  $('goalDate').value=d.toISOString().slice(0,10);
-
-  selected=types[0][0];
-
-  renderChoices();
-  previewPlan();
-}
-
-function editGoal(id){
-  const g=goals.find(x=>x.id===id);
-  if(!g)return;
-
-  editingId=id;
-  show('create');
-
-  $('createTitle').textContent='Editar meta';
-  $('saveGoalBtn').textContent='Salvar alterações';
-  $('goalName').value=g.name;
-  $('goalTarget').value=g.target;
-  $('goalInitial').value=g.saved;
-  $('goalDate').value=g.deadline;
-
-  selected=g.emoji;
-
-  renderChoices();
-  previewPlan();
-}
-
-function renderChoices(){
-  $('choices').innerHTML=types.map(t=>
-    `<button class="${selected===t[0]?'sel':''}" onclick="pick('${t[0]}','${t[1]}')">${t[0]} ${t[1]}</button>`
-  ).join('')
-}
-
-function pick(e,n){
-  selected=e;
-
-  if(
-    !$('goalName').value.trim()||
-    $('goalName').value.startsWith('Minha ')
-  ){
-    $('goalName').value='Minha '+n.toLowerCase();
-  }
-
-  renderChoices()
-}
-
-function previewPlan(){
-  const target=Number($('goalTarget')?.value||0);
-  const initial=Number($('goalInitial')?.value||0);
-  const date=$('goalDate')?.value;
-
-  if(!$('planPreview'))return;
-
-  if(!target||!date||target<=initial){
-    $('planPreview').innerHTML='';
-    return
-  }
-
-  const remaining=target-initial;
-
-  const days=Math.max(
-    1,
-    Math.ceil(
-      (new Date(date+'T23:59:59')-new Date())/86400000
-    )
-  );
-
-  const daily=remaining/days;
-  const weekly=daily*7;
-  const monthly=daily*30;
-
-  $('planPreview').innerHTML=
-    `<div class="planbox">
-      <b>🧮 Seu plano automático</b>
-      <div class="planline">
-        <span>Por dia</span>
-        <strong class="planbig">${money(daily)}</strong>
-      </div>
-      <div class="planline">
-        <span>Por semana</span>
-        <strong>${money(weekly)}</strong>
-      </div>
-      <div class="planline">
-        <span>Por mês</span>
-        <strong>${money(monthly)}</strong>
-      </div>
-      <div class="small sub" style="margin-top:8px">
-        Faltam ${days} dias para sua data. O valor é recalculado conforme você guardar.
-      </div>
-    </div>`
-}
-
-function saveGoal(){
-  const name=$('goalName').value.trim();
-  const target=Number($('goalTarget').value);
-  const initial=Number($('goalInitial').value||0);
-  const date=$('goalDate').value;
-
-  if(!name||target<=0||!date)
-    return toast('Preencha todos os campos');
-
-  if(initial<0||initial>target)
-    return toast('Valor inicial inválido');
-
-  if(
-    new Date(date+'T23:59:59')<new Date()&&
-    !editingId
-  )
-    return toast('Escolha uma data futura');
-
-  if(editingId){
-
-    const g=goals.find(x=>x.id===editingId);
-
-    g.name=name;
-    g.target=target;
-    g.deadline=date;
-    g.emoji=selected;
-
-    if(initial!==g.saved){
-      const diff=initial-g.saved;
-
-      if(diff>0)
-        g.history.unshift({
-          value:diff,
-          date:new Date().toISOString(),
-          note:'Ajuste inicial'
-        });
-
-      g.saved=initial
-    }
-
-    save();
-    toast('Meta atualizada!');
-    window.currentId=editingId;
-    show('detail')
-
-  }else{
-
-    const g={
-      id:Date.now(),
-      name,
-      target,
-      deadline:date,
-      saved:initial,
-      emoji:selected,
-      history:initial?
-        [{
-          value:initial,
-          date:new Date().toISOString(),
-          note:'Valor inicial'
-        }]:
-        []
-    };
-
-    goals.push(g);
-    save();
-
-    toast('Meta criada! 🎯');
-    show('goals');
-    openPlan(g)
-  }
-}
-
-function openPlan(g){
-  const remaining=Math.max(0,g.target-g.saved);
-  const days=remaining?daysLeft(g):0;
-  const daily=remaining?remaining/days:0;
-
-  $('planTitle').textContent=
-    remaining?'Seu plano para '+g.name:'Meta concluída!';
-
-  $('planResult').innerHTML=
-    remaining?
-      `<div class="planbox">
-        <div class="planline"><span>Meta</span><strong>${money(g.target)}</strong></div>
-        <div class="planline"><span>Já guardado</span><strong>${money(g.saved)}</strong></div>
-        <div class="planline"><span>Falta</span><strong>${money(remaining)}</strong></div>
-        <div class="planline"><span>Ritmo diário</span><strong class="planbig">${money(daily)}</strong></div>
-        <div class="planline"><span>Ritmo mensal</span><strong>${money(daily*30)}</strong></div>
-        <p class="sub" style="margin-bottom:0">
-          💡 Se um dia você guardar menos, o aplicativo recalcula o valor necessário para manter a data.
-        </p>
-      </div>`:
-      `<div class="planbox success">
-        <b>🏆 Você já atingiu essa meta!</b>
-      </div>`;
-
-  $('planModal').style.display='flex'
-}
-
-function closePlan(){
-  $('planModal').style.display='none';
-  if(window.currentId)show('detail')
-}
-
-function finishIntro(){
-  try{
-    safeSet('mm_intro_done','1')
-  }catch(e){}
-
-  $('welcome').classList.remove('show');
-  openCreate()
-}
-
-function daysLeft(g){
-  if(g.saved>=g.target)return 0;
-
-  return Math.max(
-    1,
-    Math.ceil(
-      (new Date(g.deadline+'T23:59:59')-new Date())/86400000
-    )
-  )
-}
-
-function pct(g){
-  return Math.min(100,(g.saved/g.target)*100)
-}
-
-function streak(g){
-  const days=[
-    ...new Set(
-      g.history.map(
-        x=>new Date(x.date).toISOString().slice(0,10)
-      )
-    )
-  ].sort().reverse();
-
-  if(!days.length)return 0;
-
-  let s=0;
-  let d=new Date();
-
-  for(const day of days){
-
-    const cur=d.toISOString().slice(0,10);
-
-    const prev=
-      new Date(
-        d.getTime()-86400000
-      ).toISOString().slice(0,10);
-
-    if(day===cur||day===prev){
-      s++;
-      d=new Date(d.getTime()-86400000)
-    }else break
-  }
-
-  return s
-}
-
-function totalSaved(){
-  return goals.reduce((s,g)=>s+g.saved,0)
-}
-
-function renderHome(){
-
-  if(!goals.length){
-
-    $('homeContent').innerHTML=
-      `<div class="heroCard">
-        <div class="sub">COMECE HOJE</div>
-        <h1 style="margin:5px 0 8px">Qual é o seu próximo sonho?</h1>
-        <p class="sub">
-          Crie uma meta, escolha uma data e acompanhe cada real guardado até chegar lá.
-        </p>
-        <button class="btn primary full" onclick="openCreate()">
-          🎯 Criar minha primeira meta
-        </button>
-      </div>
-
-      <h2 class="sectiontitle" style="margin-top:25px">
-        Exemplos de metas
-      </h2>
-
-      <div class="grid">
-        ${types.slice(0,6).map(t=>
-          `<div class="goal">
-            <span>${t[0]}</span>
-            <strong>${t[1]}</strong>
-            <small>Comece com o que puder.</small>
-          </div>`
-        ).join('')}
-      </div>`;
-
-    return
-  }
-
-  const total=totalSaved();
-  const target=goals.reduce((s,g)=>s+g.target,0);
-  const main=goals.slice().sort((a,b)=>pct(b)-pct(a))[0];
-  const done=goals.filter(g=>g.saved>=g.target).length;
-
-  $('homeContent').innerHTML=
-    `<div class="heroCard">
-      <div class="row">
-        <div>
-          <div class="sub">TOTAL GUARDADO</div>
-          <div class="big">${money(total)}</div>
+        <div class="hero-progress">
+            <div class="progress-line">
+                <div class="progress-fill" id="generalProgress"></div>
+            </div>
+            <div class="progress-info">
+                <span id="generalProgressText">0% do objetivo geral</span>
+                <span id="totalTarget">R$ 0,00</span>
+            </div>
         </div>
-        <div style="font-size:34px">${done?'🏆':'💚'}</div>
-      </div>
-
-      <div class="stats">
-        <div class="stat">
-          <span class="sub">Metas</span>
-          <b>${goals.length}</b>
-        </div>
-        <div class="stat">
-          <span class="sub">Concluídas</span>
-          <b>${done}</b>
-        </div>
-        <div class="stat">
-          <span class="sub">Progresso</span>
-          <b>${target?((total/target)*100).toFixed(0):0}%</b>
-        </div>
-      </div>
     </div>
 
-    <h2 class="sectiontitle" style="margin-top:22px">
-      Continue sua conquista
-    </h2>
+    <div class="metrics">
 
-    ${goalCard(main,true)}
-
-    <div class="card">
-      <div class="row">
-        <div>
-          <b>🔥 Sua sequência</b>
-          <div class="sub">${streakAll()} dia(s) com depósito</div>
-        </div>
-        <span style="font-size:30px">
-          ${streakAll()>=7?'🔥':'⚡'}
-        </span>
-      </div>
-    </div>
-
-    <button class="btn secondary full" onclick="show('goals')">
-      Ver todas as metas
-    </button>`
-}
-
-function streakAll(){
-
-  const dates=[
-    ...new Set(
-      goals.flatMap(
-        g=>g.history.map(
-          x=>new Date(x.date).toISOString().slice(0,10)
-        )
-      )
-    )
-  ].sort().reverse();
-
-  if(!dates.length)return 0;
-
-  let s=0;
-  let d=new Date();
-
-  for(const day of dates){
-
-    const today=d.toISOString().slice(0,10);
-
-    const prev=
-      new Date(
-        d.getTime()-86400000
-      ).toISOString().slice(0,10);
-
-    if(day===today||day===prev){
-      s++;
-      d=new Date(d.getTime()-86400000)
-    }else break
-  }
-
-  return s
-}
-
-function goalCard(g,compact=false){
-
-  const complete=g.saved>=g.target;
-
-  return `<div class="card" onclick="openDetail(${g.id})">
-
-    <div class="goalrow">
-      <div class="emoji">${g.emoji}</div>
-
-      <div class="grow">
-
-        <div class="row">
-          <strong>${g.name}</strong>
-          <span class="percent">
-            ${complete?'100':pct(g).toFixed(0)}%
-          </span>
+        <div class="metric">
+            <div class="metric-icon">🎯</div>
+            <div class="metric-label">Metas ativas</div>
+            <div class="metric-value" id="metricGoals">0</div>
         </div>
 
-        <div class="progress mini">
-          <div class="bar" style="width:${pct(g)}%"></div>
+        <div class="metric">
+            <div class="metric-icon">🔥</div>
+            <div class="metric-label">Sequência</div>
+            <div class="metric-value" id="metricStreak">0 dias</div>
         </div>
 
-        <div class="row sub" style="margin-top:7px">
-          <span>${money(g.saved)} guardados</span>
-          <span>
-            ${complete?'🎉 Concluída':'Falta '+money(Math.max(0,g.target-g.saved))}
-          </span>
+        <div class="metric">
+            <div class="metric-icon">📅</div>
+            <div class="metric-label">Por dia</div>
+            <div class="metric-value" id="metricDaily">R$ 0,00</div>
         </div>
 
-      </div>
-    </div>
-
-    ${compact?'':`
-      <div class="sub" style="margin-top:10px">
-        ${complete?
-          '🏆 Meta atingida':
-          `⏳ ${daysLeft(g)} dias restantes · 🔥 ${streak(g)} dia(s) de sequência`
-        }
-      </div>
-    `}
-
-  </div>`
-}
-
-function renderGoals(){
-
-  $('goalsList').innerHTML=
-    goals.length?
-      goals
-        .slice()
-        .sort((a,b)=>b.id-a.id)
-        .map(g=>goalCard(g))
-        .join(''):
-      `<div class="empty">
-        Você ainda não criou nenhuma meta.
-        <br>
-        <button class="btn primary" style="margin-top:12px" onclick="openCreate()">
-          Criar primeira meta
-        </button>
-      </div>`
-}
-
-function openDetail(id){
-  window.currentId=id;
-  show('detail')
-}
-
-function renderDetail(){
-
-  const g=goals.find(x=>x.id===window.currentId);
-
-  if(!g){
-    show('goals');
-    return
-  }
-
-  const remaining=Math.max(0,g.target-g.saved);
-  const daily=remaining?remaining/daysLeft(g):0;
-  const monthly=daily*30;
-  const complete=g.saved>=g.target;
-
-  $('detailContent').innerHTML=
-    `<div class="heroCard" style="margin-top:14px">
-
-      <div class="row">
-        <div>
-          <div class="sub">${g.emoji} ${g.name}</div>
-          <div class="big">${money(g.saved)}</div>
-          <div class="sub">de ${money(g.target)}</div>
-        </div>
-
-        <div style="font-size:45px">
-          ${complete?'🏆':g.emoji}
-        </div>
-      </div>
-
-      <div class="progress">
-        <div class="bar" style="width:${pct(g)}%"></div>
-      </div>
-
-      <div class="row">
-        <strong>${pct(g).toFixed(1)}%</strong>
-        <span class="sub">
-          ${complete?'Meta concluída!':'Falta '+money(remaining)}
-        </span>
-      </div>
-
-      <div class="stats">
-
-        <div class="stat">
-          <span class="sub">Por dia</span>
-          <b>${money(daily)}</b>
-        </div>
-
-        <div class="stat">
-          <span class="sub">Por mês</span>
-          <b>${money(monthly)}</b>
-        </div>
-
-        <div class="stat">
-          <span class="sub">Prazo</span>
-          <b>${complete?'✓':' '+daysLeft(g)+'d'}</b>
-        </div>
-
-      </div>
-
-      ${!complete&&daily>0?
-        `<div class="notice">
-          Para manter sua data, a média necessária agora é
-          <b>${money(daily)} por dia</b>.
-          Se perder um dia, o valor será recalculado.
-        </div>`:
-        `<div class="notice success">
-          🎉 Você chegou ao objetivo. Essa conquista é sua!
-        </div>`
-      }
-
-    </div>
-
-    <div class="card">
-      <h3 style="margin-top:0">
-        Quanto você guardou hoje?
-      </h3>
-
-      <input
-        class="input"
-        id="deposit"
-        type="number"
-        step="0.01"
-        inputmode="decimal"
-        placeholder="Ex.: 20"
-      >
-
-      <div class="actions">
-        <button class="btn primary" onclick="deposit(${g.id})">
-          💰 Registrar
-        </button>
-
-        <button class="btn secondary" onclick="editGoal(${g.id})">
-          ✏️ Editar
-        </button>
-      </div>
-    </div>
-
-    <div class="card">
-
-      <div class="row">
-        <h3 style="margin:0">Histórico</h3>
-        <span class="pill">${g.history.length} registros</span>
-      </div>
-
-      <div class="history">
-
-        ${g.history.length?
-          g.history.map((x,i)=>
-            `<div class="hist">
-
-              <span>
-                ${new Date(x.date).toLocaleDateString('pt-BR')}
-                <br>
-                <small class="sub">
-                  ${x.note||'Depósito'}
-                </small>
-              </span>
-
-              <span>
-                <b>+ ${money(x.value)}</b>
-
-                <button onclick="removeDeposit(event,${g.id},${i})">
-                  ↶
-                </button>
-              </span>
-
-            </div>`
-          ).join(''):
-          `<div class="empty">
-            Ainda não há depósitos.
-          </div>`
-        }
-
-      </div>
-    </div>
-
-    <button class="btn danger full" onclick="deleteGoal(${g.id})">
-      Excluir esta meta
-    </button>`
-}
-
-function deposit(id){
-
-  const g=goals.find(x=>x.id===id);
-  const v=Number($('deposit').value);
-
-  if(!v||v<=0)
-    return toast('Digite um valor válido');
-
-  const before=g.saved;
-
-  g.saved=Math.min(
-    g.target,
-    g.saved+v
-  );
-
-  const real=g.saved-before;
-
-  if(real<=0)
-    return toast('Essa meta já está concluída 🏆');
-
-  g.history.unshift({
-    value:real,
-    date:new Date().toISOString()
-  });
-
-  save();
-
-  toast(
-    g.saved>=g.target?
-      'META CONCLUÍDA! 🏆':
-      'Dinheiro registrado! 💚'
-  );
-
-  renderDetail()
-}
-
-function removeDeposit(e,id,index){
-
-  e.stopPropagation();
-
-  const g=goals.find(x=>x.id===id);
-  const item=g.history[index];
-
-  if(!item)return;
-
-  if(confirm(
-    'Desfazer este depósito de '+money(item.value)+'?'
-  )){
-
-    g.saved=Math.max(
-      0,
-      g.saved-item.value
-    );
-
-    g.history.splice(index,1);
-
-    save();
-
-    toast('Depósito desfeito');
-
-    renderDetail()
-  }
-}
-
-function deleteGoal(id){
-
-  if(confirm(
-    'Excluir esta meta? O histórico dela será apagado deste aparelho.'
-  )){
-
-    goals=goals.filter(g=>g.id!==id);
-
-    save();
-
-    toast('Meta excluída');
-
-    show('goals')
-  }
-}
-
-function renderChallenges(){
-
-  const total=totalSaved();
-
-  $('challengeList').innerHTML=
-    challenges.map((c,i)=>{
-
-      const key='challenge_'+i;
-      const done=safeGet(key,'0')==='1';
-
-      return `<div
-        class="challenge ${done?'done':''}"
-        onclick="toggleChallenge(${i})">
-
-        <span style="font-size:27px">
-          ${done?'✅':'🔥'}
-        </span>
-
-        <div>
-          <b>${c[0]}</b>
-          <div class="sub">${c[1]}</div>
-        </div>
-
-        <b>${done?'Feito':'Iniciar'}</b>
-
-      </div>`
-
-    }).join('')+
-    `<div class="card">
-      <b>Você já guardou ${money(total)} no total.</b>
-      <div class="sub" style="margin-top:5px">
-        O importante é manter o hábito.
-      </div>
-    </div>`
-}
-
-function toggleChallenge(i){
-
-  const key='challenge_'+i;
-  const done=safeGet(key,'0')==='1';
-
-  safeSet(
-    key,
-    done?'0':'1'
-  );
-
-  toast(
-    done?
-      'Desafio pausado':
-      'Desafio iniciado! 🔥'
-  );
-
-  renderChallenges()
-}
-
-function renderAchievements(){
-
-  const total=totalSaved();
-  const allHistory=goals.flatMap(g=>g.history);
-  const count=allHistory.length;
-  const complete=goals.filter(g=>g.saved>=g.target).length;
-  const max=Math.max(0,...goals.map(streak));
-  const p=goals.length?
-    goals.reduce((s,g)=>s+pct(g),0)/goals.length:
-    0;
-
-  $('overallRing').style.setProperty('--p',p+'%');
-  $('overallRingTxt').textContent=p.toFixed(0)+'%';
-
-  const b=[
-    ['💰','Primeiro R$ 1',total>=1],
-    ['🪙','R$ 100',total>=100],
-    ['💵','R$ 1.000',total>=1000],
-    ['📚','10 depósitos',count>=10],
-    ['🔥','7 dias seguidos',max>=7],
-    ['🏆','Primeira meta',complete>=1],
-    ['🚀','3 metas',goals.length>=3],
-    ['💎','R$ 10.000',total>=10000],
-    ['👑','5 metas',goals.length>=5]
-  ];
-
-  $('badges').innerHTML=
-    b.map(x=>
-      `<div class="badge ${x[2]?'':'locked'}">
-        <span class="ico">${x[0]}</span>
-        <b>${x[1]}</b>
-        <div class="small">
-          ${x[2]?'Desbloqueada':'Bloqueada'}
-        </div>
-      </div>`
-    ).join('')
-}
-
-function getRankingNick(){
-  try{
-    return localStorage.getItem('mm_ranking_nick')||''
-  }catch(e){
-    return ''
-  }
-}
-
-function saveRankingNick(){
-
-  var n=(($('rankingNick')||{}).value||'').trim();
-
-  if(!n)
-    return toast('Digite um apelido');
-
-  try{
-    localStorage.setItem('mm_ranking_nick',n)
-  }catch(e){}
-
-  toast('Apelido salvo! 🏆');
-
-  renderRanking()
-}
-
-function rankingTotalSaved(){
-  return goals.reduce(
-    function(s,g){
-      return s+Number(g.saved||0)
-    },
-    0
-  )
-}
-
-function renderRanking(){
-
-  var n=getRankingNick();
-
-  if($('rankingNick'))
-    $('rankingNick').value=n;
-
-  var r=[
-    ['FocoTotal',2850,'🔥'],
-    ['MetaForte',2430,'💪'],
-    ['Disciplina',1980,'🎯'],
-    ['Guardião',1750,'💰'],
-    ['RumoAoSonho',1420,'🚀']
-  ];
-
-  if(n)
-    r.push([n,rankingTotalSaved(),'⭐']);
-
-  r.sort(function(a,b){
-    return b[1]-a[1]
-  });
-
-  var seen={};
-
-  r=r.filter(function(x){
-    var k=x[0].toLowerCase();
-
-    if(seen[k])
-      return false;
-
-    seen[k]=1;
-
-    return true
-  });
-
-  var l=$('rankingList');
-
-  if(!l)return;
-
-  l.innerHTML=
-    r.map(function(x,i){
-
-      var p=i+1;
-
-      var m=
-        p===1?'🥇':
-        p===2?'🥈':
-        p===3?'🥉':
-        p+'º';
-
-      var me=n&&x[0]===n;
-
-      return '<div class="hist" style="'+
-        (me?
-          'background:#ecfdf3;border-radius:12px;padding:10px 8px;margin:4px 0':
-          '')+
-        '">'+
-
-        '<span>'+
-        '<b style="display:inline-block;width:34px">'+m+'</b>'+
-        x[2]+' '+x[0]+
-        (me?
-          ' <span class="pill">Você</span>':
-          '')+
-        '</span>'+
-
-        '<b>R$ '+
-        Number(x[1]).toLocaleString(
-          'pt-BR',
-          {
-            minimumFractionDigits:2,
-            maximumFractionDigits:2
-          }
-        )+
-        '</b>'+
-
-        '</div>'
-
-    }).join('')
-}
-
-function openAbout(){
-  $('modal').style.display='flex'
-}
-
-function closeAbout(){
-  $('modal').style.display='none'
-}
-
-try{
-  renderHome();
-}catch(e){
-
-  document.body.innerHTML=
-    '<div style="padding:30px;font-family:Arial;text-align:center">'+
-    '<h2>Minha Meta</h2>'+
-    '<p>O app encontrou um erro ao iniciar.</p>'+
-    '<p style="font-size:12px;color:#666">'+String(e)+'</p>'+
-    '</div>'
-}
-
-setTimeout(()=>{
-  $('splash').classList.add('hide');
-
-  try{
-    if(!localStorage.getItem('mm_intro_done'))
-      $('welcome').classList.add('show')
-  }catch(e){}
-},900);
-
-var reminderTimer=null;
-
-function getReminder(){
-
-  try{
-    return JSON.parse(
-      localStorage.getItem('mm_reminder')||
-      '{"enabled":false,"time":"20:00","last":""}'
-    )
-  }catch(e){
-    return {
-      enabled:false,
-      time:'20:00',
-      last:''
-    }
-  }
-}
-
-function setReminder(r){
-  try{
-    localStorage.setItem(
-      'mm_reminder',
-      JSON.stringify(r)
-    )
-  }catch(e){}
-}
-
-function updateReminderUI(){
-
-  var r=getReminder();
-  var sw=$('reminderSwitch');
-  var tm=$('reminderTime');
-  var st=$('reminderStatus');
-
-  if(!sw||!tm||!st)return;
-
-  tm.value=r.time||'20:00';
-
-  if(r.enabled){
-
-    sw.classList.add('on');
-
-    st.textContent=
-      'Ativo — todos os dias às '+
-      (r.time||'20:00');
-
-  }else{
-
-    sw.classList.remove('on');
-
-    st.textContent='Desativado';
-  }
-}
-
-function requestReminder(){
-
-  if(!('Notification' in window))
-    return toast(
-      'Seu aparelho não permite notificações neste modo.'
-    );
-
-  Notification.requestPermission().then(function(p){
-
-    if(p==='granted'){
-
-      var r=getReminder();
-
-      r.enabled=true;
-
-      setReminder(r);
-      updateReminderUI();
-
-      try{
-        new Notification(
-          'Minha Meta 🎯',
-          {
-            body:
-              'Lembrete ativado! Vamos cuidar da sua meta hoje.'
-          }
-        )
-      }catch(e){}
-
-      toast('Lembrete ativado!');
-
-    }else{
-
-      toast(
-        'Permita as notificações para ativar o lembrete.'
-      );
-
-    }
-
-  }).catch(function(){
-
-    toast(
-      'Não foi possível ativar a notificação neste modo.'
-    );
-
-  });
-}
-
-function toggleReminder(){
-
-  var r=getReminder();
-
-  if(r.enabled){
-
-    r.enabled=false;
-
-    setReminder(r);
-    updateReminderUI();
-
-    toast('Lembrete desativado.');
-
-  }else{
-
-    requestReminder();
-
-  }
-}
-
-function saveReminderTime(){
-
-  var r=getReminder();
-
-  r.time=
-    $('reminderTime').value||
-    '20:00';
-
-  setReminder(r);
-  updateReminderUI();
-
-  toast(
-    'Horário salvo: '+r.time
-  )
-}
-
-function checkReminder(){
-
-  var r=getReminder();
-
-  if(!r.enabled)return;
-
-  var now=new Date();
-
-  var hh=
-    ('0'+now.getHours()).slice(-2);
-
-  var mm=
-    ('0'+now.getMinutes()).slice(-2);
-
-  var key=
-    now.getFullYear()+
-    '-'+
-    (now.getMonth()+1)+
-    '-'+
-    now.getDate();
-
-  if(
-    r.time===hh+':'+mm&&
-    r.last!==key
-  ){
-
-    if(
-      'Notification' in window&&
-      Notification.permission==='granted'
-    ){
-
-      try{
-
-        new Notification(
-          'Minha Meta 🎯',
-          {
-            body:
-              'Hora de cuidar da sua meta! 💰 Separe um pouco hoje e continue no seu plano.'
-          }
-        );
-
-      }catch(e){}
-
-    }
-
-    r.last=key;
-
-    setReminder(r);
-  }
-}
-
-function initReminders(){
-
-  updateReminderUI();
-
-  if(reminderTimer)
-    clearInterval(reminderTimer);
-
-  reminderTimer=
-    setInterval(
-      checkReminder,
-      30000
-    );
-
-  checkReminder()
-}
-
-try{
-  initReminders()
-}catch(e){}
-</script>
-
-<!-- MODAL DE PAGAMENTO -->
-<div
-  class="pay-modal"
-  id="payModal"
-  onclick="if(event.target===this)closePay()">
-
-  <div class="pay-box">
-
-    <h3>⭐ Ativar Minha Meta PRO</h3>
-
-    <div
-      id="payStatus"
-      style="color:#64748b;font-size:13px;margin-bottom:14px">
-
-      Digite o e-mail que será usado na assinatura do Mercado Pago.
-    </div>
-
-    <label
-      class="label"
-      style="margin-top:0">
-
-      E-mail da sua assinatura
-    </label>
-
-    <input
-      class="input"
-      id="proEmail"
-      type="email"
-      inputmode="email"
-      autocomplete="email"
-      placeholder="seu@email.com"
-      style="margin-bottom:10px">
-
-    <div class="pro-plan">
-
-      <span class="best">
-        7 DIAS GRÁTIS
-      </span>
-
-      <h3>PRO Mensal</h3>
-
-      <div class="pro-plan-price">
-        R$ 9,90 <small>/mês</small>
-      </div>
-
-      <div style="font-size:13px;color:#475569">
-        Cobrança recorrente pelo Mercado Pago.
-      </div>
-
-    </div>
-
-    <div class="pay-method">
-      <b>💳 Cartão</b>
-      <span>
-        Pagamento recorrente e renovação automática.
-      </span>
-    </div>
-
-    <button
-      class="pay-real"
-      onclick="startCheckout()">
-
-      Continuar para pagamento
-    </button>
-
-    <button
-      class="pay-real"
-      style="background:#0f766e;margin-top:8px"
-      onclick="verifyPro()">
-
-      Já assinei — verificar PRO
-    </button>
-
-    <button
-      class="pay-close"
-      onclick="closePay()">
-
-      Agora não
-    </button>
-
-    <div class="pro-note">
-      Pagamento e assinatura pelo Mercado Pago.
-      Depois da assinatura, você poderá voltar ao Minha Meta PRO
-      para confirmar seu acesso.
-    </div>
-
-  </div>
-</div>
-
-<script>
-(function(){
-
-  /* ==========================
-     CONFIGURAÇÃO
-  ========================== */
-
-  const EMAIL_KEY =
-    "minha_meta_email";
-
-  const PRO_KEY =
-    "minha_meta_pro";
-
-  const OLD_PRO_KEY =
-    "mm_pro";
-
-  const API_URL =
-    "https://minha-meta-pro-api.onrender.com";
-
-  const MERCADO_PAGO_LINK =
-    "https://mpago.la/1dE9KSM";
-
-
-  /* ==========================
-     COMPATIBILIDADE COM VERSÃO ANTIGA
-  ========================== */
-
-  try{
-
-    if(
-      localStorage.getItem(OLD_PRO_KEY)==="1" &&
-      !localStorage.getItem(PRO_KEY)
-    ){
-
-      localStorage.setItem(
-        PRO_KEY,
-        "true"
-      );
-
-    }
-
-  }catch(e){}
-
-
-  /* ==========================
-     ESTADO PRO
-  ========================== */
-
-  window.mmPro=false;
-
-  try{
-
-    window.mmPro=
-      localStorage.getItem(PRO_KEY)==="true";
-
-  }catch(e){
-
-    window.mmPro=false;
-
-  }
-
-
-  /* ==========================
-     ABRIR TELA DE PAGAMENTO
-  ========================== */
-
-  window.openPay=function(){
-
-    var modal=
-      document.getElementById(
-        "payModal"
-      );
-
-    if(!modal)return;
-
-
-    var input=
-      document.getElementById(
-        "proEmail"
-      );
-
-
-    /* Recupera e-mail já salvo */
-
-    try{
-
-      var email=
-        localStorage.getItem(
-          EMAIL_KEY
-        );
-
-      if(
-        email&&
-        input
-      ){
-
-        input.value=email;
-
-      }
-
-    }catch(e){}
-
-
-    modal.className=
-      "pay-modal show";
-
-  };
-
-
-  /* ==========================
-     ABRIR PRO
-  ========================== */
-
-  window.openProReal=function(){
-
-    window.openPay();
-
-  };
-
-
-  /* ==========================
-     FECHAR PAGAMENTO
-  ========================== */
-
-  window.closePay=function(){
-
-    var modal=
-      document.getElementById(
-        "payModal"
-      );
-
-    if(modal){
-
-      modal.className=
-        "pay-modal";
-
-    }
-
-  };
-
-
-  /* ==========================
-     IR PARA MERCADO PAGO
-  ========================== */
-
-  window.startCheckout=function(){
-
-    var input=
-      document.getElementById(
-        "proEmail"
-      );
-
-    var status=
-      document.getElementById(
-        "payStatus"
-      );
-
-    var email=
-      (
-        input&&
-        input.value||
-        ""
-      )
-      .trim()
-      .toLowerCase();
-
-
-    if(!email){
-
-      if(status){
-
-        status.textContent=
-          "Digite seu e-mail antes de continuar.";
-
-      }
-
-      if(input)
-        input.focus();
-
-      return;
-
-    }
-
-
-    /* Salva o e-mail */
-
-    try{
-
-      localStorage.setItem(
-        EMAIL_KEY,
-        email
-      );
-
-    }catch(e){}
-
-
-    if(status){
-
-      status.textContent=
-        "Abrindo Mercado Pago...";
-
-    }
-
-
-    /*
-      IMPORTANTE:
-      Usamos a mesma janela.
-      Assim, quando o Mercado Pago
-      retornar para o site, o usuário
-      continua no mesmo fluxo.
-    */
-
-    window.location.href=
-      MERCADO_PAGO_LINK;
-
-  };
-
-
-  /* ==========================
-     VERIFICAR ASSINATURA
-  ========================== */
-
-  window.verifyPro=async function(){
-
-    var input=
-      document.getElementById(
-        "proEmail"
-      );
-
-    var status=
-      document.getElementById(
-        "payStatus"
-      );
-
-    var email=
-      (
-        input&&
-        input.value||
-        ""
-      )
-      .trim()
-      .toLowerCase();
-
-
-    /* Se o campo estiver vazio,
-       tenta usar o e-mail salvo */
-
-    if(!email){
-
-      try{
-
-        email=
-          localStorage.getItem(
-            EMAIL_KEY
-          )||"";
-
-      }catch(e){}
-
-    }
-
-
-    if(!email){
-
-      if(status){
-
-        status.textContent=
-          "Digite o e-mail usado na assinatura.";
-
-      }
-
-      return;
-
-    }
-
-
-    /* Salva o e-mail */
-
-    try{
-
-      localStorage.setItem(
-        EMAIL_KEY,
-        email
-      );
-
-    }catch(e){}
-
-
-    if(status){
-
-      status.textContent=
-        "Verificando sua assinatura...";
-
-    }
-
-
-    try{
-
-      const resposta=
-        await fetch(
-          API_URL+
-          "/verificar-pro?email="+
-          encodeURIComponent(email)
-        );
-
-
-      const dados=
-        await resposta.json();
-
-
-      if(!resposta.ok){
-
-        throw new Error(
-          dados.detail||
-          "Erro ao verificar assinatura."
-        );
-
-      }
-
-
-      if(dados.pro===true){
-
-        /* Libera PRO */
-
-        try{
-
-          localStorage.setItem(
-            PRO_KEY,
-            "true"
-          );
-
-        }catch(e){}
-
-
-        window.mmPro=true;
-
-
-        closePay();
-
-
-        if(window.toast){
-
-          window.toast(
-            "Minha Meta PRO ativado com sucesso! 🎉"
-          );
-
-        }
-
-      }else{
-
-        if(status){
-
-          status.textContent=
-            "Assinatura não encontrada ou ainda não está ativa. Confira o e-mail usado no Mercado Pago.";
-
-        }
-
-      }
-
-
-    }catch(erro){
-
-      console.error(
-        "Erro ao verificar PRO:",
-        erro
-      );
-
-
-      if(status){
-
-        status.textContent=
-          "Não foi possível verificar agora. Tente novamente em alguns segundos.";
-
-      }
-
-    }
-
-  };
-
-
-})();
-</script>
-
-</body>
- </html>
+        <div class="metric">
+           
