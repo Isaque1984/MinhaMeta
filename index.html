@@ -2,1052 +2,2139 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07111f">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0b1730">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Minha Meta PRO</title>
 
 <style>
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#07111f;
-color:#fff;
-padding-bottom:80px
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-header{
-position:sticky;
-top:0;
-z-index:10;
-background:#0b1828ee;
-backdrop-filter:blur(12px);
-padding:16px;
-border-bottom:1px solid #20344b;
-display:flex;
-justify-content:space-between;
-align-items:center
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f3f6f8;
+  color:#142033;
+  min-height:100vh;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.header{
+  background:linear-gradient(135deg,#071326,#12335c);
+  color:white;
+  padding:22px 18px 28px;
+  border-radius:0 0 28px 28px;
+}
+
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
 }
 
 .logo{
-font-size:20px;
-font-weight:bold
+  font-size:22px;
+  font-weight:800;
 }
 
-.logo span{
-color:#25d27b
+.pro{
+  background:#20d878;
+  color:#062616;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
 }
 
-.test{
-background:#25d27b;
-color:#06150d;
-font-size:10px;
-padding:5px 8px;
-border-radius:20px;
-font-weight:bold;
-margin-left:6px
+.header h1{
+  margin-top:22px;
+  font-size:28px;
 }
 
-nav{
-display:flex;
-gap:7px;
-overflow:auto;
-padding:12px
+.header p{
+  margin-top:7px;
+  opacity:.8;
+  font-size:14px;
 }
 
-nav button{
-white-space:nowrap;
-background:#0d1d30;
-border:1px solid #20344b;
-color:#9aadc0;
-padding:10px 13px;
-border-radius:12px
+.container{
+  width:min(1100px,94%);
+  margin:auto;
+  padding:18px 0 50px;
 }
 
-nav button.active{
-background:#25d27b;
-color:#06150d;
-font-weight:bold
-}
-
-main{
-max-width:1100px;
-margin:auto;
-padding:0 14px
-}
-
-.page{display:none}
-.page.active{display:block}
-
-.hero{
-padding:20px 4px
-}
-
-.hero small{
-color:#25d27b;
-font-weight:bold;
-letter-spacing:2px
-}
-
-.hero h1{
-font-size:30px;
-margin:8px 0
-}
-
-.hero p{
-color:#91a4b9;
-line-height:1.5
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:-5px;
 }
 
 .card{
-background:linear-gradient(145deg,#10243a,#091624);
-border:1px solid #20344b;
-border-radius:18px;
-padding:17px;
-margin-bottom:12px
+  background:white;
+  border-radius:18px;
+  padding:17px;
+  box-shadow:0 5px 20px rgba(0,0,0,.06);
 }
 
-.label{
-color:#91a4b9;
-font-size:12px
+.stat-title{
+  color:#6d7887;
+  font-size:12px;
 }
 
-.value{
-font-size:24px;
-font-weight:bold;
-margin-top:7px
+.stat-value{
+  margin-top:7px;
+  font-size:22px;
+  font-weight:800;
 }
 
-.green{color:#25d27b}
-.blue{color:#45a7ff}
-.gold{color:#ffd166}
-.red{color:#ff6877}
-
-button{
-cursor:pointer
-}
-
-.btn{
-background:#12263c;
-border:1px solid #29435c;
-color:white;
-padding:10px 13px;
-border-radius:11px
-}
-
-.btn.primary{
-background:#25d27b;
-color:#06150d;
-border-color:#25d27b;
-font-weight:bold
-}
-
-.btn.danger{
-background:#321b22;
-color:#ff8995
+.green{
+  color:#0a9d50;
 }
 
 .section{
-margin-top:16px
+  margin-top:20px;
 }
 
-.section h2{
-font-size:19px
+.section-title{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:12px;
 }
 
-.toolbar{
-display:flex;
-gap:7px;
-flex-wrap:wrap
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
 }
 
-.chart{
-height:260px
+.option{
+  background:white;
+  border:2px solid #e7ebef;
+  border-radius:18px;
+  padding:17px;
+  min-height:105px;
+  text-align:left;
+  transition:.2s;
 }
 
-.chart svg{
-width:100%;
-height:100%
+.option:active{
+  transform:scale(.98);
 }
 
-.goals{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px
+.option:hover{
+  border-color:#16834a;
 }
 
-.goal h3{
-margin:0;
-font-size:18px
+.option-icon{
+  font-size:28px;
 }
 
-.goalmoney{
-font-size:24px;
-font-weight:bold;
-margin:14px 0 5px
+.option-title{
+  margin-top:8px;
+  font-weight:800;
+  font-size:15px;
 }
 
-.bar{
-height:10px;
-background:#07111f;
-border-radius:20px;
-overflow:hidden
+.option-text{
+  margin-top:4px;
+  color:#788391;
+  font-size:12px;
+  line-height:1.35;
 }
 
-.bar i{
-display:block;
-height:100%;
-background:linear-gradient(90deg,#45a7ff,#25d27b)
+.chart-card{
+  padding:15px;
 }
 
-.goalstats{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:7px;
-margin-top:12px
+.chart-buttons{
+  display:flex;
+  gap:7px;
+  margin-bottom:12px;
+  overflow:auto;
 }
 
-.goalstats div{
-background:#091522;
-padding:10px;
-border-radius:10px;
-border:1px solid #20344b
+.chart-buttons button{
+  background:#edf1f4;
+  color:#4d5966;
+  padding:8px 12px;
+  border-radius:10px;
+  white-space:nowrap;
+  font-size:12px;
+}
+
+.chart-buttons button.active{
+  background:#12335c;
+  color:white;
+}
+
+canvas{
+  width:100%;
+  height:230px;
+  display:block;
+}
+
+.goal{
+  background:white;
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:12px;
+  box-shadow:0 5px 18px rgba(0,0,0,.05);
+}
+
+.goal-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.goal-name{
+  font-size:18px;
+  font-weight:800;
+}
+
+.goal-percent{
+  color:#0a9d50;
+  font-weight:800;
+}
+
+.progress{
+  height:10px;
+  background:#e9edf0;
+  border-radius:10px;
+  overflow:hidden;
+  margin:13px 0;
+}
+
+.progress div{
+  height:100%;
+  background:linear-gradient(90deg,#16834a,#20d878);
+  border-radius:10px;
+}
+
+.goal-info{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  font-size:12px;
+  color:#687483;
+}
+
+.goal-info strong{
+  display:block;
+  color:#182536;
+  font-size:14px;
+  margin-top:3px;
 }
 
 .actions{
-display:flex;
-gap:7px;
-margin-top:12px;
-flex-wrap:wrap
+  display:flex;
+  gap:7px;
+  margin-top:13px;
 }
 
-.actions button{
-flex:1
+.btn{
+  padding:10px 12px;
+  border-radius:11px;
+  font-weight:700;
+  font-size:12px;
 }
 
-.metrics{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px
+.btn-green{
+  background:#16834a;
+  color:white;
 }
 
-.metric{
-background:#091522;
-border:1px solid #20344b;
-padding:14px;
-border-radius:14px
+.btn-dark{
+  background:#12335c;
+  color:white;
 }
 
-.metric strong{
-display:block;
-font-size:20px;
-margin-top:5px
+.btn-light{
+  background:#edf1f4;
+  color:#344150;
 }
 
-.table{
-width:100%;
-border-collapse:collapse
+.btn-red{
+  background:#ffe8e8;
+  color:#b32929;
 }
 
-.table th,
-.table td{
-padding:10px 5px;
-border-bottom:1px solid #20344b;
-font-size:13px;
-text-align:left
+.form{
+  display:grid;
+  gap:10px;
 }
 
-.table th{
-color:#91a4b9
+input,select{
+  width:100%;
+  border:1px solid #dce2e7;
+  background:white;
+  padding:12px;
+  border-radius:11px;
+  outline:none;
 }
 
-.calendar{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:5px
+input:focus,select:focus{
+  border-color:#16834a;
 }
 
-.day{
-min-height:60px;
-background:#091522;
-border:1px solid #20344b;
-border-radius:8px;
-padding:6px;
-font-size:11px
-}
-
-.day.has{
-background:#0c291d;
-border-color:#1d8d5c
-}
-
-.day span{
-display:block;
-color:#25d27b;
-font-size:9px;
-margin-top:4px
-}
-
-.badges{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px
-}
-
-.badge{
-background:#091522;
-border:1px solid #20344b;
-border-radius:15px;
-padding:15px
-}
-
-.badge.lock{
-opacity:.35
-}
-
-.badge .icon{
-font-size:27px
-}
-
-.empty{
-padding:25px;
-text-align:center;
-color:#91a4b9;
-border:1px dashed #29435c;
-border-radius:15px
-}
-
-.challenge{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-margin-bottom:9px
-}
-
-.note{
-color:#91a4b9;
-font-size:12px;
-line-height:1.5
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
 .modal{
-display:none;
-position:fixed;
-inset:0;
-background:#000b;
-z-index:100;
-align-items:flex-end;
-padding:12px
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.58);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:100;
 }
 
 .modal.show{
-display:flex
+  display:flex;
 }
 
-.modalbox{
-background:#0d1b2d;
-border:1px solid #29435c;
-border-radius:22px;
-padding:18px;
-width:100%;
-max-width:550px;
-margin:auto
+.modal-box{
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:white;
+  border-radius:22px;
+  padding:20px;
 }
 
-.field{
-margin:11px 0
+.modal-title{
+  font-size:21px;
+  font-weight:800;
+  margin-bottom:15px;
 }
 
-.field label{
-display:block;
-font-size:12px;
-color:#91a4b9;
-margin-bottom:5px
+.close{
+  float:right;
+  background:#edf1f4;
+  width:32px;
+  height:32px;
+  border-radius:50%;
 }
 
-.field input{
-width:100%;
-background:#071522;
-border:1px solid #29435c;
-color:white;
-padding:12px;
-border-radius:10px
+.challenge{
+  border:1px solid #e3e8ec;
+  border-radius:15px;
+  padding:14px;
+  margin-bottom:10px;
 }
 
-.modalactions{
-display:flex;
-gap:8px;
-margin-top:15px
+.challenge-head{
+  display:flex;
+  justify-content:space-between;
 }
 
-.modalactions button{
-flex:1
+.badge{
+  display:inline-block;
+  background:#eef8f2;
+  color:#0b9149;
+  padding:5px 8px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:bold;
 }
 
-@media(max-width:800px){
-.grid{
-grid-template-columns:1fr 1fr
+.locked{
+  opacity:.55;
 }
 
-.goals{
-grid-template-columns:1fr
-}
-}
-
-@media(max-width:500px){
-.metrics{
-grid-template-columns:1fr 1fr
+.table-wrap{
+  overflow-x:auto;
 }
 
-.badges{
-grid-template-columns:1fr 1fr
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
 }
 
-.hero h1{
-font-size:26px
+th,td{
+  padding:10px 7px;
+  border-bottom:1px solid #edf0f2;
+  text-align:left;
 }
+
+th{
+  color:#657180;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#7a8592;
+}
+
+.transaction{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid #edf0f2;
+}
+
+.transaction:last-child{
+  border-bottom:0;
+}
+
+.tx-add{
+  color:#0a9d50;
+  font-weight:bold;
+}
+
+.tx-remove{
+  color:#c62c2c;
+  font-weight:bold;
+}
+
+.footer{
+  text-align:center;
+  color:#89929c;
+  font-size:11px;
+  padding:30px 0;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%) translateY(100px);
+  background:#122033;
+  color:white;
+  padding:12px 18px;
+  border-radius:12px;
+  z-index:300;
+  opacity:0;
+  transition:.25s;
+  font-size:13px;
+}
+
+.toast.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+}
+
+@media(min-width:700px){
+  .stats{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
+  .goal-info{
+    grid-template-columns:repeat(4,1fr);
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header>
+<header class="header">
+  <div class="header-top">
+    <div class="logo">🎯 Minha Meta</div>
+    <div class="pro">PRO • TESTE</div>
+  </div>
 
-<div class="logo">
-Minha Meta <span>PRO</span>
-<span class="test">MODO TESTE</span>
-</div>
-
-<button class="btn" onclick="resetar()">
-Resetar
-</button>
-
+  <h1>Meu painel financeiro</h1>
+  <p>Transforme seus objetivos em um plano real.</p>
 </header>
 
-<nav>
+<main class="container">
+
+  <div class="stats">
 
-<button class="active" onclick="pagina('inicio',this)">
-Início
-</button>
+    <div class="card">
+      <div class="stat-title">Total guardado</div>
+      <div class="stat-value green" id="totalSaved">R$ 0,00</div>
+    </div>
 
-<button onclick="pagina('metas',this)">
-🎯 Metas
-</button>
+    <div class="card">
+      <div class="stat-title">Metas ativas</div>
+      <div class="stat-value" id="goalCount">0</div>
+    </div>
 
-<button onclick="pagina('analise',this)">
-📊 Análise
-</button>
+    <div class="card">
+      <div class="stat-title">Sequência atual</div>
+      <div class="stat-value" id="streak">0 dias</div>
+    </div>
 
-<button onclick="pagina('historico',this)">
-📅 Histórico
-</button>
+    <div class="card">
+      <div class="stat-title">Guardado este mês</div>
+      <div class="stat-value green" id="monthSaved">R$ 0,00</div>
+    </div>
 
-<button onclick="pagina('recursos',this)">
-🚀 PRO
-</button>
+  </div>
 
-</nav>
 
-<main>
+  <!-- MENU PRO -->
 
-<!-- INÍCIO -->
+  <section class="section">
+    <div class="section-title">Ferramentas PRO</div>
 
-<section id="inicio" class="page active">
+    <div class="grid">
 
-<div class="hero">
+      <button class="option" onclick="openModal('depositModal')">
+        <div class="option-icon">💰</div>
+        <div class="option-title">Guardar dinheiro</div>
+        <div class="option-text">Registre um novo depósito.</div>
+      </button>
 
-<small>PAINEL PREMIUM</small>
+      <button class="option" onclick="openModal('goalModal')">
+        <div class="option-icon">🎯</div>
+        <div class="option-title">Nova meta</div>
+        <div class="option-text">Crie um objetivo financeiro.</div>
+      </button>
 
-<h1>
-Seu dinheiro. Suas metas.
-</h1>
+      <button class="option" onclick="openModal('analysisModal');renderAnalysis()">
+        <div class="option-icon">📊</div>
+        <div class="option-title">Análise</div>
+        <div class="option-text">Veja seu comportamento de economia.</div>
+      </button>
 
-<p>
-Acompanhe sua evolução usando somente os valores que você registrar.
-</p>
+      <button class="option" onclick="openModal('challengeModal');renderChallenges()">
+        <div class="option-icon">🔥</div>
+        <div class="option-title">Desafios</div>
+        <div class="option-text">Crie desafios para economizar.</div>
+      </button>
 
-</div>
+      <button class="option" onclick="openModal('simulatorModal')">
+        <div class="option-icon">🧮</div>
+        <div class="option-title">Simulador</div>
+        <div class="option-text">Descubra quanto precisa guardar.</div>
+      </button>
 
-<div class="grid">
+      <button class="option" onclick="openModal('historyModal');renderHistory()">
+        <div class="option-icon">📅</div>
+        <div class="option-title">Histórico</div>
+        <div class="option-text">Veja seus depósitos.</div>
+      </button>
 
-<div class="card">
-<div class="label">Total guardado</div>
-<div class="value green" id="total">R$ 0,00</div>
-</div>
+      <button class="option" onclick="openModal('achievementsModal');renderAchievements()">
+        <div class="option-icon">🏆</div>
+        <div class="option-title">Conquistas</div>
+        <div class="option-text">Desbloqueie medalhas.</div>
+      </button>
 
-<div class="card">
-<div class="label">Progresso geral</div>
-<div class="value" id="progresso">0%</div>
-</div>
+      <button class="option" onclick="openModal('communityModal')">
+        <div class="option-icon">👥</div>
+        <div class="option-title">Comunidade</div>
+        <div class="option-text">Área para acompanhar outros poupadores.</div>
+      </button>
 
-<div class="card">
-<div class="label">Sequência</div>
-<div class="value gold" id="sequencia">0 dias</div>
-</div>
+    </div>
+  </section>
 
-<div class="card">
-<div class="label">Necessário por dia</div>
-<div class="value blue" id="necessario">R$ 0,00</div>
-</div>
 
-</div>
+  <!-- GRÁFICO -->
 
-<div class="card section">
+  <section class="section">
+    <div class="section-title">Evolução do dinheiro</div>
 
-<div class="toolbar">
+    <div class="card chart-card">
 
-<h2 style="margin-right:auto">
-Evolução
-</h2>
+      <div class="chart-buttons">
+        <button class="active" onclick="setChartDays(7,this)">7 dias</button>
+        <button onclick="setChartDays(30,this)">30 dias</button>
+        <button onclick="setChartDays(180,this)">6 meses</button>
+        <button onclick="setChartDays(365,this)">1 ano</button>
+      </div>
 
-<button class="btn" onclick="grafico(7)">
-7 dias
-</button>
+      <canvas id="chart"></canvas>
 
-<button class="btn" onclick="grafico(30)">
-30 dias
-</button>
+    </div>
+  </section>
 
-<button class="btn" onclick="grafico(180)">
-6 meses
-</button>
 
-<button class="btn" onclick="grafico(365)">
-1 ano
-</button>
+  <!-- METAS -->
 
-</div>
+  <section class="section">
 
-<div class="chart" id="chart"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="section-title" style="margin:0">Minhas metas</div>
 
-</div>
+      <button class="btn btn-green" onclick="openModal('goalModal')">
+        + Nova
+      </button>
+    </div>
 
-<div class="section">
+    <div id="goalsList"></div>
 
-<h2>
-🎯 Minhas metas
-</h2>
+  </section>
 
-<div id="homeMetas" class="goals"></div>
 
-</div>
+  <!-- RESUMO -->
 
-</section>
+  <section class="section">
 
+    <div class="section-title">Resumo financeiro</div>
 
-<!-- METAS -->
+    <div class="card">
 
-<section id="metas" class="page">
+      <div class="goal-info">
 
-<div class="hero">
+        <div>
+          Média diária
+          <strong id="avgDaily">R$ 0,00</strong>
+        </div>
 
-<small>OBJETIVOS</small>
+        <div>
+          Últimos 7 dias
+          <strong id="last7">R$ 0,00</strong>
+        </div>
 
-<h1>
-Minhas metas
-</h1>
+        <div>
+          Melhor dia
+          <strong id="bestDay">R$ 0,00</strong>
+        </div>
 
-<p>
-Crie quantas metas quiser e acompanhe cada uma separadamente.
-</p>
+        <div>
+          Depósitos
+          <strong id="depositCount">0</strong>
+        </div>
 
-<button class="btn primary" onclick="novaMeta()">
-+ Nova meta
-</button>
+      </div>
 
-</div>
+    </div>
 
-<div id="listaMetas" class="goals"></div>
+  </section>
 
-</section>
 
+  <section class="section">
 
-<!-- ANALISE -->
+    <div class="card">
 
-<section id="analise" class="page">
+      <h3>⚙️ Dados do teste</h3>
 
-<div class="hero">
+      <p style="font-size:12px;color:#707b87;margin-top:7px">
+        Esta versão PRO é somente para teste. Os dados ficam salvos
+        neste aparelho e não existe cobrança.
+      </p>
 
-<small>INTELIGÊNCIA PRO</small>
+      <button
+        class="btn btn-red"
+        style="margin-top:14px"
+        onclick="resetApp()">
+        Apagar todos os dados
+      </button>
 
-<h1>
-Análise financeira
-</h1>
+    </div>
 
-<p>
-Tudo calculado com seus lançamentos reais.
-</p>
-
-</div>
-
-<div id="metricas" class="metrics"></div>
-
-<div class="card section">
-
-<h2>
-Comparação das metas
-</h2>
-
-<div id="comparacao"></div>
-
-</div>
-
-</section>
-
-
-<!-- HISTORICO -->
-
-<section id="historico" class="page">
-
-<div class="hero">
-
-<small>HISTÓRICO</small>
-
-<h1>
-Calendário financeiro
-</h1>
-
-<p>
-Veja os dias em que você guardou dinheiro.
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-Calendário
-</h2>
-
-<div id="calendario" class="calendar"></div>
-
-</div>
-
-<div class="card">
-
-<h2>
-Últimos lançamentos
-</h2>
-
-<div id="lancamentos"></div>
-
-</div>
-
-</section>
-
-
-<!-- RECURSOS -->
-
-<section id="recursos" class="page">
-
-<div class="hero">
-
-<small>MINHA META PRO</small>
-
-<h1>
-Desafios e conquistas
-</h1>
-
-<p>
-Use os recursos premium para manter a disciplina.
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-🔥 Desafios
-</h2>
-
-<div id="desafios"></div>
-
-<button class="btn primary" onclick="desafioPersonalizado()">
-+ Criar desafio
-</button>
-
-</div>
-
-<div class="section">
-
-<h2>
-🏆 Conquistas
-</h2>
-
-<div id="conquistas" class="badges"></div>
-
-</div>
-
-<div class="card section">
-
-<h2>
-🧮 Simulador
-</h2>
-
-<div class="field">
-
-<label>
-Valor da meta
-</label>
-
-<input
-id="simValor"
-type="number"
-placeholder="20000">
-
-</div>
-
-<div class="field">
-
-<label>
-Quanto guardar por dia
-</label>
-
-<input
-id="simDia"
-type="number"
-placeholder="20">
-
-</div>
-
-<button class="btn primary" onclick="simular()">
-Simular
-</button>
-
-<div id="resultadoSimulador"></div>
-
-</div>
-
-<div class="card">
-
-<h2>
-🌎 Comunidade
-</h2>
-
-<p class="note">
-
-Aqui futuramente poderemos mostrar estatísticas reais dos usuários, como quanto a comunidade está guardando.
-
-Neste modo teste os valores aparecem como "—" porque não vamos inventar dados.
-
-</p>
-
-<div class="metrics">
-
-<div class="metric">
-<span class="label">Usuários ativos</span>
-<strong>—</strong>
-</div>
-
-<div class="metric">
-<span class="label">Total guardado</span>
-<strong>—</strong>
-</div>
-
-<div class="metric">
-<span class="label">Média por usuário</span>
-<strong>—</strong>
-</div>
-
-</div>
-
-</div>
-
-</section>
+  </section>
 
 </main>
 
+<div class="footer">
+  Minha Meta PRO • Modo Teste
+</div>
 
-<!-- MODAL -->
 
-<div id="modal" class="modal">
+<!-- MODAL DEPÓSITO -->
 
-<div class="modalbox" id="modalConteudo"></div>
+<div class="modal" id="depositModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('depositModal')">×</button>
+
+    <div class="modal-title">💰 Guardar dinheiro</div>
+
+    <form class="form" onsubmit="addDeposit(event)">
+
+      <select id="depositGoal"></select>
+
+      <input
+        id="depositAmount"
+        type="number"
+        step="0.01"
+        min="0.01"
+        placeholder="Valor guardado"
+        required>
+
+      <input
+        id="depositDate"
+        type="date"
+        required>
+
+      <button class="btn btn-green" type="submit">
+        Guardar dinheiro
+      </button>
+
+    </form>
+
+  </div>
 
 </div>
+
+
+<!-- MODAL META -->
+
+<div class="modal" id="goalModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('goalModal')">×</button>
+
+    <div class="modal-title">🎯 Criar nova meta</div>
+
+    <form class="form" onsubmit="createGoal(event)">
+
+      <input
+        id="goalName"
+        placeholder="Ex.: Carro, casa, viagem..."
+        required>
+
+      <div class="form-row">
+
+        <input
+          id="goalTarget"
+          type="number"
+          step="0.01"
+          min="1"
+          placeholder="Valor da meta"
+          required>
+
+        <input
+          id="goalDeadline"
+          type="date"
+          required>
+
+      </div>
+
+      <button class="btn btn-green" type="submit">
+        Criar meta
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL ANÁLISE -->
+
+<div class="modal" id="analysisModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('analysisModal')">×</button>
+
+    <div class="modal-title">📊 Sua análise</div>
+
+    <div id="analysisContent"></div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL DESAFIOS -->
+
+<div class="modal" id="challengeModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('challengeModal')">×</button>
+
+    <div class="modal-title">🔥 Desafios</div>
+
+    <div id="challengeContent"></div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL SIMULADOR -->
+
+<div class="modal" id="simulatorModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('simulatorModal')">×</button>
+
+    <div class="modal-title">🧮 Simulador</div>
+
+    <div class="form">
+
+      <input
+        id="simTarget"
+        type="number"
+        step="0.01"
+        placeholder="Quanto quer juntar?">
+
+      <input
+        id="simDaily"
+        type="number"
+        step="0.01"
+        placeholder="Quanto consegue guardar por dia?">
+
+      <button
+        class="btn btn-green"
+        onclick="simulate()">
+        Simular
+      </button>
+
+      <div id="simResult"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL HISTÓRICO -->
+
+<div class="modal" id="historyModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('historyModal')">×</button>
+
+    <div class="modal-title">📅 Histórico</div>
+
+    <div id="historyContent"></div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL CONQUISTAS -->
+
+<div class="modal" id="achievementsModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('achievementsModal')">×</button>
+
+    <div class="modal-title">🏆 Conquistas</div>
+
+    <div id="achievementsContent"></div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL COMUNIDADE -->
+
+<div class="modal" id="communityModal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeModal('communityModal')">×</button>
+
+    <div class="modal-title">👥 Comunidade</div>
+
+    <div class="card" style="background:#f6faf8">
+
+      <h3>Em breve</h3>
+
+      <p style="font-size:13px;color:#697582;margin-top:8px;line-height:1.5">
+        Aqui futuramente poderemos mostrar dados reais da comunidade,
+        como quanto os usuários estão guardando e quantas pessoas estão
+        cumprindo seus desafios.
+      </p>
+
+      <p style="font-size:12px;color:#0a9149;margin-top:10px">
+        🔒 Nenhum número falso é mostrado nesta versão.
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
 
 
 <script>
 
-const STORAGE="minha_meta_pro_teste";
+/* =========================================================
+   MINHA META PRO - MODO TESTE
+   ========================================================= */
 
-let banco=JSON.parse(
-localStorage.getItem(STORAGE)
-||
-'{"metas":[],"lancamentos":[],"desafios":[]}'
-);
+const STORAGE_KEY = "minha_meta_pro_teste_v2";
 
+let data = {
+  goals: [],
+  deposits: [],
+  challenges: [],
+  started: new Date().toISOString()
+};
 
-function salvar(){
-
-localStorage.setItem(
-STORAGE,
-JSON.stringify(banco)
-);
-
-renderizar();
-
-}
+let chartDays = 7;
 
 
-function dinheiro(valor){
+/* =========================
+   INICIALIZAÇÃO
+   ========================= */
 
-return new Intl.NumberFormat(
-"pt-BR",
-{
-style:"currency",
-currency:"BRL"
-}
-).format(valor||0);
+function loadData(){
 
-}
+  try{
 
+    const saved = localStorage.getItem(STORAGE_KEY);
 
-function hoje(){
+    if(saved){
+      const parsed = JSON.parse(saved);
 
-let d=new Date();
+      if(parsed && typeof parsed === "object"){
+        data = {
+          goals: Array.isArray(parsed.goals) ? parsed.goals : [],
+          deposits: Array.isArray(parsed.deposits) ? parsed.deposits : [],
+          challenges: Array.isArray(parsed.challenges) ? parsed.challenges : [],
+          started: parsed.started || new Date().toISOString()
+        };
+      }
+    }
 
-return d.toISOString().slice(0,10);
+  }catch(error){
 
-}
+    console.error("Erro ao carregar dados:",error);
 
-
-function dataBR(data){
-
-if(!data)return "—";
-
-return new Date(
-data+"T12:00:00"
-).toLocaleDateString("pt-BR");
+  }
 
 }
 
 
-function totalGuardado(){
+function saveData(){
 
-return banco.lancamentos.reduce(
-(total,x)=>
-total+
-(x.tipo==="entrada"
-?x.valor
-:-x.valor),
-0
-);
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
 
 }
 
 
-function saldoMeta(id){
+/* =========================
+   UTILIDADES
+   ========================= */
 
-return banco.lancamentos
-.filter(x=>x.meta===id)
-.reduce(
-(total,x)=>
-total+
-(x.tipo==="entrada"
-?x.valor
-:-x.valor),
-0
-);
+function money(value){
+
+  return Number(value || 0).toLocaleString("pt-BR",{
+    style:"currency",
+    currency:"BRL"
+  });
 
 }
 
 
-function progressoGeral(){
+function dateKey(date){
 
-if(!banco.metas.length)return 0;
+  const d = new Date(date);
 
-let alvo=banco.metas.reduce(
-(t,m)=>t+m.alvo,
-0
-);
-
-let guardado=banco.metas.reduce(
-(t,m)=>t+Math.min(m.alvo,Math.max(0,saldoMeta(m.id))),
-0
-);
-
-return alvo
-?Math.min(100,guardado/alvo*100)
-:0;
+  return d.getFullYear()+"-"+
+    String(d.getMonth()+1).padStart(2,"0")+"-"+
+    String(d.getDate()).padStart(2,"0");
 
 }
 
 
-function diasSequencia(){
+function todayKey(){
 
-let entradas=banco.lancamentos
-.filter(x=>x.tipo==="entrada");
-
-let dias=new Set(
-entradas.map(x=>x.data)
-);
-
-let contador=0;
-
-let d=new Date();
-
-while(dias.has(d.toISOString().slice(0,10))){
-
-contador++;
-
-d.setDate(
-d.getDate()-1
-);
-
-}
-
-return contador;
+  return dateKey(new Date());
 
 }
 
 
-function necessario(meta){
+function daysBetween(a,b){
 
-let saldo=saldoMeta(meta.id);
+  const x = new Date(a);
+  const y = new Date(b);
 
-let falta=Math.max(
-0,
-meta.alvo-saldo
-);
+  x.setHours(0,0,0,0);
+  y.setHours(0,0,0,0);
 
-if(!meta.prazo)return 0;
-
-let hojeDate=new Date();
-
-let prazo=new Date(
-meta.prazo+"T23:59:59"
-);
-
-let dias=Math.max(
-1,
-Math.ceil(
-(prazo-hojeDate)/86400000
-)
-);
-
-return falta/dias;
+  return Math.round((y-x)/86400000);
 
 }
 
 
-function previsao(meta){
+function showToast(message){
 
-let saldo=saldoMeta(meta.id);
+  const el = document.getElementById("toast");
 
-let falta=Math.max(
-0,
-meta.alvo-saldo
-);
+  el.textContent = message;
 
-if(falta<=0)
-return "Concluída";
+  el.classList.add("show");
 
-let entradas=banco.lancamentos
-.filter(x=>x.tipo==="entrada");
-
-if(!entradas.length)
-return "Sem previsão";
-
-let primeiro=new Date(
-entradas
-.map(x=>x.data)
-.sort()[0]
-+"T12:00:00"
-);
-
-let agora=new Date();
-
-let dias=Math.max(
-1,
-Math.floor(
-(agora-primeiro)/86400000
-)+1
-);
-
-let media=
-entradas.reduce(
-(t,x)=>t+x.valor,
-0
-)/dias;
-
-if(media<=0)
-return "Sem previsão";
-
-let diasNecessarios=Math.ceil(
-falta/media
-);
-
-let data=new Date();
-
-data.setDate(
-data.getDate()+diasNecessarios
-);
-
-return data.toLocaleDateString(
-"pt-BR"
-);
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },2200);
 
 }
 
 
-function metaHTML(meta){
+/* =========================
+   MODAIS
+   ========================= */
 
-let saldo=Math.max(
-0,
-saldoMeta(meta.id)
-);
+function openModal(id){
 
-let falta=Math.max(
-0,
-meta.alvo-saldo
-);
+  document.getElementById(id).classList.add("show");
 
-let pct=Math.min(
-100,
-saldo/meta.alvo*100
-);
+}
 
-return `
 
-<div class="card goal">
+function closeModal(id){
 
-<h3>
-${escapeHTML(meta.nome)}
-</h3>
+  document.getElementById(id).classList.remove("show");
 
-<div class="goalmoney">
-${dinheiro(saldo)}
-</div>
+}
 
-<div class="label">
-de ${dinheiro(meta.alvo)}
-</div>
 
-<div class="bar">
-<i style="width:${pct}%"></i>
-</div>
+document.querySelectorAll(".modal").forEach(modal=>{
 
-<div style="margin-top:8px;color:#25d27b">
-${pct.toFixed(0)}% concluído
-</div>
+  modal.addEventListener("click",function(e){
 
-<div class="goalstats">
+    if(e.target === modal){
+      modal.classList.remove("show");
+    }
 
-<div>
-<span class="label">Falta</span>
-<br>
-<b>${dinheiro(falta)}</b>
-</div>
+  });
 
-<div>
-<span class="label">Por
+});
+
+
+/* =========================
+   TOTAIS
+   ========================= */
+
+function totalSaved(){
+
+  return data.deposits.reduce(
+    (sum,d)=>sum+Number(d.amount||0),
+    0
+  );
+
+}
+
+
+function goalSaved(goalId){
+
+  return data.deposits
+    .filter(d=>d.goalId===goalId)
+    .reduce((sum,d)=>sum+Number(d.amount||0),0);
+
+}
+
+
+function monthTotal(){
+
+  const now = new Date();
+
+  return data.deposits
+    .filter(d=>{
+
+      const x = new Date(d.date);
+
+      return x.getMonth()===now.getMonth() &&
+             x.getFullYear()===now.getFullYear();
+
+    })
+    .reduce((sum,d)=>sum+Number(d.amount||0),0);
+
+}
+
+
+function lastDaysTotal(days){
+
+  const limit = new Date();
+
+  limit.setHours(0,0,0,0);
+  limit.setDate(limit.getDate()-(days-1));
+
+  return data.deposits
+    .filter(d=>new Date(d.date)>=limit)
+    .reduce((sum,d)=>sum+Number(d.amount||0),0);
+
+}
+
+
+/* =========================
+   DASHBOARD
+   ========================= */
+
+function updateDashboard(){
+
+  document.getElementById("totalSaved").textContent =
+    money(totalSaved());
+
+  document.getElementById("goalCount").textContent =
+    data.goals.length;
+
+  document.getElementById("monthSaved").textContent =
+    money(monthTotal());
+
+  document.getElementById("streak").textContent =
+    calculateStreak()+" dias";
+
+  const avg =
+    data.deposits.length
+    ? totalSaved()/Math.max(1,daysSinceStart())
+    : 0;
+
+  document.getElementById("avgDaily").textContent =
+    money(avg);
+
+  document.getElementById("last7").textContent =
+    money(lastDaysTotal(7));
+
+  const daily = {};
+
+  data.deposits.forEach(d=>{
+
+    const key=dateKey(d.date);
+
+    daily[key]=(daily[key]||0)+Number(d.amount||0);
+
+  });
+
+  const values=Object.values(daily);
+
+  document.getElementById("bestDay").textContent =
+    money(values.length ? Math.max(...values) : 0);
+
+  document.getElementById("depositCount").textContent =
+    data.deposits.length;
+
+}
+
+
+function daysSinceStart(){
+
+  if(!data.deposits.length) return 1;
+
+  const dates=data.deposits.map(d=>new Date(d.date));
+
+  const first=new Date(Math.min(...dates.map(d=>d.getTime())));
+
+  return Math.max(1,daysBetween(first,new Date())+1);
+
+}
+
+
+function calculateStreak(){
+
+  if(!data.deposits.length) return 0;
+
+  const days=new Set(
+    data.deposits.map(d=>dateKey(d.date))
+  );
+
+  let streak=0;
+
+  const current=new Date();
+
+  for(let i=0;i<1000;i++){
+
+    const key=dateKey(current);
+
+    if(days.has(key)){
+
+      streak++;
+
+      current.setDate(current.getDate()-1);
+
+    }else{
+
+      break;
+
+    }
+
+  }
+
+  return streak;
+
+}
+
+
+/* =========================
+   METAS
+   ========================= */
+
+function renderGoals(){
+
+  const container=document.getElementById("goalsList");
+
+  if(!data.goals.length){
+
+    container.innerHTML=`
+      <div class="card empty">
+        Você ainda não criou nenhuma meta.<br><br>
+        <button class="btn btn-green"
+          onclick="openModal('goalModal')">
+          Criar minha primeira meta
+        </button>
+      </div>
+    `;
+
+    return;
+
+  }
+
+  container.innerHTML=data.goals.map(goal=>{
+
+    const saved=goalSaved(goal.id);
+
+    const percent=Math.min(
+      100,
+      goal.target>0 ? saved/goal.target*100 : 0
+    );
+
+    const remaining=Math.max(0,goal.target-saved);
+
+    const days=Math.max(
+      1,
+      daysBetween(new Date(),goal.deadline)
+    );
+
+    const daily=remaining/days;
+
+    const complete=saved>=goal.target;
+
+    return `
+
+      <div class="goal">
+
+        <div class="goal-head">
+
+          <div>
+            <div class="goal-name">
+              ${escapeHTML(goal.name)}
+            </div>
+
+            <div style="font-size:12px;color:#7b8591;margin-top:4px">
+              Meta: ${money(goal.target)}
+            </div>
+          </div>
+
+          <div class="goal-percent">
+            ${percent.toFixed(0)}%
+          </div>
+
+        </div>
+
+        <div class="progress">
+          <div style="width:${percent}%"></div>
+        </div>
+
+        <div class="goal-info">
+
+          <div>
+            Guardado
+            <strong>${money(saved)}</strong>
+          </div>
+
+          <div>
+            Falta
+            <strong>${money(remaining)}</strong>
+          </div>
+
+          <div>
+            Por dia
+            <strong>${complete ? "Concluída" : money(daily)}</strong>
+          </div>
+
+          <div>
+            Prazo
+            <strong>${formatDate(goal.deadline)}</strong>
+          </div>
+
+        </div>
+
+        <div class="actions">
+
+          <button class="btn btn-green"
+            onclick="quickDeposit('${goal.id}')">
+            + Guardar
+          </button>
+
+          <button class="btn btn-light"
+            onclick="editGoal('${goal.id}')">
+            ✏️ Editar
+          </button>
+
+          <button class="btn btn-red"
+            onclick="deleteGoal('${goal.id}')">
+            Excluir
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+
+}
+
+
+function createGoal(event){
+
+  event.preventDefault();
+
+  const name=document.getElementById("goalName").value.trim();
+
+  const target=Number(
+    document.getElementById("goalTarget").value
+  );
+
+  const deadline=document.getElementById("goalDeadline").value;
+
+  if(!name || target<=0 || !deadline){
+
+    showToast("Preencha todos os campos.");
+
+    return;
+
+  }
+
+  data.goals.push({
+
+    id:"goal_"+Date.now()+"_"+Math.random().toString(36).slice(2),
+
+    name,
+
+    target,
+
+    deadline,
+
+    created:new Date().toISOString()
+
+  });
+
+  saveData();
+
+  event.target.reset();
+
+  closeModal("goalModal");
+
+  renderAll();
+
+  showToast("Meta criada com sucesso!");
+
+}
+
+
+function editGoal(id){
+
+  const goal=data.goals.find(g=>g.id===id);
+
+  if(!goal)return;
+
+  const name=prompt("Nome da meta:",goal.name);
+
+  if(name===null)return;
+
+  const target=prompt(
+    "Valor da meta:",
+    goal.target
+  );
+
+  if(target===null)return;
+
+  const deadline=prompt(
+    "Prazo (AAAA-MM-DD):",
+    goal.deadline
+  );
+
+  if(deadline===null)return;
+
+  goal.name=name.trim() || goal.name;
+
+  goal.target=Number(target)||goal.target;
+
+  goal.deadline=deadline;
+
+  saveData();
+
+  renderAll();
+
+  showToast("Meta atualizada.");
+
+}
+
+
+function deleteGoal(id){
+
+  const goal=data.goals.find(g=>g.id===id);
+
+  if(!goal)return;
+
+  if(!confirm(
+    "Excluir a meta \""+goal.name+"\"?\n\nOs depósitos desta meta também serão excluídos."
+  ))return;
+
+  data.goals=data.goals.filter(g=>g.id!==id);
+
+  data.deposits=data.deposits.filter(d=>d.goalId!==id);
+
+  saveData();
+
+  renderAll();
+
+  showToast("Meta excluída.");
+
+}
+
+
+/* =========================
+   DEPÓSITOS
+   ========================= */
+
+function prepareDepositForm(){
+
+  const select=document.getElementById("depositGoal");
+
+  select.innerHTML="";
+
+  if(!data.goals.length){
+
+    select.innerHTML=
+      `<option value="">Crie uma meta primeiro</option>`;
+
+    return;
+
+  }
+
+  data.goals.forEach(goal=>{
+
+    const option=document.createElement("option");
+
+    option.value=goal.id;
+
+    option.textContent=goal.name;
+
+    select.appendChild(option);
+
+  });
+
+  document.getElementById("depositDate").value=
+    todayKey();
+
+}
+
+
+function addDeposit(event){
+
+  event.preventDefault();
+
+  const goalId=document.getElementById("depositGoal").value;
+
+  const amount=Number(
+    document.getElementById("depositAmount").value
+  );
+
+  const date=document.getElementById("depositDate").value;
+
+  if(!goalId){
+
+    showToast("Crie uma meta primeiro.");
+
+    return;
+
+  }
+
+  if(amount<=0 || !date){
+
+    showToast("Informe um valor válido.");
+
+    return;
+
+  }
+
+  data.deposits.push({
+
+    id:"dep_"+Date.now()+"_"+Math.random().toString(36).slice(2),
+
+    goalId,
+
+    amount,
+
+    date,
+
+    created:new Date().toISOString()
+
+  });
+
+  saveData();
+
+  event.target.reset();
+
+  document.getElementById("depositDate").value=todayKey();
+
+  closeModal("depositModal");
+
+  renderAll();
+
+  showToast("Dinheiro guardado! 💰");
+
+}
+
+
+function quickDeposit(goalId){
+
+  const value=prompt(
+    "Quanto você quer guardar nesta meta?"
+  );
+
+  if(value===null)return;
+
+  const amount=Number(
+    String(value).replace(",",".")
+  );
+
+  if(!amount || amount<=0){
+
+    showToast("Valor inválido.");
+
+    return;
+
+  }
+
+  data.deposits.push({
+
+    id:"dep_"+Date.now()+"_"+Math.random().toString(36).slice(2),
+
+    goalId,
+
+    amount,
+
+    date:todayKey(),
+
+    created:new Date().toISOString()
+
+  });
+
+  saveData();
+
+  renderAll();
+
+  showToast("Depósito registrado! 💰");
+
+}
+
+
+/* =========================
+   GRÁFICO
+   ========================= */
+
+function setChartDays(days,button){
+
+  chartDays=days;
+
+  document.querySelectorAll(".chart-buttons button")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  drawChart();
+
+}
+
+
+function drawChart(){
+
+  const canvas=document.getElementById("chart");
+
+  if(!canvas)return;
+
+  const rect=canvas.getBoundingClientRect();
+
+  const ratio=window.devicePixelRatio||1;
+
+  canvas.width=rect.width*ratio;
+
+  canvas.height=230*ratio;
+
+  const ctx=canvas.getContext("2d");
+
+  ctx.scale(ratio,ratio);
+
+  const width=rect.width;
+  const height=230;
+
+  ctx.clearRect(0,0,width,height);
+
+  const now=new Date();
+
+  const points=[];
+
+  for(let i=chartDays-1;i>=0;i--){
+
+    const date=new Date(now);
+
+    date.setHours(0,0,0,0);
+
+    date.setDate(date.getDate()-i);
+
+    const key=dateKey(date);
+
+    const total=data.deposits
+      .filter(d=>dateKey(d.date)<=key)
+      .reduce((sum,d)=>sum+Number(d.amount||0),0);
+
+    points.push({
+      date,
+      value:total
+    });
+
+  }
+
+  const max=Math.max(
+    1,
+    ...points.map(p=>p.value)
+  );
+
+  ctx.strokeStyle="#e8edf0";
+  ctx.lineWidth=1;
+
+  for(let i=1;i<=4;i++){
+
+    const y=15+(height-35)*(i/4);
+
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(width,y);
+    ctx.stroke();
+
+  }
+
+  if(points.length<2)return;
+
+  ctx.strokeStyle="#16834a";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+
+  points.forEach((p,i)=>{
+
+    const x=
+      i*(width-20)/(points.length-1)+10;
+
+    const y=
+      height-20-(p.value/max)*(height-45);
+
+    if(i===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+
+  });
+
+  ctx.stroke();
+
+  ctx.fillStyle="#16834a";
+
+  points.forEach((p,i)=>{
+
+    if(
+      chartDays<=30 ||
+      i===0 ||
+      i===points.length-1 ||
+      i%Math.ceil(chartDays/6)===0
+    ){
+
+      const x=
+        i*(width-20)/(points.length-1)+10;
+
+      const y=
+        height-20-(p.value/max)*(height-45);
+
+      ctx.beginPath();
+      ctx.arc(x,y,4,0,Math.PI*2);
+      ctx.fill();
+
+    }
+
+  });
+
+}
+
+
+/* =========================
+   ANÁLISE
+   ========================= */
+
+function renderAnalysis(){
+
+  const total=totalSaved();
+
+  const avg=data.deposits.length
+    ? total/daysSinceStart()
+    : 0;
+
+  const last7=lastDaysTotal(7);
+
+  const last30=lastDaysTotal(30);
+
+  const values=data.deposits.map(d=>Number(d.amount||0));
+
+  const best=values.length?Math.max(...values):0;
+
+  const worst=values.length?Math.min(...values):0;
+
+  document.getElementById("analysisContent").innerHTML=`
+
+    <div class="stats" style="margin:0">
+
+      <div class="card">
+        <div class="stat-title">Total</div>
+        <div class="stat-value green">${money(total)}</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-title">Média diária</div>
+        <div class="stat-value">${money(avg)}</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-title">Últimos 7 dias</div>
+        <div class="stat-value">${money(last7)}</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-title">Últimos 30 dias</div>
+        <div class="stat-value">${money(last30)}</div>
+      </div>
+
+    </div>
+
+    <div class="card" style="margin-top:12px">
+
+      <p>
+        🟢 Maior depósito:
+        <strong>${money(best)}</strong>
+      </p>
+
+      <p style="margin-top:10px">
+        🔴 Menor depósito:
+        <strong>${money(worst)}</strong>
+      </p>
+
+      <p style="margin-top:10px">
+        💰 Número de depósitos:
+        <strong>${data.deposits.length}</strong>
+      </p>
+
+      <p style="margin-top:10px">
+        🔥 Sequência atual:
+        <strong>${calculateStreak()} dias</strong>
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   HISTÓRICO
+   ========================= */
+
+function renderHistory(){
+
+  const container=document.getElementById("historyContent");
+
+  if(!data.deposits.length){
+
+    container.innerHTML=
+      `<div class="empty">Nenhum depósito registrado.</div>`;
+
+    return;
+
+  }
+
+  const sorted=[...data.deposits]
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  container.innerHTML=sorted.map(d=>{
+
+    const goal=data.goals.find(g=>g.id===d.goalId);
+
+    return `
+
+      <div class="transaction">
+
+        <div>
+          <strong>
+            ${escapeHTML(goal ? goal.name : "Meta removida")}
+          </strong>
+
+          <div style="font-size:11px;color:#7d8792;margin-top:3px">
+            ${formatDate(d.date)}
+          </div>
+        </div>
+
+        <div class="tx-add">
+          + ${money(d.amount)}
+        </div>
+
+      </div>
+
+    `;
+
+  }).join("");
+
+}
+
+
+/* =========================
+   DESAFIOS
+   ========================= */
+
+function renderChallenges(){
+
+  const challenges=[
+
+    ["1","R$ 1 por dia","Guardar R$ 1 todos os dias durante 30 dias.",30,1],
+    ["5","R$ 5 por dia","Guardar R$ 5 todos os dias durante 30 dias.",30,5],
+    ["10","R$ 10 por dia","Guardar R$ 10 todos os dias durante 30 dias.",30,10],
+    ["5x60","R$ 5 por dia • 60 dias","Desafio de 60 dias.",60,5],
+    ["10x60","R$ 10 por dia • 60 dias","Desafio de 60 dias.",60,10],
+    ["100","R$ 10 por dia • 100 dias","Seu grande desafio.",100,10]
+
+  ];
+
+  const startDates=data.challenges;
+
+  document.getElementById("challengeContent").innerHTML=
+    challenges.map(c=>{
+
+      const active=startDates.find(x=>x.id===c[0]);
+
+      let progress=0;
+
+      if(active){
+
+        const days=Math.min(
+          c[3],
+          daysBetween(active.start,new Date())
+        );
+
+        progress=Math.max(
+          0,
+          Math.min(c[3],days)
+        );
+
+      }
+
+      return `
+
+        <div class="challenge">
+
+          <div class="challenge-head">
+
+            <strong>${c[1]}</strong>
+
+            ${
+              active
+              ? `<span class="badge">${progress}/${c[3]} dias</span>`
+              : ""
+            }
+
+          </div>
+
+          <p style="font-size:12px;color:#77818d;margin-top:7px">
+            ${c[2]}
+          </p>
+
+          ${
+            active
+            ? `
+              <div class="progress">
+                <div style="width:${progress/c[3]*100}%"></div>
+              </div>
+
+              <button class="btn btn-light"
+                onclick="cancelChallenge('${c[0]}')">
+                Parar desafio
+              </button>
+            `
+            :
+            `
+              <button
+                class="btn btn-green"
+                style="margin-top:10px"
+                onclick="startChallenge('${c[0]}',${c[3]},${c[4]})">
+                Começar
+              </button>
+            `
+          }
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function startChallenge(id,days,daily){
+
+  data.challenges=data.challenges.filter(c=>c.id!==id);
+
+  data.challenges.push({
+
+    id,
+    days,
+    daily,
+    start:todayKey()
+
+  });
+
+  saveData();
+
+  renderChallenges();
+
+  showToast("Desafio iniciado! 🔥");
+
+}
+
+
+function cancelChallenge(id){
+
+  data.challenges=data.challenges.filter(c=>c.id!==id);
+
+  saveData();
+
+  renderChallenges();
+
+  showToast("Desafio encerrado.");
+
+}
+
+
+/* =========================
+   SIMULADOR
+   ========================= */
+
+function simulate(){
+
+  const target=Number(
+    document.getElementById("simTarget").value
+  );
+
+  const daily=Number(
+    document.getElementById("simDaily").value
+  );
+
+  const result=document.getElementById("simResult");
+
+  if(target<=0 || daily<=0){
+
+    result.innerHTML=`
+      <div class="card" style="margin-top:12px">
+        Informe valores maiores que zero.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const days=Math.ceil(target/daily);
+
+  const date=new Date();
+
+  date.setDate(date.getDate()+days);
+
+  result.innerHTML=`
+
+    <div class="card" style="margin-top:12px">
+
+      <strong>Resultado da simulação</strong>
+
+      <p style="margin-top:10px">
+        Você precisaria guardar
+        <strong>${money(daily)}</strong>
+        por dia.
+      </p>
+
+      <p style="margin-top:8px">
+        Tempo estimado:
+        <strong>${days} dias</strong>.
+      </p>
+
+      <p style="margin-top:8px">
+        Data estimada:
+        <strong>${formatDate(date)}</strong>
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   CONQUISTAS
+   ========================= */
+
+function renderAchievements(){
+
+  const total=totalSaved();
+
+  const achievements=[
+
+    [
+      "🎯",
+      "Primeira meta",
+      data.goals.length>=1
+    ],
+
+    [
+      "💰",
+      "Primeiros R$ 100",
+      total>=100
+    ],
+
+    [
+      "🔥",
+      "7 dias de sequência",
+      calculateStreak()>=7
+    ],
+
+    [
+      "🏆",
+      "30 dias de sequência",
+      calculateStreak()>=30
+    ],
+
+    [
+      "💎",
+      "Primeiros R$ 1.000",
+      total>=1000
+    ],
+
+    [
+      "🚀",
+      "Meta concluída",
+      data.goals.some(g=>goalSaved(g.id)>=g.target)
+    ]
+
+  ];
+
+  document.getElementById("achievementsContent").innerHTML=
+    achievements.map(a=>`
+
+      <div class="challenge ${a[2] ? "" : "locked"}">
+
+        <div style="font-size:30px">${a[0]}</div>
+
+        <strong>${a[1]}</strong>
+
+        <p style="font-size:12px;color:#77818d;margin-top:5px">
+          ${a[2] ? "Conquista desbloqueada! 🎉" : "Continue economizando para desbloquear."}
+        </p>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+/* =========================
+   FORMATAÇÃO
+   ========================= */
+
+function formatDate(value){
+
+  const d=new Date(value+"T12:00:00");
+
+  if(isNaN(d))return value;
+
+  return d.toLocaleDateString("pt-BR");
+
+}
+
+
+function escapeHTML(text){
+
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   RESET
+   ========================= */
+
+function resetApp(){
+
+  if(!confirm(
+    "Isso vai apagar todas as metas e depósitos deste aparelho. Continuar?"
+  ))return;
+
+  localStorage.removeItem(STORAGE_KEY);
+
+  location.reload();
+
+}
+
+
+/* =========================
+   ATUALIZAÇÃO GERAL
+   ========================= */
+
+function renderAll(){
+
+  updateDashboard();
+
+  renderGoals();
+
+  prepareDepositForm();
+
+  drawChart();
+
+}
+
+
+/* =========================
+   INICIAR
+   ========================= */
+
+loadData();
+
+renderAll();
+
+window.addEventListener("resize",drawChart);
+
+</script>
+
+</body>
+                                    </html>
