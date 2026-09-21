@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -6,9 +7,7 @@
 <meta name="theme-color" content="#16a34a">
 <meta name="description" content="Minha Meta: guarde um pouco por dia e acompanhe seus sonhos.">
 <link rel="manifest" href="manifest.json">
-<title>Minha Meta</title>
-
-<style>
+<title>Minha Meta</title><style>
 :root{--green:#16a34a;--green2:#15803d;--dark:#10251b;--bg:#f3f7f4;--card:#fff;--muted:#64748b;--line:#e5e7eb;--gold:#f59e0b;--red:#b91c1c}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:#172033}
@@ -166,46 +165,89 @@ label{color:#172033;font-weight:700}
 .pay-close{border:0;background:#eef2f0;border-radius:12px;padding:12px;width:100%;font-weight:800;margin-top:8px}
 .pay-real{border:0;background:#16a34a;color:#fff;border-radius:14px;padding:15px;width:100%;font-weight:900;margin-top:8px}
 .pro-active{background:#eaf8ef;border:1px solid #b9e4c5;color:#116b35;border-radius:16px;padding:14px;font-weight:800;margin-top:16px}
-</style>
-</head>
 
-<body>
-
-<div class="pro-banner">
+/* CARD DE COMPARTILHAMENTO */
+.share-card{
+  margin-top:16px;
+  padding:18px;
+  border-radius:22px;
+  background:linear-gradient(135deg,#ecfdf3,#ffffff);
+  border:1px solid #bbf7d0;
+  box-shadow:0 7px 22px #10251b0b;
+}
+.share-card-content{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.share-icon{
+  width:54px;
+  height:54px;
+  border-radius:17px;
+  background:#16a34a;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:27px;
+  flex:none;
+  box-shadow:0 7px 16px #16a34a35;
+}
+.share-card h3{
+  margin:0 0 4px;
+  font-size:18px;
+  color:#10251b;
+}
+.share-card p{
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.4;
+}
+.share-btn{
+  width:100%;
+  margin-top:14px;
+  border:0;
+  border-radius:14px;
+  padding:14px;
+  background:#16a34a;
+  color:#fff;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+}
+.share-btn:active{
+  transform:scale(.98);
+}
+</style></head><body><div class="pro-banner">
   <h2>⭐ Minha Meta PRO</h2>
   <p>Tenha mais controle, mais metas e um plano completo para chegar onde você quer.</p>
   <div class="pro-price">
     R$ 9,90 <span style="font-size:14px;font-weight:500">/mês</span>
   </div>
   <button class="pro-btn" onclick="openPro()">Conhecer o PRO</button>
-</div>
-
-<div class="pro-modal" id="proModal" onclick="if(event.target===this)closePro()">
+</div><div class="pro-modal" id="proModal" onclick="if(event.target===this)closePro()">
   <div class="pro-card">
-    <button class="pro-close" onclick="closePro()">✕</button>
+    <button class="pro-close" onclick="closePro()">✕</button><h2>⭐ Minha Meta PRO</h2>
+<p>Desbloqueie o máximo do seu planejamento financeiro.</p>
 
-    <h2>⭐ Minha Meta PRO</h2>
-    <p>Desbloqueie o máximo do seu planejamento financeiro.</p>
+<div class="pro-feature">♾️ <b>Metas ilimitadas</b></div>
+<div class="pro-feature">📊 <b>Gráficos e relatórios completos</b></div>
+<div class="pro-feature">🔔 <b>Lembretes personalizados</b></div>
+<div class="pro-feature">🎯 <b>Planos automáticos adaptativos</b></div>
+<div class="pro-feature">🏆 <b>Desafios e conquistas exclusivas</b></div>
+<div class="pro-feature">☁️ <b>Backup e sincronização</b></div>
+<div class="pro-feature">🚫 <b>Sem anúncios</b></div>
 
-    <div class="pro-feature">♾️ <b>Metas ilimitadas</b></div>
-    <div class="pro-feature">📊 <b>Gráficos e relatórios completos</b></div>
-    <div class="pro-feature">🔔 <b>Lembretes personalizados</b></div>
-    <div class="pro-feature">🎯 <b>Planos automáticos adaptativos</b></div>
-    <div class="pro-feature">🏆 <b>Desafios e conquistas exclusivas</b></div>
-    <div class="pro-feature">☁️ <b>Backup e sincronização</b></div>
-    <div class="pro-feature">🚫 <b>Sem anúncios</b></div>
+<button class="pro-cta" onclick="openPay()">
+  Começar meu PRO
+</button>
 
-    <button class="pro-cta" onclick="openPay()">
-      Começar meu PRO
-    </button>
-
-    <div class="pro-note">
-      7 dias grátis • assinatura pelo Mercado Pago
-    </div>
-  </div>
+<div class="pro-note">
+  7 dias grátis • assinatura pelo Mercado Pago
 </div>
 
-<script>
+  </div>
+</div><script>
 function openPro(){
   var m=document.getElementById('proModal');
   if(m)m.className='pro-modal show';
@@ -215,65 +257,56 @@ function closePro(){
   var m=document.getElementById('proModal');
   if(m)m.className='pro-modal';
 }
-</script>
-
-<div class="splash" id="splash">
+</script><div class="splash" id="splash">
   <div>
     <div class="logoMark">🎯</div>
     <h1>Minha Meta</h1>
     <p>Transforme um sonho em um plano.</p>
     <div class="loader"><i></i></div>
   </div>
-</div>
-
-<div class="welcome" id="welcome">
+</div><div class="welcome" id="welcome">
   <div class="sheet">
-    <div class="logoMark" style="background:#ecfdf3;border-color:#bbf7d0;color:#15803d;width:70px;height:70px;font-size:35px">🎯</div>
+    <div class="logoMark" style="background:#ecfdf3;border-color:#bbf7d0;color:#15803d;width:70px;height:70px;font-size:35px">🎯</div><h2>Seu dinheiro. Sua meta. Seu plano.</h2>
 
-    <h2>Seu dinheiro. Sua meta. Seu plano.</h2>
+<p class="sub">
+  Escolha o que você quer conquistar, diga quanto precisa e até quando.
+  O Minha Meta calcula um caminho simples para você chegar lá.
+</p>
 
-    <p class="sub">
-      Escolha o que você quer conquistar, diga quanto precisa e até quando.
-      O Minha Meta calcula um caminho simples para você chegar lá.
-    </p>
-
-    <div class="checklist">
-      <div class="check">🎯 <b>Escolha sua meta</b> — moto, carro, casa, viagem e mais.</div>
-      <div class="check">🧮 <b>Receba seu plano</b> — saiba quanto guardar por dia e por mês.</div>
-      <div class="check">🔥 <b>Acompanhe o ritmo</b> — registre cada depósito e veja seu progresso.</div>
-    </div>
-
-    <button class="btn primary full" onclick="finishIntro()">
-      Começar minha primeira meta
-    </button>
-  </div>
+<div class="checklist">
+  <div class="check">🎯 <b>Escolha sua meta</b> — moto, carro, casa, viagem e mais.</div>
+  <div class="check">🧮 <b>Receba seu plano</b> — saiba quanto guardar por dia e por mês.</div>
+  <div class="check">🔥 <b>Acompanhe o ritmo</b> — registre cada depósito e veja seu progresso.</div>
 </div>
 
-<div class="app">
+<button class="btn primary full" onclick="finishIntro()">
+  Começar minha primeira meta
+</button>
 
-<header class="top">
+  </div>
+</div><div class="app"><header class="top">
   <div class="toprow">
     <div>
       <div class="brand">💰 Minha Meta</div>
       <div class="tag">Um pouco por dia. Uma conquista de cada vez.</div>
-    </div>
-
-    <!-- COMPARTILHAR ADICIONADO -->
-    <div style="display:flex;gap:8px">
-      <button class="iconbtn" onclick="compartilharMinhaMeta()">📤</button>
-      <button class="iconbtn" onclick="openAbout()">?</button>
-    </div>
+    </div><button class="iconbtn" onclick="openAbout()">?</button>
 
   </div>
-</header>
+</header><main class="wrap"><section id="home" class="screen active">
+  <div id="homeContent"></div>  <div class="share-card">
+    <div class="share-card-content">
+      <div class="share-icon">📤</div>  <div>
+    <h3>Compartilhe o Minha Meta</h3>
+    <p>Convide alguém para começar a guardar dinheiro também.</p>
+  </div>
+</div>
 
-<main class="wrap">
+<button class="share-btn" onclick="compartilharMinhaMeta()">
+  📤 Compartilhar
+</button>
 
-<section id="home" class="screen active">
-  <div id="homeContent"></div>
-</section>
-
-<section id="goals" class="screen">
+  </div>
+</section><section id="goals" class="screen">
   <div class="row">
     <div>
       <h2 class="sectiontitle">Minhas metas</h2>
@@ -282,89 +315,71 @@ function closePro(){
     <button class="btn primary" onclick="openCreate()">+ Meta</button>
   </div>
   <div id="goalsList"></div>
-</section>
-
-<section id="create" class="screen">
-  <h2 class="sectiontitle" id="createTitle">Criar uma meta</h2>
-
-  <div class="card">
+</section><section id="create" class="screen">
+  <h2 class="sectiontitle" id="createTitle">Criar uma meta</h2>  <div class="card">
     <label class="label">Escolha o objetivo</label>
-    <div class="choice" id="choices"></div>
+    <div class="choice" id="choices"></div><label class="label">Nome da meta</label>
+<input class="input" id="goalName" placeholder="Ex.: Minha moto">
 
-    <label class="label">Nome da meta</label>
-    <input class="input" id="goalName" placeholder="Ex.: Minha moto">
+<label class="label">Quanto você quer juntar?</label>
+<input class="input" id="goalTarget" type="number" step="0.01" inputmode="decimal" placeholder="15000" oninput="previewPlan()">
 
-    <label class="label">Quanto você quer juntar?</label>
-    <input class="input" id="goalTarget" type="number" step="0.01" inputmode="decimal" placeholder="15000" oninput="previewPlan()">
+<label class="label">Quanto já tem guardado?</label>
+<input class="input" id="goalInitial" type="number" step="0.01" inputmode="decimal" placeholder="0" oninput="previewPlan()">
 
-    <label class="label">Quanto já tem guardado?</label>
-    <input class="input" id="goalInitial" type="number" step="0.01" inputmode="decimal" placeholder="0" oninput="previewPlan()">
+<label class="label">Até quando?</label>
+<input class="input" id="goalDate" type="date" oninput="previewPlan()">
 
-    <label class="label">Até quando?</label>
-    <input class="input" id="goalDate" type="date" oninput="previewPlan()">
+<div id="planPreview"></div>
 
-    <div id="planPreview"></div>
+<button class="btn primary full" onclick="saveGoal()" id="saveGoalBtn">
+  Criar minha meta
+</button>
 
-    <button class="btn primary full" onclick="saveGoal()" id="saveGoalBtn">
-      Criar minha meta
-    </button>
+<button class="btn secondary full" onclick="show('goals')">
+  Cancelar
+</button>
 
-    <button class="btn secondary full" onclick="show('goals')">
-      Cancelar
-    </button>
   </div>
-</section>
-
-<section id="detail" class="screen">
+</section><section id="detail" class="screen">
   <button class="btn secondary" onclick="show('goals')">← Voltar</button>
   <div id="detailContent"></div>
-</section>
-
-<section id="challenges" class="screen">
+</section><section id="challenges" class="screen">
   <h2 class="sectiontitle">🔥 Desafios</h2>
   <div class="sub">Escolha um ritmo e comece sem esperar sobrar dinheiro.</div>
-  <div id="challengeList"></div>
-
-  <div class="card">
+  <div id="challengeList"></div>  <div class="card">
     <h3 style="margin-top:0">💡 Dica</h3>
     <p class="sub">
       Você não precisa começar alto. R$ 5 por dia já são R$ 150 em 30 dias.
     </p>
   </div>
-</section>
-
-<section id="reminders" class="screen">
+</section><section id="reminders" class="screen">
   <h2 class="sectiontitle">🔔 Lembretes</h2>
   <div class="sub">
     Receba um aviso para não esquecer de guardar dinheiro para sua meta.
-  </div>
-
-  <div class="card">
+  </div>  <div class="card">
     <div class="reminderbox">
       <div>
         <b>Lembrete diário</b>
         <div class="sub">Ativar notificação no horário escolhido</div>
       </div>
       <button class="switch" id="reminderSwitch" onclick="toggleReminder()"></button>
-    </div>
+    </div><div style="margin-top:18px">
+  <label class="label">Horário do lembrete</label>
+  <input class="timeinput" id="reminderTime" type="time" value="20:00" onchange="saveReminderTime()">
+</div>
 
-    <div style="margin-top:18px">
-      <label class="label">Horário do lembrete</label>
-      <input class="timeinput" id="reminderTime" type="time" value="20:00" onchange="saveReminderTime()">
-    </div>
+<div class="reminderstatus" id="reminderStatus">Desativado</div>
 
-    <div class="reminderstatus" id="reminderStatus">Desativado</div>
+<button class="btn primary full" style="margin-top:16px" onclick="requestReminder()">
+  Ativar lembrete
+</button>
 
-    <button class="btn primary full" style="margin-top:16px" onclick="requestReminder()">
-      Ativar lembrete
-    </button>
+<p class="sub" style="margin-top:12px">
+  Mensagem: “Hora de cuidar da sua meta! 💰 Separe um pouco hoje e continue no seu plano.”
+</p>
 
-    <p class="sub" style="margin-top:12px">
-      Mensagem: “Hora de cuidar da sua meta! 💰 Separe um pouco hoje e continue no seu plano.”
-    </p>
-  </div>
-
-  <div class="card">
+  </div>  <div class="card">
     <h3 style="margin-top:0">⚠️ Sobre as notificações</h3>
     <p class="sub">
       O celular precisa permitir notificações para o Minha Meta.
@@ -372,64 +387,46 @@ function closePro(){
       Para notificações confiáveis mesmo fechado, a próxima etapa é instalar o Minha Meta como PWA/APK.
     </p>
   </div>
-</section>
-
-<section id="ranking" class="screen">
+</section><section id="ranking" class="screen">
   <h2 class="sectiontitle">🏆 Ranking</h2>
   <div class="sub">
     Uma competição saudável para incentivar você a continuar guardando.
-  </div>
-
-  <div class="card">
+  </div>  <div class="card">
     <b>👤 Seu apelido</b>
-    <div class="sub">Use um nome que não revele sua identidade.</div>
+    <div class="sub">Use um nome que não revele sua identidade.</div><input class="input" id="rankingNick" maxlength="20" placeholder="Ex.: FocoTotal" style="margin-top:10px">
 
-    <input class="input" id="rankingNick" maxlength="20" placeholder="Ex.: FocoTotal" style="margin-top:10px">
+<button class="btn primary full" onclick="saveRankingNick()">
+  Salvar apelido
+</button>
 
-    <button class="btn primary full" onclick="saveRankingNick()">
-      Salvar apelido
-    </button>
-  </div>
-
-  <div class="card">
+  </div>  <div class="card">
     <div class="row">
       <div>
         <h3 style="margin:0">💰 Ranking de quem mais guardou</h3>
         <div class="sub">Veja quanto cada participante já conseguiu guardar.</div>
       </div>
       <span style="font-size:28px">🎯</span>
-    </div>
+    </div><div id="rankingList" style="margin-top:12px"></div>
 
-    <div id="rankingList" style="margin-top:12px"></div>
+<div class="notice success">
+  💡 Os valores exibidos no ranking são demonstrativos nesta versão.
+  Para mostrar usuários reais, vamos conectar o ranking ao banco de dados.
+</div>
 
-    <div class="notice success">
-      💡 Os valores exibidos no ranking são demonstrativos nesta versão.
-      Para mostrar usuários reais, vamos conectar o ranking ao banco de dados.
-    </div>
   </div>
-</section>
-
-<section id="achievements" class="screen">
+</section><section id="achievements" class="screen">
   <h2 class="sectiontitle">🏆 Conquistas</h2>
   <div class="sub">
     Cada depósito conta. Vá desbloqueando seus marcos.
-  </div>
-
-  <div class="card">
+  </div>  <div class="card">
     <div class="ring" id="overallRing">
       <div class="ringtxt" id="overallRingTxt">0%</div>
     </div>
     <p style="text-align:center;margin-bottom:0" class="sub">
       Progresso de todas as suas metas
     </p>
-  </div>
-
-  <div class="badgegrid" id="badges"></div>
-</section>
-
-</main>
-
-<nav class="nav">
+  </div>  <div class="badgegrid" id="badges"></div>
+</section></main><nav class="nav">
   <button id="navHome" onclick="show('home')"><span>🏠</span>Início</button>
   <button id="navGoals" onclick="show('goals')"><span>🎯</span>Metas</button>
   <button id="navChallenges" onclick="show('challenges')"><span>🔥</span>Desafios</button>
@@ -437,11 +434,7 @@ function closePro(){
   <button id="navAchievements" onclick="show('achievements')"><span>🏆</span>Conquistas</button>
   <button id="navRanking" onclick="show('ranking')"><span>🏅</span>Ranking</button>
   <button onclick="openCreate()"><span>➕</span>Nova</button>
-</nav>
-
-</div>
-
-<div class="modal" id="modal">
+</nav></div><div class="modal" id="modal">
   <div class="sheet">
     <h2>Sobre o Minha Meta</h2>
     <p class="sub">
@@ -453,9 +446,7 @@ function closePro(){
     </p>
     <button class="btn primary full" onclick="closeAbout()">Entendi</button>
   </div>
-</div>
-
-<div class="modal" id="planModal">
+</div><div class="modal" id="planModal">
   <div class="sheet">
     <div style="font-size:40px">🎯</div>
     <h2 id="planTitle">Seu plano está pronto!</h2>
@@ -467,11 +458,7 @@ function closePro(){
       Começar a guardar
     </button>
   </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
+</div><div class="toast" id="toast"></div><script>
 const types=[
   ['🏍️','Moto'],
   ['🚗','Carro'],
@@ -533,7 +520,6 @@ function toast(t){
   setTimeout(()=>$('toast').classList.remove('show'),1900)
 }
 
-/* COMPARTILHAMENTO ADICIONADO */
 function compartilharMinhaMeta(){
 
   const link="https://minhameta.onrender.com";
@@ -1729,403 +1715,231 @@ function initReminders(){
 try{
   initReminders()
 }catch(e){}
-</script>
-
-<!-- MODAL DE PAGAMENTO -->
-<div
+</script><div
   class="pay-modal"
   id="payModal"
-  onclick="if(event.target===this)closePay()">
+  onclick="if(event.target===this)closePay()">  <div class="pay-box"><h3>⭐ Ativar Minha Meta PRO</h3>
 
-  <div class="pay-box">
+<div
+  id="payStatus"
+  style="color:#64748b;font-size:13px;margin-bottom:14px">
 
-    <h3>⭐ Ativar Minha Meta PRO</h3>
-
-    <div
-      id="payStatus"
-      style="color:#64748b;font-size:13px;margin-bottom:14px">
-
-      Digite o e-mail que será usado na assinatura do Mercado Pago.
-    </div>
-
-    <label
-      class="label"
-      style="margin-top:0">
-
-      E-mail da sua assinatura
-    </label>
-
-    <input
-      class="input"
-      id="proEmail"
-      type="email"
-      inputmode="email"
-      autocomplete="email"
-      placeholder="seu@email.com"
-      style="margin-bottom:10px">
-
-    <div class="pro-plan">
-
-      <span class="best">
-        7 DIAS GRÁTIS
-      </span>
-
-      <h3>PRO Mensal</h3>
-
-      <div class="pro-plan-price">
-        R$ 9,90 <small>/mês</small>
-      </div>
-
-      <div style="font-size:13px;color:#475569">
-        Cobrança recorrente pelo Mercado Pago.
-      </div>
-
-    </div>
-
-    <div class="pay-method">
-      <b>💳 Cartão</b>
-      <span>
-        Pagamento recorrente e renovação automática.
-      </span>
-    </div>
-
-    <button
-      class="pay-real"
-      onclick="startCheckout()">
-
-      Continuar para pagamento
-    </button>
-
-    <button
-      class="pay-real"
-      style="background:#0f766e;margin-top:8px"
-      onclick="verifyPro()">
-
-      Já assinei — verificar PRO
-    </button>
-
-    <button
-      class="pay-close"
-      onclick="closePay()">
-
-      Agora não
-    </button>
-
-    <div class="pro-note">
-      Pagamento e assinatura pelo Mercado Pago.
-      Depois da assinatura, você poderá voltar ao Minha Meta PRO
-      para confirmar seu acesso.
-    </div>
-
-  </div>
+  Digite o e-mail que será usado na assinatura do Mercado Pago.
 </div>
 
-<script>
+<label
+  class="label"
+  style="margin-top:0">
+
+  E-mail da sua assinatura
+</label>
+
+<input
+  class="input"
+  id="proEmail"
+  type="email"
+  inputmode="email"
+  autocomplete="email"
+  placeholder="seu@email.com"
+  style="margin-bottom:10px">
+
+<div class="pro-plan">
+
+  <span class="best">
+    7 DIAS GRÁTIS
+  </span>
+
+  <h3>PRO Mensal</h3>
+
+  <div class="pro-plan-price">
+    R$ 9,90 <small>/mês</small>
+  </div>
+
+  <div style="font-size:13px;color:#475569">
+    Cobrança recorrente pelo Mercado Pago.
+  </div>
+
+</div>
+
+<div class="pay-method">
+  <b>💳 Cartão</b>
+  <span>
+    Pagamento recorrente e renovação automática.
+  </span>
+</div>
+
+<button
+  class="pay-real"
+  onclick="startCheckout()">
+
+  Continuar para pagamento
+</button>
+
+<button
+  class="pay-real"
+  style="background:#0f766e;margin-top:8px"
+  onclick="verifyPro()">
+
+  Já assinei — verificar PRO
+</button>
+
+<button
+  class="pay-close"
+  onclick="closePay()">
+
+  Agora não
+</button>
+
+<div class="pro-note">
+  Pagamento e assinatura pelo Mercado Pago.
+  Depois da assinatura, você poderá voltar ao Minha Meta PRO
+  para confirmar seu acesso.
+</div>
+
+  </div>
+</div><script>
 (function(){
 
-  /* ==========================
-     CONFIGURAÇÃO
-  ========================== */
-
-  const EMAIL_KEY =
-    "minha_meta_email";
-
-  const PRO_KEY =
-    "minha_meta_pro";
-
-  const OLD_PRO_KEY =
-    "mm_pro";
-
-  const API_URL =
-    "https://minha-meta-pro-api.onrender.com";
-
-  const MERCADO_PAGO_LINK =
-    "https://mpago.la/2aCGpLb";
-
-
-  /* ==========================
-     COMPATIBILIDADE COM VERSÃO ANTIGA
-  ========================== */
+  const EMAIL_KEY="minha_meta_email";
+  const PRO_KEY="minha_meta_pro";
+  const OLD_PRO_KEY="mm_pro";
+  const API_URL="https://minha-meta-pro-api.onrender.com";
+  const MERCADO_PAGO_LINK="https://mpago.la/2aCGpLb";
 
   try{
-
     if(
       localStorage.getItem(OLD_PRO_KEY)==="1" &&
       !localStorage.getItem(PRO_KEY)
     ){
-
-      localStorage.setItem(
-        PRO_KEY,
-        "true"
-      );
-
+      localStorage.setItem(PRO_KEY,"true");
     }
-
   }catch(e){}
-
-
-  /* ==========================
-     ESTADO PRO
-  ========================== */
 
   window.mmPro=false;
 
   try{
-
     window.mmPro=
       localStorage.getItem(PRO_KEY)==="true";
-
   }catch(e){
-
     window.mmPro=false;
-
   }
-
-
-  /* ==========================
-     ABRIR TELA DE PAGAMENTO
-  ========================== */
 
   window.openPay=function(){
 
-    var modal=
-      document.getElementById(
-        "payModal"
-      );
-
+    var modal=document.getElementById("payModal");
     if(!modal)return;
 
-
-    var input=
-      document.getElementById(
-        "proEmail"
-      );
-
-
-    /* Recupera e-mail já salvo */
+    var input=document.getElementById("proEmail");
 
     try{
+      var email=localStorage.getItem(EMAIL_KEY);
 
-      var email=
-        localStorage.getItem(
-          EMAIL_KEY
-        );
-
-      if(
-        email&&
-        input
-      ){
-
+      if(email&&input){
         input.value=email;
-
       }
 
     }catch(e){}
 
-
-    modal.className=
-      "pay-modal show";
-
+    modal.className="pay-modal show";
   };
-
-
-  /* ==========================
-     ABRIR PRO
-  ========================== */
 
   window.openProReal=function(){
-
     window.openPay();
-
   };
-
-
-  /* ==========================
-     FECHAR PAGAMENTO
-  ========================== */
 
   window.closePay=function(){
 
-    var modal=
-      document.getElementById(
-        "payModal"
-      );
+    var modal=document.getElementById("payModal");
 
     if(modal){
-
-      modal.className=
-        "pay-modal";
-
+      modal.className="pay-modal";
     }
 
   };
 
-
-  /* ==========================
-     IR PARA MERCADO PAGO
-  ========================== */
-
   window.startCheckout=function(){
 
-    var input=
-      document.getElementById(
-        "proEmail"
-      );
+    var input=document.getElementById("proEmail");
+    var status=document.getElementById("payStatus");
 
-    var status=
-      document.getElementById(
-        "payStatus"
-      );
-
-    var email=
-      (
-        input&&
-        input.value||
-        ""
-      )
-      .trim()
-      .toLowerCase();
-
+    var email=(
+      input&&
+      input.value||
+      ""
+    ).trim().toLowerCase();
 
     if(!email){
 
       if(status){
-
         status.textContent=
           "Digite seu e-mail antes de continuar.";
-
       }
 
-      if(input)
-        input.focus();
+      if(input)input.focus();
 
       return;
-
     }
 
-
-    /* Salva o e-mail */
-
     try{
-
       localStorage.setItem(
         EMAIL_KEY,
         email
       );
-
     }catch(e){}
 
-
     if(status){
-
       status.textContent=
         "Abrindo Mercado Pago...";
-
     }
-
-
-    /*
-      IMPORTANTE:
-      Usamos a mesma janela.
-      Assim, quando o Mercado Pago
-      retornar para o site, o usuário
-      continua no mesmo fluxo.
-    */
 
     window.location.href=
       MERCADO_PAGO_LINK;
-
   };
-
-
-  /* ==========================
-     VERIFICAR ASSINATURA
-  ========================== */
 
   window.verifyPro=function(){
 
-    var input=
-      document.getElementById(
-        "proEmail"
-      );
+    var input=document.getElementById("proEmail");
+    var status=document.getElementById("payStatus");
 
-    var status=
-      document.getElementById(
-        "payStatus"
-      );
-
-    var email=
-      (
-        input&&
-        input.value||
-        ""
-      )
-      .trim()
-      .toLowerCase();
-
-
-    /* Se o campo estiver vazio,
-       tenta usar o e-mail salvo */
+    var email=(
+      input&&
+      input.value||
+      ""
+    ).trim().toLowerCase();
 
     if(!email){
 
       try{
-
         email=
           localStorage.getItem(
             EMAIL_KEY
           )||"";
-
       }catch(e){}
-
     }
-
 
     if(!email){
 
       if(status){
-
         status.textContent=
           "Digite o e-mail usado na assinatura.";
-
       }
 
-      if(input)
-        input.focus();
+      if(input)input.focus();
 
       return;
-
     }
 
-
-    /* Salva o e-mail */
-
     try{
-
       localStorage.setItem(
         EMAIL_KEY,
         email
       );
-
     }catch(e){}
 
-
     if(status){
-
       status.textContent=
         "Abrindo sua área PRO...";
-
     }
-
-
-    /*
-      A verificação da assinatura e
-      o login/criação da conta agora
-      acontecem dentro do meta-pro.html.
-
-      O index.html não consulta mais
-      o Mercado Pago diretamente aqui.
-    */
 
     setTimeout(function(){
 
@@ -2136,9 +1950,6 @@ try{
 
   };
 
-
 })();
-</script>
-
-</body>
+</script></body>
   </html>
