@@ -257,7 +257,13 @@ function closePro(){
       <div class="brand">💰 Minha Meta</div>
       <div class="tag">Um pouco por dia. Uma conquista de cada vez.</div>
     </div>
-    <button class="iconbtn" onclick="openAbout()">?</button>
+
+    <!-- COMPARTILHAR ADICIONADO -->
+    <div style="display:flex;gap:8px">
+      <button class="iconbtn" onclick="compartilharMinhaMeta()">📤</button>
+      <button class="iconbtn" onclick="openAbout()">?</button>
+    </div>
+
   </div>
 </header>
 
@@ -525,6 +531,50 @@ function toast(t){
   $('toast').textContent=t;
   $('toast').classList.add('show');
   setTimeout(()=>$('toast').classList.remove('show'),1900)
+}
+
+/* COMPARTILHAMENTO ADICIONADO */
+function compartilharMinhaMeta(){
+
+  const link="https://minhameta.onrender.com";
+
+  const texto=
+    "Estou usando o Minha Meta para organizar minhas metas e economizar. " +
+    "Conheça também: "+link;
+
+  if(navigator.share){
+
+    navigator.share({
+      title:"Minha Meta",
+      text:texto,
+      url:link
+    }).catch(function(e){
+      console.log("Compartilhamento cancelado:",e);
+    });
+
+  }else{
+
+    if(navigator.clipboard){
+
+      navigator.clipboard.writeText(link)
+        .then(function(){
+          toast("Link copiado! Agora é só compartilhar.");
+        })
+        .catch(function(){
+          toast("Não foi possível copiar o link.");
+        });
+
+    }else{
+
+      prompt(
+        "Copie o link do Minha Meta:",
+        link
+      );
+
+    }
+
+  }
+
 }
 
 function show(id){
