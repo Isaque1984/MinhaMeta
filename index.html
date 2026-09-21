@@ -1138,6 +1138,7 @@ function renderDetail(){
                 <button onclick="removeDeposit(event,${g.id},${i})">
                   ↶
                 </button>
+
               </span>
 
             </div>`
@@ -1991,7 +1992,7 @@ try{
      VERIFICAR ASSINATURA
   ========================== */
 
-  window.verifyPro=async function(){
+  window.verifyPro=function(){
 
     var input=
       document.getElementById(
@@ -2039,6 +2040,9 @@ try{
 
       }
 
+      if(input)
+        input.focus();
+
       return;
 
     }
@@ -2059,91 +2063,26 @@ try{
     if(status){
 
       status.textContent=
-        "Verificando sua assinatura...";
+        "Abrindo sua área PRO...";
 
     }
 
 
-    try{
+    /*
+      A verificação da assinatura e
+      o login/criação da conta agora
+      acontecem dentro do meta-pro.html.
 
-      const resposta=
-        await fetch(
-          API_URL+
-          "/verificar-pro?email="+
-          encodeURIComponent(email)
-        );
+      O index.html não consulta mais
+      o Mercado Pago diretamente aqui.
+    */
 
+    setTimeout(function(){
 
-      const dados=
-        await resposta.json();
+      window.location.href=
+        "./meta-pro.html";
 
-
-      if(!resposta.ok){
-
-        throw new Error(
-          dados.detail||
-          "Erro ao verificar assinatura."
-        );
-
-      }
-
-
-      if(dados.pro===true){
-
-        /* Libera PRO */
-
-        try{
-
-          localStorage.setItem(
-            PRO_KEY,
-            "true"
-          );
-
-        }catch(e){}
-
-
-        window.mmPro=true;
-
-
-        closePay();
-
-
-        if(window.toast){
-
-          window.toast(
-            "Minha Meta PRO ativado com sucesso! 🎉"
-          );
-
-        }
-
-      }else{
-
-        if(status){
-
-          status.textContent=
-            "Assinatura não encontrada ou ainda não está ativa. Confira o e-mail usado no Mercado Pago.";
-
-        }
-
-      }
-
-
-    }catch(erro){
-
-      console.error(
-        "Erro ao verificar PRO:",
-        erro
-      );
-
-
-      if(status){
-
-        status.textContent=
-          "Não foi possível verificar agora. Tente novamente em alguns segundos.";
-
-      }
-
-    }
+    },300);
 
   };
 
@@ -2152,4 +2091,4 @@ try{
 </script>
 
 </body>
-    </html>
+  </html>
