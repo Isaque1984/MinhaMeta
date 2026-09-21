@@ -126,10 +126,6 @@
       padding: 35px 10px;
     }
 
-    .pro-content {
-      display: none;
-    }
-
     .feature {
       display: flex;
       gap: 12px;
@@ -161,6 +157,26 @@
       text-decoration: none;
       font-weight: bold;
     }
+
+    .small {
+      text-align: center;
+      font-size: 14px;
+      color: #66736b;
+      margin-top: 14px;
+    }
+
+    .link-button {
+      background: none;
+      border: 0;
+      color: #16834a;
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 
@@ -175,26 +191,31 @@
     >
 
     <h1>Minha Meta PRO</h1>
-    <div class="subtitle">Seu plano para alcançar seus objetivos.</div>
+    <div class="subtitle">
+      Seu plano para alcançar seus objetivos.
+    </div>
   </div>
 
   <div class="container">
 
-    <!-- VERIFICAÇÃO -->
+    <!-- VERIFICANDO SESSÃO -->
     <div id="checking" class="card loading">
-      <h2>🔐 Verificando seu acesso</h2>
+      <h2>🔐 Entrando no PRO</h2>
       <p id="checkingText">
-        Aguarde enquanto verificamos sua assinatura...
+        Verificando sua sessão...
       </p>
     </div>
 
-    <!-- ÁREA PARA INFORMAR E-MAIL -->
-    <div id="loginArea" class="card" style="display:none;">
 
-      <h2>Seu acesso PRO</h2>
+    <!-- LOGIN / CRIAÇÃO -->
+    <div id="loginArea" class="card hidden">
 
-      <p>
-        Digite o mesmo e-mail utilizado na assinatura do Minha Meta PRO.
+      <h2 id="formTitle">
+        🔐 Entrar no Minha Meta PRO
+      </h2>
+
+      <p id="formDescription">
+        Entre com seu e-mail e senha para acessar sua conta PRO.
       </p>
 
       <input
@@ -204,95 +225,75 @@
         autocomplete="email"
       >
 
-      <button class="btn-green" onclick="verificarPro()">
-        🔎 VERIFICAR MINHA ASSINATURA
+      <input
+        type="password"
+        id="password"
+        placeholder="Senha"
+        autocomplete="current-password"
+      >
+
+      <div id="confirmPasswordArea" class="hidden">
+
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder="Confirme sua senha"
+          autocomplete="new-password"
+        >
+
+      </div>
+
+      <button
+        id="mainButton"
+        class="btn-green"
+        onclick="entrarOuCriarConta()"
+      >
+        🔐 ENTRAR NO PRO
+      </button>
+
+      <button
+        id="toggleButton"
+        class="link-button"
+        onclick="alternarModo()"
+      >
+        Primeiro acesso? Criar minha conta PRO
       </button>
 
       <div id="status" class="status">
-        Informe seu e-mail para verificar.
+        Informe seus dados para continuar.
       </div>
 
     </div>
 
-    <!-- CONTEÚDO PRO -->
-    <div id="proContent" class="pro-content">
+
+    <!-- CONTEÚDO DE CONFIRMAÇÃO -->
+    <div id="proContent" class="hidden">
 
       <div class="card">
+
         <h2>🎉 PRO ativado!</h2>
 
         <p>
-          Sua assinatura foi confirmada. Agora você tem acesso aos recursos
-          PRO do Minha Meta.
+          Sua conta PRO está ativa. Você será encaminhado para sua área.
         </p>
 
         <div class="status success">
-          ✓ Assinatura ativa
-        </div>
-      </div>
-
-      <div class="card">
-
-        <h2>🚀 Recursos PRO</h2>
-
-        <div class="feature">
-          <div class="icon">🎯</div>
-          <div>
-            <strong>Metas avançadas</strong>
-            Organize seus objetivos financeiros com mais detalhes.
-          </div>
+          ✓ Acesso PRO confirmado
         </div>
 
-        <div class="feature">
-          <div class="icon">📊</div>
-          <div>
-            <strong>Acompanhamento completo</strong>
-            Visualize melhor sua evolução até atingir cada meta.
-          </div>
-        </div>
-
-        <div class="feature">
-          <div class="icon">🔥</div>
-          <div>
-            <strong>Sequência de economia</strong>
-            Acompanhe seus dias consecutivos economizando.
-          </div>
-        </div>
-
-        <div class="feature">
-          <div class="icon">🏆</div>
-          <div>
-            <strong>Conquistas</strong>
-            Desbloqueie conquistas conforme avança.
-          </div>
-        </div>
-
-        <div class="feature">
-          <div class="icon">💰</div>
-          <div>
-            <strong>Desafios de economia</strong>
-            Crie desafios para acelerar suas metas.
-          </div>
-        </div>
-
-      </div>
-
-      <div class="card">
-        <h2>📧 Sua conta</h2>
-
-        <p id="accountEmail"></p>
-
-        <button class="btn-light" onclick="verificarPro()">
-          🔄 ATUALIZAR ASSINATURA
-        </button>
       </div>
 
     </div>
 
+
     <div class="back">
-      <a href="./index.html">← Voltar para Minha Meta</a>
+      <a href="./index.html">
+        ← Voltar para Minha Meta
+      </a>
     </div>
 
   </div>
+
 
 <script>
 
@@ -305,81 +306,262 @@ const EMAIL_KEY =
 const PRO_KEY =
   "minha_meta_pro";
 
+const TOKEN_KEY =
+  "minha_meta_pro_token";
+
+
+let modoCriarConta = false;
+
+
+/* ================================
+   UTILIDADES
+================================ */
 
 function normalizarEmail(email) {
+
   return String(email || "")
     .trim()
     .toLowerCase();
+
 }
 
 
 function salvarEmail(email) {
+
   try {
+
     localStorage.setItem(
       EMAIL_KEY,
       normalizarEmail(email)
     );
+
   } catch (e) {
-    console.log("Não foi possível salvar o e-mail.");
+
+    console.log(
+      "Não foi possível salvar o e-mail."
+    );
+
   }
+
 }
 
 
 function obterEmail() {
+
   try {
+
     return normalizarEmail(
       localStorage.getItem(EMAIL_KEY)
     );
+
   } catch (e) {
+
     return "";
+
   }
+
+}
+
+
+function salvarToken(token) {
+
+  try {
+
+    localStorage.setItem(
+      TOKEN_KEY,
+      token
+    );
+
+  } catch (e) {
+
+    console.log(
+      "Não foi possível salvar a sessão."
+    );
+
+  }
+
+}
+
+
+function obterToken() {
+
+  try {
+
+    return localStorage.getItem(
+      TOKEN_KEY
+    ) || "";
+
+  } catch (e) {
+
+    return "";
+
+  }
+
+}
+
+
+function salvarPro() {
+
+  try {
+
+    localStorage.setItem(
+      PRO_KEY,
+      "true"
+    );
+
+  } catch (e) {}
+
 }
 
 
 function mostrarLogin() {
 
-  document.getElementById("checking").style.display =
-    "none";
+  document.getElementById(
+    "checking"
+  ).classList.add("hidden");
 
-  document.getElementById("loginArea").style.display =
-    "block";
+  document.getElementById(
+    "loginArea"
+  ).classList.remove("hidden");
 
   const email = obterEmail();
 
   if (email) {
-    document.getElementById("email").value = email;
+
+    document.getElementById(
+      "email"
+    ).value = email;
+
   }
+
 }
 
 
-/* ÚNICA ALTERAÇÃO: após confirmar o PRO,
-   o usuário vai para a área PRO completa. */
+/* ================================
+   ALTERNAR LOGIN / CRIAÇÃO
+================================ */
 
-function liberarPro(email) {
+function alternarModo() {
 
-  salvarEmail(email);
+  modoCriarConta =
+    !modoCriarConta;
 
-  try {
-    localStorage.setItem(
-      PRO_KEY,
-      "true"
+  const title =
+    document.getElementById(
+      "formTitle"
     );
-  } catch (e) {}
 
-  window.location.href = "./area-pro.html";
-}
+  const description =
+    document.getElementById(
+      "formDescription"
+    );
 
+  const confirmArea =
+    document.getElementById(
+      "confirmPasswordArea"
+    );
 
-async function verificarPro() {
+  const mainButton =
+    document.getElementById(
+      "mainButton"
+    );
 
-  const input =
-    document.getElementById("email");
+  const toggleButton =
+    document.getElementById(
+      "toggleButton"
+    );
 
   const status =
-    document.getElementById("status");
+    document.getElementById(
+      "status"
+    );
+
+
+  if (modoCriarConta) {
+
+    title.textContent =
+      "🚀 Criar minha conta PRO";
+
+    description.textContent =
+      "Use o mesmo e-mail utilizado na assinatura do Minha Meta PRO.";
+
+    confirmArea.classList.remove(
+      "hidden"
+    );
+
+    mainButton.textContent =
+      "🚀 CRIAR MINHA CONTA PRO";
+
+    toggleButton.textContent =
+      "Já tenho uma conta PRO → Entrar";
+
+    status.className =
+      "status";
+
+    status.textContent =
+      "No primeiro acesso, vamos confirmar sua assinatura.";
+
+    document.getElementById(
+      "password"
+    ).autocomplete =
+      "new-password";
+
+  } else {
+
+    title.textContent =
+      "🔐 Entrar no Minha Meta PRO";
+
+    description.textContent =
+      "Entre com seu e-mail e senha para acessar sua conta PRO.";
+
+    confirmArea.classList.add(
+      "hidden"
+    );
+
+    mainButton.textContent =
+      "🔐 ENTRAR NO PRO";
+
+    toggleButton.textContent =
+      "Primeiro acesso? Criar minha conta PRO";
+
+    status.className =
+      "status";
+
+    status.textContent =
+      "Informe seus dados para continuar.";
+
+    document.getElementById(
+      "password"
+    ).autocomplete =
+      "current-password";
+
+  }
+
+}
+
+
+/* ================================
+   ENTRAR OU CRIAR
+================================ */
+
+async function entrarOuCriarConta() {
 
   const email =
-    normalizarEmail(input.value);
+    normalizarEmail(
+      document.getElementById(
+        "email"
+      ).value
+    );
+
+  const password =
+    document.getElementById(
+      "password"
+    ).value;
+
+  const status =
+    document.getElementById(
+      "status"
+    );
 
   if (!email) {
 
@@ -387,51 +569,180 @@ async function verificarPro() {
       "status error";
 
     status.textContent =
-      "Digite o e-mail usado na assinatura.";
+      "Digite seu e-mail.";
 
     return;
+
   }
 
-  salvarEmail(email);
+
+  if (!password) {
+
+    status.className =
+      "status error";
+
+    status.textContent =
+      "Digite sua senha.";
+
+    return;
+
+  }
+
+
+  if (password.length < 6) {
+
+    status.className =
+      "status error";
+
+    status.textContent =
+      "A senha precisa ter pelo menos 6 caracteres.";
+
+    return;
+
+  }
+
+
+  if (modoCriarConta) {
+
+    const confirmPassword =
+      document.getElementById(
+        "confirmPassword"
+      ).value;
+
+    if (!confirmPassword) {
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "Confirme sua senha.";
+
+      return;
+
+    }
+
+    if (password !== confirmPassword) {
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "As senhas não são iguais.";
+
+      return;
+
+    }
+
+    await criarConta(
+      email,
+      password
+    );
+
+  } else {
+
+    await fazerLogin(
+      email,
+      password
+    );
+
+  }
+
+}
+
+
+/* ================================
+   CRIAR CONTA
+================================ */
+
+async function criarConta(
+  email,
+  password
+) {
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+  const button =
+    document.getElementById(
+      "mainButton"
+    );
+
+  button.disabled = true;
+
+  button.textContent =
+    "VERIFICANDO...";
 
   status.className =
     "status";
 
   status.textContent =
-    "Verificando sua assinatura...";
+    "Confirmando sua assinatura PRO...";
+
 
   try {
 
     const resposta =
       await fetch(
         API_URL +
-        "/verificar-pro?email=" +
-        encodeURIComponent(email)
+        "/criar-conta-pro",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        }
       );
+
 
     const dados =
       await resposta.json();
 
+
     if (!resposta.ok) {
+
       throw new Error(
         dados.detail ||
-        "Erro na verificação."
+        "Não foi possível criar sua conta."
       );
-    }
-
-    if (dados.pro === true) {
-
-      liberarPro(email);
-
-    } else {
-
-      status.className =
-        "status error";
-
-      status.textContent =
-        "Não encontramos uma assinatura PRO ativa para este e-mail. Se você acabou de pagar, aguarde alguns instantes e tente novamente.";
 
     }
+
+
+    salvarEmail(email);
+
+    salvarToken(
+      dados.token
+    );
+
+    salvarPro();
+
+
+    status.className =
+      "status success";
+
+    status.textContent =
+      "✓ Conta criada! Entrando no PRO...";
+
+
+    setTimeout(
+      function() {
+
+        window.location.href =
+          "./area-pro.html";
+
+      },
+      500
+    );
+
 
   } catch (erro) {
 
@@ -441,31 +752,258 @@ async function verificarPro() {
       "status error";
 
     status.textContent =
-      "Não foi possível verificar agora. Tente novamente em alguns segundos.";
+      erro.message ||
+      "Não foi possível criar sua conta.";
+
+    button.disabled = false;
+
+    button.textContent =
+      "🚀 CRIAR MINHA CONTA PRO";
 
   }
+
 }
 
+
+/* ================================
+   LOGIN
+================================ */
+
+async function fazerLogin(
+  email,
+  password
+) {
+
+  const status =
+    document.getElementById(
+      "status"
+    );
+
+  const button =
+    document.getElementById(
+      "mainButton"
+    );
+
+  button.disabled = true;
+
+  button.textContent =
+    "ENTRANDO...";
+
+  status.className =
+    "status";
+
+  status.textContent =
+    "Verificando seus dados...";
+
+
+  try {
+
+    const resposta =
+      await fetch(
+        API_URL +
+        "/login-pro",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        }
+      );
+
+
+    const dados =
+      await resposta.json();
+
+
+    if (!resposta.ok) {
+
+      throw new Error(
+        dados.detail ||
+        "E-mail ou senha incorretos."
+      );
+
+    }
+
+
+    salvarEmail(email);
+
+    salvarToken(
+      dados.token
+    );
+
+    salvarPro();
+
+
+    status.className =
+      "status success";
+
+    status.textContent =
+      "✓ Login realizado! Entrando no PRO...";
+
+
+    setTimeout(
+      function() {
+
+        window.location.href =
+          "./area-pro.html";
+
+      },
+      400
+    );
+
+
+  } catch (erro) {
+
+    console.error(erro);
+
+    status.className =
+      "status error";
+
+    status.textContent =
+      erro.message ||
+      "Não foi possível entrar.";
+
+    button.disabled = false;
+
+    button.textContent =
+      "🔐 ENTRAR NO PRO";
+
+  }
+
+}
+
+
+/* ================================
+   VERIFICAR SESSÃO EXISTENTE
+================================ */
+
+async function verificarSessao() {
+
+  const token =
+    obterToken();
+
+
+  if (!token) {
+
+    mostrarLogin();
+
+    return;
+
+  }
+
+
+  try {
+
+    const resposta =
+      await fetch(
+        API_URL +
+        "/verificar-sessao",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            token: token
+          })
+        }
+      );
+
+
+    const dados =
+      await resposta.json();
+
+
+    if (!resposta.ok) {
+
+      throw new Error(
+        dados.detail ||
+        "Sessão inválida."
+      );
+
+    }
+
+
+    salvarEmail(
+      dados.email
+    );
+
+    salvarPro();
+
+
+    document.getElementById(
+      "checkingText"
+    ).textContent =
+      "Sessão válida. Entrando no PRO...";
+
+
+    setTimeout(
+      function() {
+
+        window.location.href =
+          "./area-pro.html";
+
+      },
+      200
+    );
+
+
+  } catch (erro) {
+
+    console.log(
+      "Sessão expirada:",
+      erro
+    );
+
+
+    try {
+
+      localStorage.removeItem(
+        TOKEN_KEY
+      );
+
+    } catch (e) {}
+
+
+    document.getElementById(
+      "checkingText"
+    ).textContent =
+      "Sua sessão expirou. Entre novamente.";
+
+
+    setTimeout(
+      function() {
+
+        mostrarLogin();
+
+      },
+      300
+    );
+
+  }
+
+}
+
+
+/* ================================
+   INÍCIO
+================================ */
 
 window.addEventListener(
   "DOMContentLoaded",
   function() {
 
-    const email =
-      obterEmail();
-
-    if (email) {
-
-      document.getElementById("email").value =
-        email;
-
-      verificarPro();
-
-    } else {
-
-      mostrarLogin();
-
-    }
+    verificarSessao();
 
   }
 );
@@ -473,4 +1011,4 @@ window.addEventListener(
 </script>
 
 </body>
-</html>
+  </html>
