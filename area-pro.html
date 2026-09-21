@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#0b1730">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Minha Meta PRO</title>
-
-<style>
+<title>Minha Meta PRO</title><style>
 *{
   box-sizing:border-box;
   margin:0;
@@ -516,555 +513,438 @@ input:focus,select:focus{
     grid-template-columns:repeat(4,1fr);
   }
 }
-</style>
-</head>
-
-<body>
-
-<header class="header">
+</style></head><body><header class="header">
   <div class="header-top">
     <div class="logo">🎯 Minha Meta</div>
     <div class="pro">PRO</div>
-  </div>
-
-  <h1>Meu painel financeiro</h1>
+  </div>  <h1>Meu painel financeiro</h1>
   <p>Transforme seus objetivos em um plano real.</p>
-</header>
+</header><main class="container">  <div class="stats"><div class="card">
+  <div class="stat-title">Total guardado</div>
+  <div class="stat-value green" id="totalSaved">R$ 0,00</div>
+</div>
 
-<main class="container">
+<div class="card">
+  <div class="stat-title">Metas ativas</div>
+  <div class="stat-value" id="goalCount">0</div>
+</div>
 
-  <div class="stats">
+<div class="card">
+  <div class="stat-title">Sequência atual</div>
+  <div class="stat-value" id="streak">0 dias</div>
+</div>
 
-    <div class="card">
-      <div class="stat-title">Total guardado</div>
-      <div class="stat-value green" id="totalSaved">R$ 0,00</div>
+<div class="card">
+  <div class="stat-title">Guardado este mês</div>
+  <div class="stat-value green" id="monthSaved">R$ 0,00</div>
+</div>
+
+  </div>  <section class="section">
+    <div class="section-title">Ferramentas PRO</div><div class="grid">
+
+  <button type="button" class="option" onclick="openModal('depositModal')">
+    <div class="option-icon">💰</div>
+    <div class="option-title">Guardar dinheiro</div>
+    <div class="option-text">Registre um novo depósito.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openModal('goalModal')">
+    <div class="option-icon">🎯</div>
+    <div class="option-title">Nova meta</div>
+    <div class="option-text">Crie um objetivo financeiro.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openFinanceMap()">
+    <div class="option-icon">🗺️</div>
+    <div class="option-title">Mapa Financeiro</div>
+    <div class="option-text">Veja entradas, gastos e dinheiro destinado às metas.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openModal('incomeModal')">
+    <div class="option-icon">💵</div>
+    <div class="option-title">Registrar entrada</div>
+    <div class="option-text">Registre salário, vendas ou outros recebimentos.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openModal('expenseModal')">
+    <div class="option-icon">💸</div>
+    <div class="option-title">Registrar gasto</div>
+    <div class="option-text">Controle para onde seu dinheiro está indo.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openAnalysis()">
+    <div class="option-icon">📊</div>
+    <div class="option-title">Análise</div>
+    <div class="option-text">Veja seu comportamento de economia.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openChallenges()">
+    <div class="option-icon">🔥</div>
+    <div class="option-title">Desafios</div>
+    <div class="option-text">Crie desafios para economizar.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openModal('simulatorModal')">
+    <div class="option-icon">🧮</div>
+    <div class="option-title">Simulador</div>
+    <div class="option-text">Descubra quanto precisa guardar.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openHistory()">
+    <div class="option-icon">📅</div>
+    <div class="option-title">Histórico</div>
+    <div class="option-text">Veja suas movimentações.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openAchievements()">
+    <div class="option-icon">🏆</div>
+    <div class="option-title">Conquistas</div>
+    <div class="option-text">Desbloqueie medalhas.</div>
+  </button>
+
+  <button type="button" class="option" onclick="openModal('communityModal')">
+    <div class="option-icon">👥</div>
+    <div class="option-title">Comunidade</div>
+    <div class="option-text">Área para acompanhar outros poupadores.</div>
+  </button>
+
+  <button type="button" class="option" onclick="compartilharMinhaMeta()">
+    <div class="option-icon">🎁</div>
+    <div class="option-title">Compartilhar Minha Meta PRO</div>
+    <div class="option-text">Convide seus amigos para conhecer o Minha Meta.</div>
+  </button>
+
+</div>
+
+  </section>  <section class="section">
+    <div class="section-title">Evolução do dinheiro</div><div class="card chart-card">
+
+  <div class="chart-buttons">
+    <button type="button" class="active" onclick="setChartDays(7,this)">7 dias</button>
+    <button type="button" onclick="setChartDays(30,this)">30 dias</button>
+    <button type="button" onclick="setChartDays(180,this)">6 meses</button>
+    <button type="button" onclick="setChartDays(365,this)">1 ano</button>
+  </div>
+
+  <canvas id="chart"></canvas>
+
+</div>
+
+  </section>  <section class="section"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <div class="section-title" style="margin:0">Minhas metas</div>
+
+  <button type="button" class="btn btn-green" onclick="openModal('goalModal')">
+    + Nova
+  </button>
+</div>
+
+<div id="goalsList"></div>
+
+  </section>  <section class="section"><div class="section-title">Resumo financeiro</div>
+
+<div class="card">
+
+  <div class="goal-info">
+
+    <div>
+      Média diária
+      <strong id="avgDaily">R$ 0,00</strong>
     </div>
 
-    <div class="card">
-      <div class="stat-title">Metas ativas</div>
-      <div class="stat-value" id="goalCount">0</div>
+    <div>
+      Últimos 7 dias
+      <strong id="last7">R$ 0,00</strong>
     </div>
 
-    <div class="card">
-      <div class="stat-title">Sequência atual</div>
-      <div class="stat-value" id="streak">0 dias</div>
+    <div>
+      Melhor dia
+      <strong id="bestDay">R$ 0,00</strong>
     </div>
 
-    <div class="card">
-      <div class="stat-title">Guardado este mês</div>
-      <div class="stat-value green" id="monthSaved">R$ 0,00</div>
+    <div>
+      Depósitos
+      <strong id="depositCount">0</strong>
     </div>
 
   </div>
 
+</div>
 
-  <section class="section">
-    <div class="section-title">Ferramentas PRO</div>
+  </section>  <section class="section"><div class="card">
 
-    <div class="grid">
+  <h3>⚙️ Dados do aparelho</h3>
 
-      <button type="button" class="option" onclick="openModal('depositModal')">
-        <div class="option-icon">💰</div>
-        <div class="option-title">Guardar dinheiro</div>
-        <div class="option-text">Registre um novo depósito.</div>
-      </button>
+  <p style="font-size:12px;color:#707b87;margin-top:7px">
+    Seus dados financeiros ficam salvos neste aparelho.
+  </p>
 
-      <button type="button" class="option" onclick="openModal('goalModal')">
-        <div class="option-icon">🎯</div>
-        <div class="option-title">Nova meta</div>
-        <div class="option-text">Crie um objetivo financeiro.</div>
-      </button>
+  <button
+    type="button"
+    class="btn btn-red"
+    style="margin-top:14px"
+    onclick="resetApp()">
+    Apagar todos os dados
+  </button>
 
-      <button type="button" class="option" onclick="openFinanceMap()">
-        <div class="option-icon">🗺️</div>
-        <div class="option-title">Mapa Financeiro</div>
-        <div class="option-text">Veja entradas, gastos e dinheiro destinado às metas.</div>
-      </button>
+</div>
 
-      <button type="button" class="option" onclick="openModal('incomeModal')">
-        <div class="option-icon">💵</div>
-        <div class="option-title">Registrar entrada</div>
-        <div class="option-text">Registre salário, vendas ou outros recebimentos.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openModal('expenseModal')">
-        <div class="option-icon">💸</div>
-        <div class="option-title">Registrar gasto</div>
-        <div class="option-text">Controle para onde seu dinheiro está indo.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openAnalysis()">
-        <div class="option-icon">📊</div>
-        <div class="option-title">Análise</div>
-        <div class="option-text">Veja seu comportamento de economia.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openChallenges()">
-        <div class="option-icon">🔥</div>
-        <div class="option-title">Desafios</div>
-        <div class="option-text">Crie desafios para economizar.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openModal('simulatorModal')">
-        <div class="option-icon">🧮</div>
-        <div class="option-title">Simulador</div>
-        <div class="option-text">Descubra quanto precisa guardar.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openHistory()">
-        <div class="option-icon">📅</div>
-        <div class="option-title">Histórico</div>
-        <div class="option-text">Veja suas movimentações.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openAchievements()">
-        <div class="option-icon">🏆</div>
-        <div class="option-title">Conquistas</div>
-        <div class="option-text">Desbloqueie medalhas.</div>
-      </button>
-
-      <button type="button" class="option" onclick="openModal('communityModal')">
-        <div class="option-icon">👥</div>
-        <div class="option-title">Comunidade</div>
-        <div class="option-text">Área para acompanhar outros poupadores.</div>
-      </button>
-
-    </div>
-  </section>
-
-
-  <section class="section">
-    <div class="section-title">Evolução do dinheiro</div>
-
-    <div class="card chart-card">
-
-      <div class="chart-buttons">
-        <button type="button" class="active" onclick="setChartDays(7,this)">7 dias</button>
-        <button type="button" onclick="setChartDays(30,this)">30 dias</button>
-        <button type="button" onclick="setChartDays(180,this)">6 meses</button>
-        <button type="button" onclick="setChartDays(365,this)">1 ano</button>
-      </div>
-
-      <canvas id="chart"></canvas>
-
-    </div>
-  </section>
-
-
-  <section class="section">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div class="section-title" style="margin:0">Minhas metas</div>
-
-      <button type="button" class="btn btn-green" onclick="openModal('goalModal')">
-        + Nova
-      </button>
-    </div>
-
-    <div id="goalsList"></div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div class="section-title">Resumo financeiro</div>
-
-    <div class="card">
-
-      <div class="goal-info">
-
-        <div>
-          Média diária
-          <strong id="avgDaily">R$ 0,00</strong>
-        </div>
-
-        <div>
-          Últimos 7 dias
-          <strong id="last7">R$ 0,00</strong>
-        </div>
-
-        <div>
-          Melhor dia
-          <strong id="bestDay">R$ 0,00</strong>
-        </div>
-
-        <div>
-          Depósitos
-          <strong id="depositCount">0</strong>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="section">
-
-    <div class="card">
-
-      <h3>⚙️ Dados do aparelho</h3>
-
-      <p style="font-size:12px;color:#707b87;margin-top:7px">
-        Seus dados financeiros ficam salvos neste aparelho.
-      </p>
-
-      <button
-        type="button"
-        class="btn btn-red"
-        style="margin-top:14px"
-        onclick="resetApp()">
-        Apagar todos os dados
-      </button>
-
-    </div>
-
-  </section>
-
-</main>
-
-<div class="footer">
+  </section></main><div class="footer">
   Minha Meta PRO
-</div>
+</div><!-- DEPÓSITO --><div class="modal" id="depositModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('depositModal')">×</button>
 
+<div class="modal-title">💰 Guardar dinheiro</div>
 
-<!-- DEPÓSITO -->
+<form class="form" id="depositForm">
 
-<div class="modal" id="depositModal">
-  <div class="modal-box">
+  <select id="depositGoal" required></select>
 
-    <button type="button" class="close" onclick="closeModal('depositModal')">×</button>
+  <input
+    id="depositAmount"
+    type="number"
+    step="0.01"
+    min="0.01"
+    placeholder="Valor guardado"
+    required>
 
-    <div class="modal-title">💰 Guardar dinheiro</div>
+  <input
+    id="depositDate"
+    type="date"
+    required>
 
-    <form class="form" id="depositForm">
+  <button class="btn btn-green" type="submit">
+    Guardar dinheiro
+  </button>
 
-      <select id="depositGoal" required></select>
-
-      <input
-        id="depositAmount"
-        type="number"
-        step="0.01"
-        min="0.01"
-        placeholder="Valor guardado"
-        required>
-
-      <input
-        id="depositDate"
-        type="date"
-        required>
-
-      <button class="btn btn-green" type="submit">
-        Guardar dinheiro
-      </button>
-
-    </form>
+</form>
 
   </div>
-</div>
+</div><!-- META --><div class="modal" id="goalModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('goalModal')">×</button>
 
+<div class="modal-title">🎯 Criar nova meta</div>
 
-<!-- META -->
+<form class="form" id="goalForm">
 
-<div class="modal" id="goalModal">
-  <div class="modal-box">
+  <input
+    id="goalName"
+    placeholder="Ex.: Carro, casa, viagem..."
+    required>
 
-    <button type="button" class="close" onclick="closeModal('goalModal')">×</button>
+  <div class="form-row">
 
-    <div class="modal-title">🎯 Criar nova meta</div>
+    <input
+      id="goalTarget"
+      type="number"
+      step="0.01"
+      min="1"
+      placeholder="Valor da meta"
+      required>
 
-    <form class="form" id="goalForm">
-
-      <input
-        id="goalName"
-        placeholder="Ex.: Carro, casa, viagem..."
-        required>
-
-      <div class="form-row">
-
-        <input
-          id="goalTarget"
-          type="number"
-          step="0.01"
-          min="1"
-          placeholder="Valor da meta"
-          required>
-
-        <input
-          id="goalDeadline"
-          type="date"
-          required>
-
-      </div>
-
-      <button class="btn btn-green" type="submit">
-        Criar meta
-      </button>
-
-    </form>
+    <input
+      id="goalDeadline"
+      type="date"
+      required>
 
   </div>
-</div>
 
+  <button class="btn btn-green" type="submit">
+    Criar meta
+  </button>
 
-<!-- ENTRADA -->
-
-<div class="modal" id="incomeModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('incomeModal')">×</button>
-
-    <div class="modal-title">💵 Registrar entrada</div>
-
-    <form class="form" id="incomeForm">
-
-      <input
-        id="incomeDescription"
-        placeholder="Ex.: Salário, venda, freela..."
-        required>
-
-      <div class="form-row">
-
-        <input
-          id="incomeAmount"
-          type="number"
-          step="0.01"
-          min="0.01"
-          placeholder="Valor"
-          required>
-
-        <select id="incomeCategory">
-          <option>Salário</option>
-          <option>Vendas</option>
-          <option>Freela</option>
-          <option>Extra</option>
-          <option>Outros</option>
-        </select>
-
-      </div>
-
-      <input id="incomeDate" type="date" required>
-
-      <button class="btn btn-green" type="submit">
-        Registrar entrada
-      </button>
-
-    </form>
+</form>
 
   </div>
-</div>
+</div><!-- ENTRADA --><div class="modal" id="incomeModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('incomeModal')">×</button>
 
+<div class="modal-title">💵 Registrar entrada</div>
 
-<!-- GASTO -->
+<form class="form" id="incomeForm">
 
-<div class="modal" id="expenseModal">
-  <div class="modal-box">
+  <input
+    id="incomeDescription"
+    placeholder="Ex.: Salário, venda, freela..."
+    required>
 
-    <button type="button" class="close" onclick="closeModal('expenseModal')">×</button>
+  <div class="form-row">
 
-    <div class="modal-title">💸 Registrar gasto</div>
+    <input
+      id="incomeAmount"
+      type="number"
+      step="0.01"
+      min="0.01"
+      placeholder="Valor"
+      required>
 
-    <form class="form" id="expenseForm">
-
-      <input
-        id="expenseDescription"
-        placeholder="Ex.: Mercado, gasolina, aluguel..."
-        required>
-
-      <div class="form-row">
-
-        <input
-          id="expenseAmount"
-          type="number"
-          step="0.01"
-          min="0.01"
-          placeholder="Valor"
-          required>
-
-        <select id="expenseCategory">
-          <option>Alimentação</option>
-          <option>Transporte</option>
-          <option>Casa</option>
-          <option>Contas</option>
-          <option>Lazer</option>
-          <option>Compras</option>
-          <option>Saúde</option>
-          <option>Educação</option>
-          <option>Outros</option>
-        </select>
-
-      </div>
-
-      <input id="expenseDate" type="date" required>
-
-      <button class="btn btn-red" type="submit">
-        Registrar gasto
-      </button>
-
-    </form>
+    <select id="incomeCategory">
+      <option>Salário</option>
+      <option>Vendas</option>
+      <option>Freela</option>
+      <option>Extra</option>
+      <option>Outros</option>
+    </select>
 
   </div>
-</div>
 
+  <input id="incomeDate" type="date" required>
 
-<!-- MAPA FINANCEIRO -->
+  <button class="btn btn-green" type="submit">
+    Registrar entrada
+  </button>
 
-<div class="modal" id="financeModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('financeModal')">×</button>
-
-    <div class="modal-title">🗺️ Mapa Financeiro</div>
-
-    <div class="month-nav">
-
-      <button type="button" onclick="changeFinanceMonth(-1)">‹</button>
-
-      <div class="month-name" id="financeMonthName"></div>
-
-      <button type="button" onclick="changeFinanceMonth(1)">›</button>
-
-    </div>
-
-    <div id="financeContent"></div>
+</form>
 
   </div>
-</div>
+</div><!-- GASTO --><div class="modal" id="expenseModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('expenseModal')">×</button>
 
+<div class="modal-title">💸 Registrar gasto</div>
 
-<!-- ANÁLISE -->
+<form class="form" id="expenseForm">
 
-<div class="modal" id="analysisModal">
-  <div class="modal-box">
+  <input
+    id="expenseDescription"
+    placeholder="Ex.: Mercado, gasolina, aluguel..."
+    required>
 
-    <button type="button" class="close" onclick="closeModal('analysisModal')">×</button>
+  <div class="form-row">
 
-    <div class="modal-title">📊 Sua análise</div>
+    <input
+      id="expenseAmount"
+      type="number"
+      step="0.01"
+      min="0.01"
+      placeholder="Valor"
+      required>
 
-    <div id="analysisContent"></div>
-
-  </div>
-</div>
-
-
-<!-- DESAFIOS -->
-
-<div class="modal" id="challengeModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('challengeModal')">×</button>
-
-    <div class="modal-title">🔥 Desafios</div>
-
-    <div id="challengeContent"></div>
-
-  </div>
-</div>
-
-
-<!-- SIMULADOR -->
-
-<div class="modal" id="simulatorModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('simulatorModal')">×</button>
-
-    <div class="modal-title">🧮 Simulador</div>
-
-    <div class="form">
-
-      <input
-        id="simTarget"
-        type="number"
-        step="0.01"
-        placeholder="Quanto quer juntar?">
-
-      <input
-        id="simDaily"
-        type="number"
-        step="0.01"
-        placeholder="Quanto consegue guardar por dia?">
-
-      <button
-        type="button"
-        class="btn btn-green"
-        onclick="simulate()">
-        Simular
-      </button>
-
-      <div id="simResult"></div>
-
-    </div>
+    <select id="expenseCategory">
+      <option>Alimentação</option>
+      <option>Transporte</option>
+      <option>Casa</option>
+      <option>Contas</option>
+      <option>Lazer</option>
+      <option>Compras</option>
+      <option>Saúde</option>
+      <option>Educação</option>
+      <option>Outros</option>
+    </select>
 
   </div>
-</div>
 
+  <input id="expenseDate" type="date" required>
 
-<!-- HISTÓRICO -->
+  <button class="btn btn-red" type="submit">
+    Registrar gasto
+  </button>
 
-<div class="modal" id="historyModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('historyModal')">×</button>
-
-    <div class="modal-title">📅 Histórico</div>
-
-    <div id="historyContent"></div>
+</form>
 
   </div>
+</div><!-- MAPA FINANCEIRO --><div class="modal" id="financeModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('financeModal')">×</button>
+
+<div class="modal-title">🗺️ Mapa Financeiro</div>
+
+<div class="month-nav">
+
+  <button type="button" onclick="changeFinanceMonth(-1)">‹</button>
+
+  <div class="month-name" id="financeMonthName"></div>
+
+  <button type="button" onclick="changeFinanceMonth(1)">›</button>
+
 </div>
 
-
-<!-- CONQUISTAS -->
-
-<div class="modal" id="achievementsModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('achievementsModal')">×</button>
-
-    <div class="modal-title">🏆 Conquistas</div>
-
-    <div id="achievementsContent"></div>
+<div id="financeContent"></div>
 
   </div>
-</div>
+</div><!-- ANÁLISE --><div class="modal" id="analysisModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('analysisModal')">×</button>
 
+<div class="modal-title">📊 Sua análise</div>
 
-<!-- COMUNIDADE -->
-
-<div class="modal" id="communityModal">
-  <div class="modal-box">
-
-    <button type="button" class="close" onclick="closeModal('communityModal')">×</button>
-
-    <div class="modal-title">👥 Comunidade</div>
-
-    <div class="card" style="background:#f6faf8">
-
-      <h3>Em breve</h3>
-
-      <p style="font-size:13px;color:#697582;margin-top:8px;line-height:1.5">
-        Aqui futuramente poderemos mostrar dados reais da comunidade,
-        como quanto os usuários estão guardando e quantas pessoas estão
-        cumprindo seus desafios.
-      </p>
-
-      <p style="font-size:12px;color:#0a9149;margin-top:10px">
-        🔒 Nenhum número falso é mostrado nesta versão.
-      </p>
-
-    </div>
+<div id="analysisContent"></div>
 
   </div>
+</div><!-- DESAFIOS --><div class="modal" id="challengeModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('challengeModal')">×</button>
+
+<div class="modal-title">🔥 Desafios</div>
+
+<div id="challengeContent"></div>
+
+  </div>
+</div><!-- SIMULADOR --><div class="modal" id="simulatorModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('simulatorModal')">×</button>
+
+<div class="modal-title">🧮 Simulador</div>
+
+<div class="form">
+
+  <input
+    id="simTarget"
+    type="number"
+    step="0.01"
+    placeholder="Quanto quer juntar?">
+
+  <input
+    id="simDaily"
+    type="number"
+    step="0.01"
+    placeholder="Quanto consegue guardar por dia?">
+
+  <button
+    type="button"
+    class="btn btn-green"
+    onclick="simulate()">
+    Simular
+  </button>
+
+  <div id="simResult"></div>
+
 </div>
 
+  </div>
+</div><!-- HISTÓRICO --><div class="modal" id="historyModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('historyModal')">×</button>
 
-<div class="toast" id="toast"></div>
+<div class="modal-title">📅 Histórico</div>
 
+<div id="historyContent"></div>
 
-<script>
+  </div>
+</div><!-- CONQUISTAS --><div class="modal" id="achievementsModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('achievementsModal')">×</button>
+
+<div class="modal-title">🏆 Conquistas</div>
+
+<div id="achievementsContent"></div>
+
+  </div>
+</div><!-- COMUNIDADE --><div class="modal" id="communityModal">
+  <div class="modal-box"><button type="button" class="close" onclick="closeModal('communityModal')">×</button>
+
+<div class="modal-title">👥 Comunidade</div>
+
+<div class="card" style="background:#f6faf8">
+
+  <h3>Em breve</h3>
+
+  <p style="font-size:13px;color:#697582;margin-top:8px;line-height:1.5">
+    Aqui futuramente poderemos mostrar dados reais da comunidade,
+    como quanto os usuários estão guardando e quantas pessoas estão
+    cumprindo seus desafios.
+  </p>
+
+  <p style="font-size:12px;color:#0a9149;margin-top:10px">
+    🔒 Nenhum número falso é mostrado nesta versão.
+  </p>
+
+</div>
+
+  </div>
+</div><div class="toast" id="toast"></div><script>
 
 const STORAGE_KEY = "minha_meta_pro_teste_v2";
 
@@ -2983,6 +2863,69 @@ function renderAchievements(){
 
 
 /* =========================
+   COMPARTILHAR
+========================= */
+
+function compartilharMinhaMeta(){
+
+  const link="https://minhameta.onrender.com/meta-pro.html";
+
+  const texto=
+    "Estou usando o Minha Meta PRO para organizar minhas metas e economizar. " +
+    "Conheça também: "+link;
+
+  if(navigator.share){
+
+    navigator.share({
+
+      title:"Minha Meta PRO",
+      text:texto,
+      url:link
+
+    }).catch(error=>{
+
+      console.log(
+        "Compartilhamento cancelado:",
+        error
+      );
+
+    });
+
+  }else{
+
+    if(navigator.clipboard){
+
+      navigator.clipboard.writeText(link)
+        .then(()=>{
+
+          showToast(
+            "Link copiado! Agora é só compartilhar."
+          );
+
+        })
+        .catch(()=>{
+
+          showToast(
+            "Não foi possível copiar o link."
+          );
+
+        });
+
+    }else{
+
+      prompt(
+        "Copie o link do Minha Meta PRO:",
+        link
+      );
+
+    }
+
+  }
+
+}
+
+
+/* =========================
    RESET
 ========================= */
 
@@ -3063,7 +3006,5 @@ window.addEventListener(
   drawChart
 );
 
-</script>
-
-</body>
+</script></body>
   </html>
