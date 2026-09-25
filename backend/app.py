@@ -1,36 +1,16 @@
 import os
-import hmac
 import hashlib
 import secrets
-import sqlite3
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import datetime, timedelta, timezone
 
-import requests
-from fastapi import FastAPI, Request, HTTPException
+import httpx
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
+from supabase import create_client
 
 
-APP_URL = os.getenv(
-    "APP_URL",
-    "https://quantovenderhoje.onrender.com"
-)
-
-MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN", "")
-MP_PLAN_ID = os.getenv("MP_PLAN_ID", "")
-MP_WEBHOOK_SECRET = os.getenv("MP_WEBHOOK_SECRET", "")
-
-DATABASE_PATH = os.getenv("DATABASE_PATH", "sellium.db")
-
-MP_API = "https://api.mercadopago.com"
-PRO_PRICE = 9.90
-
-
-app = FastAPI(
-    title="Sellium PRO API",
-    version="1.0.0"
-)
+app = FastAPI(title="Minha Meta PRO API")
 
 
 app.add_middleware(
@@ -42,260 +22,116 @@ app.add_middleware(
 )
 
 
+MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN", "").strip()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip()
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "").strip()
+
+
 # =========================================================
-# BANCO
+# SUPABASE
 # =========================================================
 
-def get_db():
-    db = sqlite3.connect(
-        DATABASE_PATH,
-        timeout=30
+def get_supabase():
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase não configurado no Render"
+        )
+
+    return create_client(
+        SUPABASE_URL,
+        SUPABASE_KEY
     )
-    db.row_factory = sqlite3.Row
-
-    # Proteção contra concorrência do SQLite.
-    # Aguarda até 30 segundos quando outra operação
-    # estiver usando o banco, em vez de falhar imediatamente.
-    db.execute("PRAGMA busy_timeout = 30000")
-    db.execute("PRAGMA journal_mode = WAL")
-    db.execute("PRAGMA synchronous = NORMAL")
-
-    return db
-
-
-def init_db():
-    db = get_db()
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            pro INTEGER DEFAULT 0,
-            subscription_id TEXT,
-            subscription_status TEXT,
-            created_at TEXT NOT NULL
-        )
-    """)
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS sessions (
-            token TEXT PRIMARY KEY,
-            user_id INTEGER NOT NULL,
-            created_at TEXT NOT NULL
-        )
-    """)
-
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS webhook_events (
-            id TEXT PRIMARY KEY,
-            created_at TEXT NOT NULL
-        )
-    """)
-
-    db.commit()
-    db.close()
-
-
-init_db()
 
 
 # =========================================================
-# UTILITÁRIOS
+# SENHAS
 # =========================================================
 
-def now_iso():
-    return datetime.now(timezone.utc).isoformat()
+def hash_password(password):
 
+    salt = secrets.token_hex(16)
 
-def normalize_email(email: str):
-    return email.strip().lower()
-
-
-def hash_password(password: str):
-    salt = secrets.token_bytes(16)
-
-    derived = hashlib.pbkdf2_hmac(
+    password_hash = hashlib.pbkdf2_hmac(
         "sha256",
         password.encode("utf-8"),
-        salt,
+        salt.encode("utf-8"),
         200000
-    )
+    ).hex()
 
-    return salt.hex() + ":" + derived.hex()
+    return salt + ":" + password_hash
 
 
-def verify_password(password: str, stored: str):
+def check_password(password, stored_hash):
+
     try:
-        salt_hex, hash_hex = stored.split(":")
 
-        salt = bytes.fromhex(salt_hex)
+        salt, original_hash = stored_hash.split(":", 1)
 
-        derived = hashlib.pbkdf2_hmac(
+        password_hash = hashlib.pbkdf2_hmac(
             "sha256",
             password.encode("utf-8"),
-            salt,
+            salt.encode("utf-8"),
             200000
-        )
+        ).hex()
 
-        return hmac.compare_digest(
-            derived.hex(),
-            hash_hex
+        return secrets.compare_digest(
+            password_hash,
+            original_hash
         )
 
     except Exception:
+
         return False
 
 
-def create_session(user_id: int):
-    token = secrets.token_urlsafe(32)
-
-    db = get_db()
-
-    try:
-        db.execute(
-            """
-            INSERT INTO sessions
-            (token, user_id, created_at)
-            VALUES (?, ?, ?)
-            """,
-            (
-                token,
-                user_id,
-                now_iso()
-            )
-        )
-
-        db.commit()
-
-        return token
-
-    finally:
-        db.close()
-
-
-def get_user_by_token(token: str):
-    db = get_db()
-
-    user = db.execute(
-        """
-        SELECT users.*
-        FROM users
-        JOIN sessions
-        ON sessions.user_id = users.id
-        WHERE sessions.token = ?
-        """,
-        (token,)
-    ).fetchone()
-
-    db.close()
-
-    return user
-
-
-def update_user_pro(
-    user_id: int,
-    pro: bool,
-    subscription_id: Optional[str] = None,
-    subscription_status: Optional[str] = None
-):
-    db = get_db()
-
-    db.execute(
-        """
-        UPDATE users
-        SET
-            pro = ?,
-            subscription_id = COALESCE(?, subscription_id),
-            subscription_status = COALESCE(?, subscription_status)
-        WHERE id = ?
-        """,
-        (
-            1 if pro else 0,
-            subscription_id,
-            subscription_status,
-            user_id
-        )
-    )
-
-    db.commit()
-    db.close()
-
-
 # =========================================================
-# MERCADO PAGO
+# SESSÃO
 # =========================================================
 
-def mp_headers():
+def create_session():
 
-    if not MP_ACCESS_TOKEN:
-        raise HTTPException(
-            status_code=500,
-            detail="MP_ACCESS_TOKEN não configurado."
-        )
-
-    return {
-        "Authorization": f"Bearer {MP_ACCESS_TOKEN}",
-        "Content-Type": "application/json"
-    }
+    return secrets.token_urlsafe(48)
 
 
-def consultar_assinatura(subscription_id: str):
+def normalize_email(email):
 
-    try:
-
-        response = requests.get(
-            f"{MP_API}/preapproval/{subscription_id}",
-            headers=mp_headers(),
-            timeout=20
-        )
-
-        if response.status_code != 200:
-            return None
-
-        return response.json()
-
-    except Exception:
-
-        return None
-
-
-def status_pro(status: Optional[str]):
-
-    return status in (
-        "authorized",
-        "active"
-    )
+    return str(email or "").strip().lower()
 
 
 # =========================================================
 # MODELOS
 # =========================================================
 
-class CriarConta(BaseModel):
-    email: EmailStr
+class CreateAccount(BaseModel):
+
+    email: str
     password: str
 
 
-class Login(BaseModel):
-    email: EmailStr
+class LoginData(BaseModel):
+
+    email: str
     password: str
 
 
-class Assinar(BaseModel):
+class SessionData(BaseModel):
+
     token: str
-    mp_email: EmailStr
 
 
 # =========================================================
-# BÁSICO
+# ROTAS BÁSICAS
 # =========================================================
 
 @app.get("/")
 def root():
 
     return {
-        "app": "Sellium PRO API",
+        "app": "Minha Meta PRO API",
         "status": "online"
     }
 
@@ -304,140 +140,646 @@ def root():
 def health():
 
     return {
-        "ok": True,
-        "app": "Sellium PRO API"
+        "ok": True
     }
 
 
 # =========================================================
-# CRIAR CONTA
+# CONSULTAR MERCADO PAGO PELO E-MAIL
+# =========================================================
+
+async def buscar_assinatura_por_email(email):
+
+    if not MP_ACCESS_TOKEN:
+
+        raise Exception(
+            "MP_ACCESS_TOKEN não configurado"
+        )
+
+    email = normalize_email(email)
+
+    url = (
+        "https://api.mercadopago.com/"
+        "preapproval/search"
+    )
+
+    headers = {
+        "Authorization":
+            f"Bearer {MP_ACCESS_TOKEN}",
+
+        "Content-Type":
+            "application/json"
+    }
+
+    params = {
+        "payer_email": email
+    }
+
+    async with httpx.AsyncClient(
+        timeout=20
+    ) as client:
+
+        response = await client.get(
+            url,
+            headers=headers,
+            params=params
+        )
+
+    if response.status_code >= 400:
+
+        raise Exception(
+            f"Mercado Pago HTTP "
+            f"{response.status_code}: "
+            f"{response.text}"
+        )
+
+    data = response.json()
+
+    return data.get(
+        "results",
+        []
+    )
+
+
+# =========================================================
+# CONSULTAR ASSINATURA PELO ID
+# =========================================================
+
+async def buscar_assinatura_por_id(
+    subscription_id
+):
+
+    if not MP_ACCESS_TOKEN:
+
+        raise Exception(
+            "MP_ACCESS_TOKEN não configurado"
+        )
+
+    url = (
+        "https://api.mercadopago.com/"
+        f"preapproval/{subscription_id}"
+    )
+
+    headers = {
+        "Authorization":
+            f"Bearer {MP_ACCESS_TOKEN}",
+
+        "Content-Type":
+            "application/json"
+    }
+
+    async with httpx.AsyncClient(
+        timeout=20
+    ) as client:
+
+        response = await client.get(
+            url,
+            headers=headers
+        )
+
+    if response.status_code >= 400:
+
+        raise Exception(
+            f"Mercado Pago HTTP "
+            f"{response.status_code}: "
+            f"{response.text}"
+        )
+
+    return response.json()
+
+
+# =========================================================
+# VERIFICAR STATUS ATUAL DA ASSINATURA
+# =========================================================
+
+async def verificar_assinatura_atual(email, subscription_id=None):
+
+    email = normalize_email(email)
+
+    assinatura = None
+
+    # -----------------------------------------------------
+    # Se já temos ID, consulta diretamente
+    # -----------------------------------------------------
+
+    if subscription_id:
+
+        try:
+
+            assinatura = await buscar_assinatura_por_id(
+                subscription_id
+            )
+
+        except Exception:
+
+            assinatura = None
+
+    # -----------------------------------------------------
+    # Se não temos ID, procura pelo e-mail
+    # -----------------------------------------------------
+
+    if not assinatura:
+
+        assinaturas = await buscar_assinatura_por_email(
+            email
+        )
+
+        # Primeiro tenta encontrar uma assinatura ativa
+        for item in assinaturas:
+
+            status = item.get("status")
+
+            if status == "authorized":
+
+                assinatura = item
+                break
+
+        # Se não encontrou ativa,
+        # pega a mais recente disponível
+        if not assinatura and assinaturas:
+
+            assinatura = assinaturas[0]
+
+    # -----------------------------------------------------
+    # Nenhuma assinatura encontrada
+    # -----------------------------------------------------
+
+    if not assinatura:
+
+        return {
+            "pro": False,
+            "status": "inactive",
+            "subscription_id": None
+        }
+
+    status = assinatura.get(
+        "status",
+        "inactive"
+    )
+
+    subscription_id = assinatura.get(
+        "id"
+    )
+
+    active_statuses = {
+        "authorized",
+        "active"
+    }
+
+    return {
+        "pro": status in active_statuses,
+        "status": status,
+        "subscription_id": subscription_id,
+        "next_payment_date":
+            assinatura.get(
+                "next_payment_date"
+            )
+    }
+
+
+# =========================================================
+# ATUALIZAÇÃO DA ASSINATURA EM SEGUNDO PLANO
+# =========================================================
+
+async def atualizar_assinatura_usuario(
+    user_id,
+    email,
+    subscription_id=None
+):
+
+    try:
+
+        verificacao = await verificar_assinatura_atual(
+            email,
+            subscription_id
+        )
+
+        supabase = get_supabase()
+
+        agora = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        novo_status = verificacao.get(
+            "status",
+            "inactive"
+        )
+
+        novo_id = verificacao.get(
+            "subscription_id"
+        )
+
+        ativo = bool(
+            verificacao.get("pro")
+        )
+
+        dados = {
+            "active": ativo,
+            "mp_status": novo_status,
+            "mp_checked_at": agora
+        }
+
+        if novo_id:
+
+            dados[
+                "mercado_pago_subscription_id"
+            ] = novo_id
+
+        supabase.table(
+            "pro_users"
+        ).update(
+            dados
+        ).eq(
+            "id",
+            user_id
+        ).execute()
+
+        print(
+            "Verificação Mercado Pago concluída:",
+            email,
+            novo_status
+        )
+
+    except Exception as e:
+
+        print(
+            "Erro na verificação Mercado Pago:",
+            str(e)
+        )
+
+
+# =========================================================
+# VERIFICAR PRO PELO E-MAIL
+# =========================================================
+
+@app.get("/verificar-pro")
+async def verificar_pro(email: str):
+
+    email = normalize_email(email)
+
+    if not email:
+
+        raise HTTPException(
+            status_code=400,
+            detail="E-mail obrigatório"
+        )
+
+    try:
+
+        verificacao = await verificar_assinatura_atual(
+            email
+        )
+
+        return {
+            "pro":
+                verificacao.get("pro"),
+
+            "status":
+                verificacao.get("status"),
+
+            "subscription_id":
+                verificacao.get(
+                    "subscription_id"
+                ),
+
+            "email":
+                email,
+
+            "next_payment_date":
+                verificacao.get(
+                    "next_payment_date"
+                )
+        }
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Erro ao consultar Mercado Pago: "
+                + str(e)
+            )
+        )
+
+
+# =========================================================
+# CRIAR CONTA PRO
 # =========================================================
 
 @app.post("/criar-conta-pro")
-def criar_conta(data: CriarConta):
+async def criar_conta_pro(
+    data: CreateAccount
+):
 
     email = normalize_email(
-        str(data.email)
+        data.email
     )
 
-    if len(data.password) < 6:
+    password = data.password
+
+    if not email:
 
         raise HTTPException(
             status_code=400,
-            detail="A senha precisa ter pelo menos 6 caracteres."
+            detail="E-mail obrigatório"
         )
 
-    db = get_db()
-
-    existing = db.execute(
-        """
-        SELECT id
-        FROM users
-        WHERE email = ?
-        """,
-        (email,)
-    ).fetchone()
-
-    if existing:
-
-        db.close()
+    if len(password) < 6:
 
         raise HTTPException(
             status_code=400,
-            detail="Este e-mail já possui uma conta."
+            detail=(
+                "A senha deve ter pelo menos "
+                "6 caracteres"
+            )
         )
 
-    db.execute(
-        """
-        INSERT INTO users
-        (
-            email,
-            password_hash,
-            pro,
-            created_at
-        )
-        VALUES (?, ?, 0, ?)
-        """,
-        (
-            email,
-            hash_password(data.password),
-            now_iso()
-        )
+    # -----------------------------------------------------
+    # Confirma assinatura
+    # -----------------------------------------------------
+
+    verificacao = await verificar_assinatura_atual(
+        email
     )
 
-    db.commit()
+    if not verificacao.get("pro"):
 
-    user_id = db.execute(
-        """
-        SELECT id
-        FROM users
-        WHERE email = ?
-        """,
-        (email,)
-    ).fetchone()["id"]
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Não encontramos uma assinatura "
+                "PRO ativa para este e-mail."
+            )
+        )
 
-    db.close()
+    supabase = get_supabase()
 
-    token = create_session(user_id)
+    existente = (
+        supabase
+        .table("pro_users")
+        .select("id")
+        .eq("email", email)
+        .execute()
+    )
+
+    if existente.data:
+
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Já existe uma conta PRO "
+                "com este e-mail."
+            )
+        )
+
+    password_hash = hash_password(
+        password
+    )
+
+    token = create_session()
+
+    expires = (
+        datetime.now(timezone.utc)
+        + timedelta(days=30)
+    )
+
+    resultado = (
+        supabase
+        .table("pro_users")
+        .insert({
+            "email": email,
+            "password_hash": password_hash,
+            "active": True,
+
+            "session_token_hash":
+                hashlib.sha256(
+                    token.encode()
+                ).hexdigest(),
+
+            "session_expires_at":
+                expires.isoformat(),
+
+            "mercado_pago_subscription_id":
+                verificacao.get(
+                    "subscription_id"
+                ),
+
+            "mp_status":
+                verificacao.get(
+                    "status"
+                ),
+
+            "mp_checked_at":
+                datetime.now(
+                    timezone.utc
+                ).isoformat()
+        })
+        .execute()
+    )
+
+    if not resultado.data:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Não foi possível criar "
+                "sua conta."
+            )
+        )
 
     return {
         "ok": True,
-        "token": token,
+        "pro": True,
         "email": email,
-        "pro": False
+        "token": token
     }
 
 
 # =========================================================
-# LOGIN
+# LOGIN PRO
 # =========================================================
 
 @app.post("/login-pro")
-def login(data: Login):
+async def login_pro(
+    data: LoginData,
+    background_tasks: BackgroundTasks
+):
 
     email = normalize_email(
-        str(data.email)
+        data.email
     )
 
-    db = get_db()
+    if not email or not data.password:
 
-    user = db.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE email = ?
-        """,
-        (email,)
-    ).fetchone()
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "E-mail e senha são obrigatórios."
+            )
+        )
 
-    db.close()
+    supabase = get_supabase()
 
-    if not user:
+    resultado = (
+        supabase
+        .table("pro_users")
+        .select("*")
+        .eq("email", email)
+        .limit(1)
+        .execute()
+    )
+
+    if not resultado.data:
 
         raise HTTPException(
             status_code=401,
-            detail="E-mail ou senha incorretos."
+            detail=(
+                "E-mail ou senha incorretos."
+            )
         )
 
-    if not verify_password(
+    usuario = resultado.data[0]
+
+    if not check_password(
         data.password,
-        user["password_hash"]
+        usuario.get(
+            "password_hash",
+            ""
+        )
     ):
 
         raise HTTPException(
             status_code=401,
-            detail="E-mail ou senha incorretos."
+            detail=(
+                "E-mail ou senha incorretos."
+            )
         )
 
-    token = create_session(
-        user["id"]
+    # -----------------------------------------------------
+    # Se a conta está inativa, fazemos uma verificação
+    # imediata para permitir uma eventual renovação.
+    # -----------------------------------------------------
+
+    if not usuario.get("active"):
+
+        verificacao = (
+            await verificar_assinatura_atual(
+                email,
+                usuario.get(
+                    "mercado_pago_subscription_id"
+                )
+            )
+        )
+
+        if not verificacao.get("pro"):
+
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    "Sua assinatura PRO "
+                    "não está ativa."
+                )
+            )
+
+        supabase.table(
+            "pro_users"
+        ).update({
+            "active": True,
+
+            "mercado_pago_subscription_id":
+                verificacao.get(
+                    "subscription_id"
+                ),
+
+            "mp_status":
+                verificacao.get(
+                    "status"
+                ),
+
+            "mp_checked_at":
+                datetime.now(
+                    timezone.utc
+                ).isoformat()
+        }).eq(
+            "id",
+            usuario["id"]
+        ).execute()
+
+    token = create_session()
+
+    expires = (
+        datetime.now(timezone.utc)
+        + timedelta(days=30)
     )
+
+    supabase.table(
+        "pro_users"
+    ).update({
+
+        "session_token_hash":
+            hashlib.sha256(
+                token.encode()
+            ).hexdigest(),
+
+        "session_expires_at":
+            expires.isoformat()
+
+    }).eq(
+        "id",
+        usuario["id"]
+    ).execute()
+
+    # -----------------------------------------------------
+    # Se está ativo, a entrada continua rápida.
+    # A próxima verificação é feita em segundo plano.
+    # -----------------------------------------------------
+
+    usuario_mp_checked = usuario.get(
+        "mp_checked_at"
+    )
+
+    precisa_verificar = True
+
+    if usuario_mp_checked:
+
+        try:
+
+            ultima_verificacao = datetime.fromisoformat(
+                usuario_mp_checked.replace(
+                    "Z",
+                    "+00:00"
+                )
+            )
+
+            limite = (
+                datetime.now(timezone.utc)
+                - timedelta(days=1)
+            )
+
+            if ultima_verificacao > limite:
+
+                precisa_verificar = False
+
+        except Exception:
+
+            precisa_verificar = True
+
+    if precisa_verificar:
+
+        background_tasks.add_task(
+            atualizar_assinatura_usuario,
+            usuario["id"],
+            email,
+            usuario.get(
+                "mercado_pago_subscription_id"
+            )
+        )
 
     return {
         "ok": True,
-        "token": token,
-        "email": user["email"],
-        "pro": bool(user["pro"])
+        "pro": True,
+        "email": email,
+        "token": token
     }
 
 
@@ -445,283 +787,148 @@ def login(data: Login):
 # VERIFICAR SESSÃO
 # =========================================================
 
-@app.get("/verificar-sessao")
-def verificar_sessao(token: str):
+@app.post("/verificar-sessao")
+async def verificar_sessao(
+    data: SessionData,
+    background_tasks: BackgroundTasks
+):
 
-    user = get_user_by_token(token)
-
-    if not user:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Sessão inválida ou expirada."
-        )
-
-    return {
-        "ok": True,
-        "email": user["email"],
-        "pro": bool(user["pro"]),
-        "subscription_id": user["subscription_id"],
-        "subscription_status": user["subscription_status"]
-    }
-
-
-# =========================================================
-# ASSINAR PRO
-# =========================================================
-
-@app.post("/assinar")
-def assinar(data: Assinar):
-
-    user = get_user_by_token(
-        data.token
-    )
-
-    if not user:
+    if not data.token:
 
         raise HTTPException(
             status_code=401,
-            detail="Sessão inválida ou expirada."
+            detail="Sessão inválida."
         )
 
-    if not MP_ACCESS_TOKEN:
+    token_hash = hashlib.sha256(
+        data.token.encode()
+    ).hexdigest()
+
+    supabase = get_supabase()
+
+    resultado = (
+        supabase
+        .table("pro_users")
+        .select(
+            "id, email, active, "
+            "session_expires_at, "
+            "mercado_pago_subscription_id, "
+            "mp_checked_at"
+        )
+        .eq(
+            "session_token_hash",
+            token_hash
+        )
+        .limit(1)
+        .execute()
+    )
+
+    if not resultado.data:
 
         raise HTTPException(
-            status_code=500,
-            detail="Mercado Pago não configurado no servidor."
-        )
-
-    mp_email = normalize_email(
-        str(data.mp_email)
-    )
-
-    # Se já possui assinatura, verifica primeiro.
-    if user["subscription_id"]:
-
-        subscription = consultar_assinatura(
-            user["subscription_id"]
-        )
-
-        if subscription:
-
-            status = subscription.get(
-                "status"
+            status_code=401,
+            detail=(
+                "Sessão inválida "
+                "ou expirada."
             )
-
-            update_user_pro(
-                user["id"],
-                status_pro(status),
-                user["subscription_id"],
-                status
-            )
-
-            if status_pro(status):
-
-                return {
-                    "ok": True,
-                    "pro": True,
-                    "already_pro": True,
-                    "subscription_id": user["subscription_id"],
-                    "status": status,
-                    "checkout_url": None
-                }
-
-    payload = {
-
-        "reason": "Sellium PRO",
-
-        "external_reference":
-            f"SELLIUM_USER_{user['id']}",
-
-        "payer_email": mp_email,
-
-        "auto_recurring": {
-
-            "frequency": 1,
-
-            "frequency_type": "months",
-
-            "transaction_amount": PRO_PRICE,
-
-            "currency_id": "BRL"
-        },
-
-        "back_url":
-            f"{APP_URL}/area-pro.html"
-    }
-
-    if MP_PLAN_ID:
-
-        payload["preapproval_plan_id"] = MP_PLAN_ID
-
-    try:
-
-        response = requests.post(
-
-            f"{MP_API}/preapproval",
-
-            headers=mp_headers(),
-
-            json=payload,
-
-            timeout=30
         )
 
-    except Exception as e:
+    usuario = resultado.data[0]
+
+    if not usuario.get("active"):
 
         raise HTTPException(
-
-            status_code=502,
-
-            detail={
-                "message":
-                    "Erro ao conectar ao Mercado Pago.",
-
-                "error": str(e)
-            }
+            status_code=403,
+            detail="Conta PRO inativa."
         )
 
-    try:
-
-        subscription = response.json()
-
-    except Exception:
-
-        subscription = {
-            "raw": response.text
-        }
-
-    if response.status_code not in (
-        200,
-        201
-    ):
-
-        raise HTTPException(
-
-            status_code=502,
-
-            detail={
-                "message":
-                    "Mercado Pago recusou a criação da assinatura.",
-
-                "mercadopago":
-                    subscription
-            }
-        )
-
-    subscription_id = subscription.get(
-        "id"
+    expires = usuario.get(
+        "session_expires_at"
     )
 
-    status = subscription.get(
-        "status"
-    )
+    if expires:
 
-    checkout_url = (
-        subscription.get("init_point")
-        or subscription.get("checkout_url")
-        or subscription.get("sandbox_init_point")
-    )
+        try:
 
-    update_user_pro(
-        user["id"],
-        status_pro(status),
-        subscription_id,
-        status
-    )
-
-    return {
-
-        "ok": True,
-
-        "pro":
-            status_pro(status),
-
-        "subscription_id":
-            subscription_id,
-
-        "status":
-            status,
-
-        "checkout_url":
-            checkout_url,
-
-        "init_point":
-            subscription.get("init_point"),
-
-        "sandbox_init_point":
-            subscription.get("sandbox_init_point")
-    }
-
-
-# =========================================================
-# VERIFICAR PRO
-# =========================================================
-
-@app.get("/verificar-pro")
-def verificar_pro(email: EmailStr):
-
-    email = normalize_email(
-        str(email)
-    )
-
-    db = get_db()
-
-    user = db.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE email = ?
-        """,
-        (email,)
-    ).fetchone()
-
-    db.close()
-
-    if not user:
-
-        return {
-            "ok": True,
-            "pro": False,
-            "status": "inactive"
-        }
-
-    if user["subscription_id"]:
-
-        subscription = consultar_assinatura(
-            user["subscription_id"]
-        )
-
-        if subscription:
-
-            status = subscription.get(
-                "status"
+            data_expiracao = datetime.fromisoformat(
+                expires.replace(
+                    "Z",
+                    "+00:00"
+                )
             )
 
-            update_user_pro(
-                user["id"],
-                status_pro(status),
-                user["subscription_id"],
-                status
+            if (
+                data_expiracao
+                < datetime.now(timezone.utc)
+            ):
+
+                raise HTTPException(
+                    status_code=401,
+                    detail="Sessão expirada."
+                )
+
+        except ValueError:
+
+            pass
+
+    # -----------------------------------------------------
+    # Verificação em segundo plano
+    # -----------------------------------------------------
+
+    precisa_verificar = True
+
+    ultima_verificacao = usuario.get(
+        "mp_checked_at"
+    )
+
+    if ultima_verificacao:
+
+        try:
+
+            ultima = datetime.fromisoformat(
+                ultima_verificacao.replace(
+                    "Z",
+                    "+00:00"
+                )
             )
 
-            return {
-                "ok": True,
-                "pro": status_pro(status),
-                "status": status
-            }
+            limite = (
+                datetime.now(timezone.utc)
+                - timedelta(days=1)
+            )
+
+            if ultima > limite:
+
+                precisa_verificar = False
+
+        except Exception:
+
+            precisa_verificar = True
+
+    if precisa_verificar:
+
+        background_tasks.add_task(
+            atualizar_assinatura_usuario,
+            usuario["id"],
+            usuario["email"],
+            usuario.get(
+                "mercado_pago_subscription_id"
+            )
+        )
+
+    # -----------------------------------------------------
+    # Responde imediatamente
+    # -----------------------------------------------------
 
     return {
         "ok": True,
-        "pro": bool(user["pro"]),
-        "status":
-            user["subscription_status"]
-            or "inactive"
+        "pro": True,
+        "email": usuario["email"]
     }
 
 
 # =========================================================
-# WEBHOOK
+# WEBHOOK MERCADO PAGO
 # =========================================================
 
 @app.post("/webhook/mercadopago")
@@ -729,457 +936,20 @@ async def webhook_mercadopago(
     request: Request
 ):
 
-    body = await request.body()
-
     try:
+
         data = await request.json()
 
     except Exception:
+
         data = {}
 
-    data_id = None
-
-    if isinstance(data, dict):
-
-        if isinstance(
-            data.get("data"),
-            dict
-        ):
-
-            data_id = data["data"].get(
-                "id"
-            )
-
-    event_id = (
-        request.headers.get(
-            "x-request-id"
-        )
-        or hashlib.sha256(
-            body
-        ).hexdigest()
+    print(
+        "Webhook Mercado Pago recebido:"
     )
 
-    db = get_db()
-
-    existing = db.execute(
-        """
-        SELECT id
-        FROM webhook_events
-        WHERE id = ?
-        """,
-        (event_id,)
-    ).fetchone()
-
-    if existing:
-
-        db.close()
-
-        return {
-            "ok": True,
-            "duplicate": True
-        }
-
-    db.execute(
-        """
-        INSERT INTO webhook_events
-        (id, created_at)
-        VALUES (?, ?)
-        """,
-        (
-            event_id,
-            now_iso()
-        )
-    )
-
-    db.commit()
-    db.close()
-
-    event_type = (
-        data.get("type")
-        or data.get("action")
-        or ""
-    )
-
-    object_id = (
-        str(data_id)
-        if data_id
-        else None
-    )
-
-    # -----------------------------------------------------
-    # ASSINATURA
-    # -----------------------------------------------------
-
-    if event_type in (
-        "subscription_preapproval",
-        "preapproval"
-    ):
-
-        if object_id:
-
-            subscription = consultar_assinatura(
-                object_id
-            )
-
-            if subscription:
-
-                external_reference = (
-                    subscription.get(
-                        "external_reference"
-                    )
-                )
-
-                if (
-                    external_reference
-                    and external_reference.startswith(
-                        "SELLIUM_USER_"
-                    )
-                ):
-
-                    try:
-
-                        user_id = int(
-                            external_reference.replace(
-                                "SELLIUM_USER_",
-                                ""
-                            )
-                        )
-
-                        status = subscription.get(
-                            "status"
-                        )
-
-                        update_user_pro(
-                            user_id,
-                            status_pro(status),
-                            object_id,
-                            status
-                        )
-
-                    except Exception:
-                        pass
+    print(data)
 
     return {
-        "ok": True
+        "received": True
     }
-
-
-# =========================================================
-# SINCRONIZAR PRO
-# =========================================================
-
-@app.post("/sincronizar-pro")
-def sincronizar_pro(
-    token: str,
-    mp_email: Optional[EmailStr] = None
-):
-
-    user = get_user_by_token(
-        token
-    )
-
-    if not user:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Sessão inválida ou expirada."
-        )
-
-
-    # =====================================================
-    # SE JÁ EXISTE SUBSCRIPTION ID
-    # =====================================================
-
-    if user["subscription_id"]:
-
-        subscription = consultar_assinatura(
-            user["subscription_id"]
-        )
-
-        if subscription:
-
-            status = subscription.get(
-                "status"
-            )
-
-            update_user_pro(
-                user["id"],
-                status_pro(status),
-                user["subscription_id"],
-                status
-            )
-
-            return {
-                "ok": True,
-                "pro": status_pro(status),
-                "status": status,
-                "subscription_id":
-                    user["subscription_id"]
-            }
-
-
-    # =====================================================
-    # SE NÃO EXISTE ID, TENTA RECUPERAR PELO
-    # EXTERNAL REFERENCE DO USUÁRIO
-    # =====================================================
-
-    try:
-
-        response = requests.get(
-
-            f"{MP_API}/preapproval/search",
-
-            headers=mp_headers(),
-
-            params={
-                "q":
-                    f"SELLIUM_USER_{user['id']}"
-            },
-
-            timeout=20
-        )
-
-        if response.status_code == 200:
-
-            data = response.json()
-
-            resultados = data.get(
-                "results",
-                []
-            )
-
-            for subscription in resultados:
-
-                external_reference = str(
-                    subscription.get(
-                        "external_reference"
-                    )
-                    or ""
-                )
-
-                if external_reference == (
-                    f"SELLIUM_USER_{user['id']}"
-                ):
-
-                    subscription_id = (
-                        subscription.get("id")
-                    )
-
-                    status = (
-                        subscription.get("status")
-                    )
-
-                    if subscription_id:
-
-                        update_user_pro(
-
-                            user["id"],
-
-                            status_pro(status),
-
-                            str(subscription_id),
-
-                            status
-                        )
-
-                        return {
-
-                            "ok": True,
-
-                            "pro":
-                                status_pro(status),
-
-                            "status":
-                                status,
-
-                            "subscription_id":
-                                str(subscription_id),
-
-                            "recovered":
-                                True
-                        }
-
-    except Exception:
-        pass
-
-
-    # =====================================================
-    # TENTA PELO E-MAIL DO MERCADO PAGO
-    # =====================================================
-
-    emails = []
-
-    if mp_email:
-
-        emails.append(
-            normalize_email(
-                str(mp_email)
-            )
-        )
-
-    conta_email = normalize_email(
-        user["email"]
-    )
-
-    if conta_email not in emails:
-
-        emails.append(
-            conta_email
-        )
-
-
-    for email in emails:
-
-        try:
-
-            response = requests.get(
-
-                f"{MP_API}/preapproval/search",
-
-                headers=mp_headers(),
-
-                params={
-                    "payer_email": email
-                },
-
-                timeout=20
-            )
-
-            if response.status_code != 200:
-                continue
-
-            data = response.json()
-
-            resultados = data.get(
-                "results",
-                []
-            )
-
-            # Primeiro procura uma assinatura
-            # claramente do Sellium.
-
-            for subscription in resultados:
-
-                reason = str(
-                    subscription.get(
-                        "reason"
-                    )
-                    or ""
-                ).lower()
-
-                external_reference = str(
-                    subscription.get(
-                        "external_reference"
-                    )
-                    or ""
-                )
-
-                if (
-                    "sellium" in reason
-                    or external_reference.startswith(
-                        "SELLIUM_USER_"
-                    )
-                ):
-
-                    subscription_id = (
-                        subscription.get("id")
-                    )
-
-                    status = (
-                        subscription.get("status")
-                    )
-
-                    if subscription_id:
-
-                        update_user_pro(
-
-                            user["id"],
-
-                            status_pro(status),
-
-                            str(subscription_id),
-
-                            status
-                        )
-
-                        return {
-
-                            "ok": True,
-
-                            "pro":
-                                status_pro(status),
-
-                            "status":
-                                status,
-
-                            "subscription_id":
-                                str(subscription_id),
-
-                            "recovered":
-                                True
-                        }
-
-            # Se houver apenas uma assinatura
-            # para esse e-mail, usa ela.
-
-            if len(resultados) == 1:
-
-                subscription = resultados[0]
-
-                subscription_id = (
-                    subscription.get("id")
-                )
-
-                status = (
-                    subscription.get("status")
-                )
-
-                if subscription_id:
-
-                    update_user_pro(
-
-                        user["id"],
-
-                        status_pro(status),
-
-                        str(subscription_id),
-
-                        status
-                    )
-
-                    return {
-
-                        "ok": True,
-
-                        "pro":
-                            status_pro(status),
-
-                        "status":
-                            status,
-
-                        "subscription_id":
-                            str(subscription_id),
-
-                        "recovered":
-                            True
-                    }
-
-        except Exception:
-            continue
-
-
-    # =====================================================
-    # NADA ENCONTRADO
-    # =====================================================
-
-    return {
-
-        "ok": True,
-
-        "pro":
-            bool(user["pro"]),
-
-        "status":
-            user["subscription_status"]
-            or "inactive"
-            }
