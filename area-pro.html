@@ -554,8 +554,7 @@ input:focus,select:focus{
         type="button"
         id="installBtn"
         class="header-btn install-btn"
-        onclick="instalarApp()"
-        style="display:none">
+        onclick="instalarApp()">
         📲 Instalar
       </button>
 
@@ -1045,7 +1044,7 @@ async function instalarApp(){
   if(!deferredInstallPrompt){
 
     showToast(
-      "O aplicativo já está instalado ou a instalação não está disponível."
+      "A instalação não está disponível neste momento. Se o app já estiver instalado, não é necessário instalar novamente."
     );
 
     return;
@@ -1065,13 +1064,6 @@ async function instalarApp(){
   }
 
   deferredInstallPrompt=null;
-
-  const installBtn=
-    document.getElementById("installBtn");
-
-  if(installBtn){
-    installBtn.style.display="none";
-  }
 
 }
 
