@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#16834a">
+  <link rel="manifest" href="./manifest.json">
 
   <title>Minha Meta PRO</title>
 
@@ -177,6 +178,25 @@
     .hidden {
       display: none !important;
     }
+
+    /* BOTÃO DE INSTALAÇÃO PWA */
+    .install-btn {
+      display: none;
+      width: 100%;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      background: #fff;
+      color: #15803d;
+      font-size: 14px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .install-btn:active {
+      transform: scale(.98);
+    }
   </style>
 </head>
 
@@ -191,19 +211,32 @@
     >
 
     <h1>Minha Meta PRO</h1>
+
     <div class="subtitle">
       Seu plano para alcançar seus objetivos.
     </div>
+
+    <!-- BOTÃO DE INSTALAÇÃO -->
+    <button
+      id="installButton"
+      class="install-btn"
+      onclick="instalarMinhaMeta()"
+    >
+      📲 Instalar aplicativo
+    </button>
   </div>
 
   <div class="container">
 
     <!-- VERIFICANDO SESSÃO -->
     <div id="checking" class="card loading">
+
       <h2>🔐 Entrando no PRO</h2>
+
       <p id="checkingText">
         Verificando sua sessão...
       </p>
+
     </div>
 
 
@@ -287,15 +320,110 @@
 
 
     <div class="back">
+
       <a href="./index.html">
         ← Voltar para Minha Meta
       </a>
+
     </div>
 
   </div>
 
 
 <script>
+
+/* =====================================================
+   INSTALAÇÃO PWA
+===================================================== */
+
+let deferredInstallPrompt = null;
+
+
+window.addEventListener(
+  "beforeinstallprompt",
+  function(event) {
+
+    event.preventDefault();
+
+    deferredInstallPrompt = event;
+
+    const button =
+      document.getElementById(
+        "installButton"
+      );
+
+    if (button) {
+      button.style.display = "block";
+    }
+
+  }
+);
+
+
+async function instalarMinhaMeta() {
+
+  if (!deferredInstallPrompt) {
+
+    alert(
+      'Se o botão de instalação não aparecer, abra o menu do navegador e escolha "Instalar aplicativo" ou "Adicionar à tela inicial".'
+    );
+
+    return;
+
+  }
+
+
+  deferredInstallPrompt.prompt();
+
+
+  try {
+
+    await deferredInstallPrompt.userChoice;
+
+  } catch (e) {}
+
+
+  deferredInstallPrompt = null;
+
+
+  const button =
+    document.getElementById(
+      "installButton"
+    );
+
+  if (button) {
+
+    button.style.display = "none";
+
+  }
+
+}
+
+
+window.addEventListener(
+  "appinstalled",
+  function() {
+
+    deferredInstallPrompt = null;
+
+    const button =
+      document.getElementById(
+        "installButton"
+      );
+
+    if (button) {
+
+      button.style.display = "none";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   CONFIGURAÇÃO PRO
+===================================================== */
 
 const API_URL =
   "https://minha-meta-pro-api.onrender.com";
@@ -563,6 +691,7 @@ async function entrarOuCriarConta() {
       "status"
     );
 
+
   if (!email) {
 
     status.className =
@@ -609,6 +738,7 @@ async function entrarOuCriarConta() {
         "confirmPassword"
       ).value;
 
+
     if (!confirmPassword) {
 
       status.className =
@@ -621,6 +751,7 @@ async function entrarOuCriarConta() {
 
     }
 
+
     if (password !== confirmPassword) {
 
       status.className =
@@ -632,6 +763,7 @@ async function entrarOuCriarConta() {
       return;
 
     }
+
 
     await criarConta(
       email,
@@ -669,10 +801,12 @@ async function criarConta(
       "mainButton"
     );
 
+
   button.disabled = true;
 
   button.textContent =
     "VERIFICANDO...";
+
 
   status.className =
     "status";
@@ -784,10 +918,12 @@ async function fazerLogin(
       "mainButton"
     );
 
+
   button.disabled = true;
 
   button.textContent =
     "ENTRANDO...";
+
 
   status.className =
     "status";
@@ -1008,7 +1144,41 @@ window.addEventListener(
   }
 );
 
+
+/* =====================================================
+   SERVICE WORKER
+===================================================== */
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener(
+    "load",
+    function() {
+
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then(function() {
+
+          console.log(
+            "Minha Meta PRO: Service Worker registrado."
+          );
+
+        })
+        .catch(function(err) {
+
+          console.log(
+            "Minha Meta PRO: erro no Service Worker:",
+            err
+          );
+
+        });
+
+    }
+  );
+
+}
+
 </script>
 
 </body>
-  </html>
+</html>
