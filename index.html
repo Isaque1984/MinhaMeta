@@ -1951,5 +1951,22 @@ try{
   };
 
 })();
-</script></body>
+</script>
+
+<!-- CORREÇÃO PWA: REGISTRO DO SERVICE WORKER -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js")
+      .then(function () {
+        console.log("Minha Meta: Service Worker registrado.");
+      })
+      .catch(function (err) {
+        console.log("Minha Meta: erro no Service Worker:", err);
+      });
+  });
+}
+</script>
+
+</body>
   </html>
