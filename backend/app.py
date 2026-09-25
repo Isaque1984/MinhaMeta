@@ -13,6 +13,10 @@ from supabase import create_client
 app = FastAPI(title="Minha Meta PRO API")
 
 
+# =========================================================
+# CORS
+# =========================================================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,10 +26,24 @@ app.add_middleware(
 )
 
 
-MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN", "").strip()
+# =========================================================
+# CONFIGURAÇÕES
+# =========================================================
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip()
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "").strip()
+MP_ACCESS_TOKEN = os.getenv(
+    "MP_ACCESS_TOKEN",
+    ""
+).strip()
+
+SUPABASE_URL = os.getenv(
+    "SUPABASE_URL",
+    ""
+).strip()
+
+SUPABASE_KEY = os.getenv(
+    "SUPABASE_KEY",
+    ""
+).strip()
 
 
 # =========================================================
@@ -69,7 +87,10 @@ def check_password(password, stored_hash):
 
     try:
 
-        salt, original_hash = stored_hash.split(":", 1)
+        salt, original_hash = stored_hash.split(
+            ":",
+            1
+        )
 
         password_hash = hashlib.pbkdf2_hmac(
             "sha256",
@@ -99,7 +120,9 @@ def create_session():
 
 def normalize_email(email):
 
-    return str(email or "").strip().lower()
+    return str(
+        email or ""
+    ).strip().lower()
 
 
 # =========================================================
@@ -145,7 +168,7 @@ def health():
 
 
 # =========================================================
-# CONSULTAR MERCADO PAGO PELO E-MAIL
+# MERCADO PAGO
 # =========================================================
 
 async def buscar_assinatura_por_email(email):
@@ -215,6 +238,10 @@ async def buscar_assinatura_por_id(
             "MP_ACCESS_TOKEN não configurado"
         )
 
+    if not subscription_id:
+
+        return None
+
     url = (
         "https://api.mercadopago.com/"
         f"preapproval/{subscription_id}"
@@ -237,6 +264,10 @@ async def buscar_assinatura_por_id(
             headers=headers
         )
 
+    if response.status_code == 404:
+
+        return None
+
     if response.status_code >= 400:
 
         raise Exception(
@@ -249,59 +280,87 @@ async def buscar_assinatura_por_id(
 
 
 # =========================================================
-# VERIFICAR STATUS ATUAL DA ASSINATURA
+# VERIFICAR ASSINATURA
 # =========================================================
 
-async def verificar_assinatura_atual(email, subscription_id=None):
+async def verificar_assinatura_atual(
+    email,
+    subscription_id=None
+):
 
     email = normalize_email(email)
 
     assinatura = None
 
     # -----------------------------------------------------
-    # Se já temos ID, consulta diretamente
+    # PRIMEIRO: tentar pelo ID salvo
     # -----------------------------------------------------
 
     if subscription_id:
 
         try:
 
-            assinatura = await buscar_assinatura_por_id(
-                subscription_id
+            assinatura = (
+                await buscar_assinatura_por_id(
+                    subscription_id
+                )
             )
 
-        except Exception:
+        except Exception as e:
+
+            print(
+                "Erro ao consultar assinatura pelo ID:",
+                str(e)
+            )
 
             assinatura = None
 
     # -----------------------------------------------------
-    # Se não temos ID, procura pelo e-mail
+    # SEGUNDO: procurar pelo e-mail
     # -----------------------------------------------------
 
     if not assinatura:
 
-        assinaturas = await buscar_assinatura_por_email(
+        assinaturas = (
+            await buscar_assinatura_por_email(
+                email
+            )
+        )
+
+        print(
+            "Mercado Pago encontrou",
+            len(assinaturas),
+            "assinatura(s) para",
             email
         )
 
-        # Primeiro tenta encontrar uma assinatura ativa
+        # Procurar uma ativa primeiro
         for item in assinaturas:
 
-            status = item.get("status")
+            status = str(
+                item.get(
+                    "status",
+                    ""
+                )
+            ).lower()
 
-            if status == "authorized":
+            if status in {
+                "authorized",
+                "active"
+            }:
 
                 assinatura = item
+
                 break
 
         # Se não encontrou ativa,
-        # pega a mais recente disponível
+        # guardar a primeira para sabermos o status
         if not assinatura and assinaturas:
 
             assinatura = assinaturas[0]
 
     # -----------------------------------------------------
-    # Nenhuma assinatura encontrada
+    # NENHUMA ASSINATURA
     # -----------------------------------------------------
 
     if not assinatura:
@@ -309,36 +368,55 @@ async def verificar_assinatura_atual(email, subscription_id=None):
         return {
             "pro": False,
             "status": "inactive",
-            "subscription_id": None
+            "subscription_id": None,
+            "next_payment_date": None
         }
 
-    status = assinatura.get(
-        "status",
-        "inactive"
-    )
+    # -----------------------------------------------------
+    # STATUS
+    # -----------------------------------------------------
+
+    status = str(
+        assinatura.get(
+            "status",
+            "inactive"
+        )
+    ).lower()
 
     subscription_id = assinatura.get(
         "id"
     )
 
-    active_statuses = {
+    next_payment_date = assinatura.get(
+        "next_payment_date"
+    )
+
+    ativa = status in {
         "authorized",
         "active"
     }
 
+    print(
+        "Verificação Mercado Pago:",
+        email,
+        "| status:",
+        status,
+        "| ID:",
+        subscription_id,
+        "| PRO:",
+        ativa
+    )
+
     return {
-        "pro": status in active_statuses,
+        "pro": ativa,
         "status": status,
         "subscription_id": subscription_id,
-        "next_payment_date":
-            assinatura.get(
-                "next_payment_date"
-            )
+        "next_payment_date": next_payment_date
     }
 
 
 # =========================================================
-# ATUALIZAÇÃO DA ASSINATURA EM SEGUNDO PLANO
+# ATUALIZAR ASSINATURA EM SEGUNDO PLANO
 # =========================================================
 
 async def atualizar_assinatura_usuario(
@@ -349,9 +427,16 @@ async def atualizar_assinatura_usuario(
 
     try:
 
-        verificacao = await verificar_assinatura_atual(
-            email,
-            subscription_id
+        print(
+            "Iniciando verificação em segundo plano:",
+            email
+        )
+
+        verificacao = (
+            await verificar_assinatura_atual(
+                email,
+                subscription_id
+            )
         )
 
         supabase = get_supabase()
@@ -370,7 +455,9 @@ async def atualizar_assinatura_usuario(
         )
 
         ativo = bool(
-            verificacao.get("pro")
+            verificacao.get(
+                "pro"
+            )
         )
 
         dados = {
@@ -395,15 +482,25 @@ async def atualizar_assinatura_usuario(
         ).execute()
 
         print(
-            "Verificação Mercado Pago concluída:",
+            "Verificação em segundo plano concluída:",
             email,
-            novo_status
+            "| status:",
+            novo_status,
+            "| PRO:",
+            ativo
         )
 
     except Exception as e:
 
+        # -------------------------------------------------
+        # MUITO IMPORTANTE:
+        #
+        # Se o Mercado Pago der erro temporário,
+        # NÃO desativamos a conta.
+        # -------------------------------------------------
+
         print(
-            "Erro na verificação Mercado Pago:",
+            "Erro temporário na verificação Mercado Pago:",
             str(e)
         )
 
@@ -413,9 +510,13 @@ async def atualizar_assinatura_usuario(
 # =========================================================
 
 @app.get("/verificar-pro")
-async def verificar_pro(email: str):
+async def verificar_pro(
+    email: str
+):
 
-    email = normalize_email(email)
+    email = normalize_email(
+        email
+    )
 
     if not email:
 
@@ -426,16 +527,23 @@ async def verificar_pro(email: str):
 
     try:
 
-        verificacao = await verificar_assinatura_atual(
-            email
+        verificacao = (
+            await verificar_assinatura_atual(
+                email
+            )
         )
 
         return {
             "pro":
-                verificacao.get("pro"),
+                verificacao.get(
+                    "pro",
+                    False
+                ),
 
             "status":
-                verificacao.get("status"),
+                verificacao.get(
+                    "status"
+                ),
 
             "subscription_id":
                 verificacao.get(
@@ -495,11 +603,13 @@ async def criar_conta_pro(
         )
 
     # -----------------------------------------------------
-    # Confirma assinatura
+    # PRIMEIRA CRIAÇÃO PRECISA CONFIRMAR O PAGAMENTO
     # -----------------------------------------------------
 
-    verificacao = await verificar_assinatura_atual(
-        email
+    verificacao = (
+        await verificar_assinatura_atual(
+            email
+        )
     )
 
     if not verificacao.get("pro"):
@@ -518,7 +628,10 @@ async def criar_conta_pro(
         supabase
         .table("pro_users")
         .select("id")
-        .eq("email", email)
+        .eq(
+            "email",
+            email
+        )
         .execute()
     )
 
@@ -547,9 +660,14 @@ async def criar_conta_pro(
         supabase
         .table("pro_users")
         .insert({
-            "email": email,
-            "password_hash": password_hash,
-            "active": True,
+            "email":
+                email,
+
+            "password_hash":
+                password_hash,
+
+            "active":
+                True,
 
             "session_token_hash":
                 hashlib.sha256(
@@ -624,7 +742,10 @@ async def login_pro(
         supabase
         .table("pro_users")
         .select("*")
-        .eq("email", email)
+        .eq(
+            "email",
+            email
+        )
         .limit(1)
         .execute()
     )
@@ -639,6 +760,10 @@ async def login_pro(
         )
 
     usuario = resultado.data[0]
+
+    # -----------------------------------------------------
+    # CONFERIR SENHA
+    # -----------------------------------------------------
 
     if not check_password(
         data.password,
@@ -656,54 +781,161 @@ async def login_pro(
         )
 
     # -----------------------------------------------------
-    # Se a conta está inativa, fazemos uma verificação
-    # imediata para permitir uma eventual renovação.
+    # CONTA JÁ ATIVA
+    #
+    # LIBERA IMEDIATAMENTE.
+    #
+    # NÃO CONSULTA O MERCADO PAGO AQUI.
     # -----------------------------------------------------
 
-    if not usuario.get("active"):
+    if usuario.get("active"):
 
-        verificacao = (
-            await verificar_assinatura_atual(
+        token = create_session()
+
+        expires = (
+            datetime.now(timezone.utc)
+            + timedelta(days=30)
+        )
+
+        supabase.table(
+            "pro_users"
+        ).update({
+
+            "session_token_hash":
+                hashlib.sha256(
+                    token.encode()
+                ).hexdigest(),
+
+            "session_expires_at":
+                expires.isoformat()
+
+        }).eq(
+            "id",
+            usuario["id"]
+        ).execute()
+
+        # -------------------------------------------------
+        # VERIFICAÇÃO EM SEGUNDO PLANO
+        # -------------------------------------------------
+
+        precisa_verificar = True
+
+        ultima_verificacao = usuario.get(
+            "mp_checked_at"
+        )
+
+        if ultima_verificacao:
+
+            try:
+
+                ultima = datetime.fromisoformat(
+                    ultima_verificacao.replace(
+                        "Z",
+                        "+00:00"
+                    )
+                )
+
+                limite = (
+                    datetime.now(timezone.utc)
+                    - timedelta(days=1)
+                )
+
+                if ultima > limite:
+
+                    precisa_verificar = False
+
+            except Exception:
+
+                precisa_verificar = True
+
+        if precisa_verificar:
+
+            background_tasks.add_task(
+                atualizar_assinatura_usuario,
+                usuario["id"],
                 email,
                 usuario.get(
                     "mercado_pago_subscription_id"
                 )
             )
+
+        # -------------------------------------------------
+        # LIBERA IMEDIATAMENTE
+        # -------------------------------------------------
+
+        return {
+            "ok": True,
+            "pro": True,
+            "email": email,
+            "token": token
+        }
+
+    # =====================================================
+    # CONTA INATIVA
+    #
+    # Aqui fazemos consulta imediata para tentar reativar.
+    # =====================================================
+
+    verificacao = (
+        await verificar_assinatura_atual(
+            email,
+            usuario.get(
+                "mercado_pago_subscription_id"
+            )
+        )
+    )
+
+    if not verificacao.get("pro"):
+
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Sua assinatura PRO "
+                "não está ativa."
+            )
         )
 
-        if not verificacao.get("pro"):
+    # -----------------------------------------------------
+    # REATIVAR
+    # -----------------------------------------------------
 
-            raise HTTPException(
-                status_code=403,
-                detail=(
-                    "Sua assinatura PRO "
-                    "não está ativa."
-                )
-            )
+    novo_id = verificacao.get(
+        "subscription_id"
+    )
 
-        supabase.table(
-            "pro_users"
-        ).update({
-            "active": True,
+    dados = {
+        "active":
+            True,
 
-            "mercado_pago_subscription_id":
-                verificacao.get(
-                    "subscription_id"
-                ),
+        "mp_status":
+            verificacao.get(
+                "status"
+            ),
 
-            "mp_status":
-                verificacao.get(
-                    "status"
-                ),
+        "mp_checked_at":
+            datetime.now(
+                timezone.utc
+            ).isoformat()
+    }
 
-            "mp_checked_at":
-                datetime.now(
-                    timezone.utc
-                ).isoformat()
-        }).eq(
-            "id",
-            usuario["id"]
-        ).execute()
+    if novo_id:
+
+        dados[
+            "mercado_pago_subscription_id"
+        ] = novo_id
+
+    supabase.table(
+        "pro_users"
+    ).update(
+        dados
+    ).eq(
+        "id",
+        usuario["id"]
+    ).execute()
+
+    # -----------------------------------------------------
+    # CRIAR SESSÃO
+    # -----------------------------------------------------
 
     token = create_session()
 
@@ -728,52 +960,6 @@ async def login_pro(
         "id",
         usuario["id"]
     ).execute()
-
-    # -----------------------------------------------------
-    # Se está ativo, a entrada continua rápida.
-    # A próxima verificação é feita em segundo plano.
-    # -----------------------------------------------------
-
-    usuario_mp_checked = usuario.get(
-        "mp_checked_at"
-    )
-
-    precisa_verificar = True
-
-    if usuario_mp_checked:
-
-        try:
-
-            ultima_verificacao = datetime.fromisoformat(
-                usuario_mp_checked.replace(
-                    "Z",
-                    "+00:00"
-                )
-            )
-
-            limite = (
-                datetime.now(timezone.utc)
-                - timedelta(days=1)
-            )
-
-            if ultima_verificacao > limite:
-
-                precisa_verificar = False
-
-        except Exception:
-
-            precisa_verificar = True
-
-    if precisa_verificar:
-
-        background_tasks.add_task(
-            atualizar_assinatura_usuario,
-            usuario["id"],
-            email,
-            usuario.get(
-                "mercado_pago_subscription_id"
-            )
-        )
 
     return {
         "ok": True,
@@ -835,12 +1021,20 @@ async def verificar_sessao(
 
     usuario = resultado.data[0]
 
+    # -----------------------------------------------------
+    # CONTA INATIVA
+    # -----------------------------------------------------
+
     if not usuario.get("active"):
 
         raise HTTPException(
             status_code=403,
             detail="Conta PRO inativa."
         )
+
+    # -----------------------------------------------------
+    # EXPIRAÇÃO DA SESSÃO
+    # -----------------------------------------------------
 
     expires = usuario.get(
         "session_expires_at"
@@ -872,7 +1066,7 @@ async def verificar_sessao(
             pass
 
     # -----------------------------------------------------
-    # Verificação em segundo plano
+    # VERIFICAÇÃO EM SEGUNDO PLANO
     # -----------------------------------------------------
 
     precisa_verificar = True
@@ -917,7 +1111,7 @@ async def verificar_sessao(
         )
 
     # -----------------------------------------------------
-    # Responde imediatamente
+    # RESPONDE IMEDIATAMENTE
     # -----------------------------------------------------
 
     return {
@@ -945,11 +1139,21 @@ async def webhook_mercadopago(
         data = {}
 
     print(
-        "Webhook Mercado Pago recebido:"
+        "===================================="
     )
 
-    print(data)
+    print(
+        "WEBHOOK MERCADO PAGO RECEBIDO"
+    )
+
+    print(
+        data
+    )
+
+    print(
+        "===================================="
+    )
 
     return {
         "received": True
-    }
+        }
