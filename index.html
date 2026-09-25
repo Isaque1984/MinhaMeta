@@ -1979,15 +1979,44 @@ try{
 <script>
 let deferredInstallPrompt = null;
 
+function verificarBotaoInstalar(){
+
+  const button =
+    document.getElementById("installButton");
+
+  if(!button)return;
+
+  const instalado =
+    window.matchMedia &&
+    window.matchMedia("(display-mode: standalone)").matches;
+
+  const instaladoIOS =
+    window.navigator.standalone === true;
+
+  if(instalado || instaladoIOS){
+
+    button.style.display = "none";
+
+  }else{
+
+    button.style.display = "block";
+
+  }
+}
+
 window.addEventListener("beforeinstallprompt", function(event){
+
   event.preventDefault();
+
   deferredInstallPrompt = event;
 
-  const button = document.getElementById("installButton");
+  const button =
+    document.getElementById("installButton");
 
   if(button){
     button.style.display = "block";
   }
+
 });
 
 async function instalarMinhaMeta(){
@@ -2004,7 +2033,9 @@ async function instalarMinhaMeta(){
   deferredInstallPrompt.prompt();
 
   try{
+
     await deferredInstallPrompt.userChoice;
+
   }catch(e){}
 
   deferredInstallPrompt = null;
@@ -2015,6 +2046,7 @@ async function instalarMinhaMeta(){
   if(button){
     button.style.display = "none";
   }
+
 }
 
 window.addEventListener("appinstalled", function(){
@@ -2027,6 +2059,12 @@ window.addEventListener("appinstalled", function(){
   if(button){
     button.style.display = "none";
   }
+
+});
+
+window.addEventListener("load", function(){
+
+  verificarBotaoInstalar();
 
 });
 </script>
@@ -2047,4 +2085,4 @@ if ("serviceWorker" in navigator) {
 </script>
 
 </body>
-  </html>
+                                                                                                                                       </html>
