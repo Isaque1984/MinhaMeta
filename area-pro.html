@@ -55,6 +55,36 @@ button{
   font-weight:bold;
 }
 
+/* BOTÕES DO CABEÇALHO */
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.header-btn{
+  padding:6px 9px;
+  border-radius:9px;
+  font-size:10px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.install-btn{
+  background:#20d878;
+  color:#062616;
+}
+
+.logout-btn{
+  background:rgba(255,255,255,.12);
+  color:white;
+  border:1px solid rgba(255,255,255,.18);
+}
+
+.header-btn:active{
+  transform:scale(.96);
+}
+
 .header h1{
   margin-top:22px;
   font-size:28px;
@@ -515,9 +545,34 @@ input:focus,select:focus{
 }
 </style></head><body><header class="header">
   <div class="header-top">
+
     <div class="logo">🎯 Minha Meta</div>
-    <div class="pro">PRO</div>
-  </div>  <h1>Meu painel financeiro</h1>
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        id="installBtn"
+        class="header-btn install-btn"
+        onclick="instalarApp()"
+        style="display:none">
+        📲 Instalar
+      </button>
+
+      <button
+        type="button"
+        class="header-btn logout-btn"
+        onclick="sairDoPro()">
+        🚪 Sair
+      </button>
+
+      <div class="pro">PRO</div>
+
+    </div>
+
+  </div>
+
+  <h1>Meu painel financeiro</h1>
   <p>Transforme seus objetivos em um plano real.</p>
 </header><main class="container">  <div class="stats"><div class="card">
   <div class="stat-title">Total guardado</div>
@@ -961,6 +1016,98 @@ let chartDays = 7;
 
 let financeViewDate = new Date();
 financeViewDate.setDate(1);
+
+
+/* =========================
+   INSTALAÇÃO DO APLICATIVO
+========================= */
+
+let deferredInstallPrompt = null;
+
+window.addEventListener("beforeinstallprompt",function(event){
+
+  event.preventDefault();
+
+  deferredInstallPrompt=event;
+
+  const installBtn=
+    document.getElementById("installBtn");
+
+  if(installBtn){
+    installBtn.style.display="inline-block";
+  }
+
+});
+
+
+async function instalarApp(){
+
+  if(!deferredInstallPrompt){
+
+    showToast(
+      "O aplicativo já está instalado ou a instalação não está disponível."
+    );
+
+    return;
+  }
+
+  deferredInstallPrompt.prompt();
+
+  const result=
+    await deferredInstallPrompt.userChoice;
+
+  if(result.outcome==="accepted"){
+
+    showToast(
+      "Aplicativo instalado com sucesso! 📲"
+    );
+
+  }
+
+  deferredInstallPrompt=null;
+
+  const installBtn=
+    document.getElementById("installBtn");
+
+  if(installBtn){
+    installBtn.style.display="none";
+  }
+
+}
+
+
+/* =========================
+   SAIR DO PRO
+========================= */
+
+function sairDoPro(){
+
+  if(!confirm(
+    "Deseja sair da sua conta PRO?"
+  )){
+    return;
+  }
+
+  /*
+    IMPORTANTE:
+    Os dados financeiros NÃO são apagados.
+    Apenas os dados de sessão são removidos.
+  */
+
+  localStorage.removeItem("minha_meta_email");
+  localStorage.removeItem("minha_meta_pro");
+  localStorage.removeItem("minha_meta_pro_token");
+
+  showToast("Você saiu da conta PRO.");
+
+  setTimeout(function(){
+
+    window.location.href=
+      "https://minhameta.onrender.com/meta-pro.html";
+
+  },700);
+
+}
 
 
 /* =========================
