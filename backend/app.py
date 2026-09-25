@@ -1,173 +1,229 @@
 import os
-import asyncio
+import hashlib
 import secrets
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import httpx
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from passlib.context import CryptContext
-from supabase import create_client, Client
+from supabase import create_client
 
 
-# =========================================================
-# CONFIGURAÇÃO
-# =========================================================
+app = FastAPI(title="Minha Meta PRO API")
 
-APP_NAME = "Minha Meta PRO API"
-
-MP_ACCESS_TOKEN = os.getenv(
-    "MP_ACCESS_TOKEN",
-    ""
-).strip()
-
-SUPABASE_URL = os.getenv(
-    "SUPABASE_URL",
-    ""
-).strip()
-
-SUPABASE_KEY = os.getenv(
-    "SUPABASE_KEY",
-    ""
-).strip()
-
-
-# =========================================================
-# APP
-# =========================================================
-
-app = FastAPI(
-    title=APP_NAME
-)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN", "").strip()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip()
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "").strip()
 
 
 # =========================================================
 # SUPABASE
 # =========================================================
 
-supabase: Client | None = None
+def get_supabase():
 
-if SUPABASE_URL and SUPABASE_KEY:
+    if not SUPABASE_URL or not SUPABASE_KEY:
 
-    try:
-
-        supabase = create_client(
-            SUPABASE_URL,
-            SUPABASE_KEY
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase não configurado no Render"
         )
 
-        print("Supabase conectado.")
-
-    except Exception as erro:
-
-        print(
-            "Erro ao conectar ao Supabase:",
-            erro
-        )
+    return create_client(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    )
 
 
 # =========================================================
 # SENHAS
 # =========================================================
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
+def hash_password(password):
+
+    salt = secrets.token_hex(16)
+
+    password_hash = hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        salt.encode("utf-8"),
+        200000
+    ).hex()
+
+    return salt + ":" + password_hash
+
+
+def check_password(password, stored_hash):
+
+    try:
+
+        salt, original_hash = stored_hash.split(":", 1)
+
+        password_hash = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            salt.encode("utf-8"),
+            200000
+        ).hex()
+
+        return secrets.compare_digest(
+            password_hash,
+            original_hash
+        )
+
+    except Exception:
+
+        return False
+
+
+# =========================================================
+# SESSÃO
+# =========================================================
+
+def create_session():
+
+    return secrets.token_urlsafe(48)
+
+
+def normalize_email(email):
+
+    return str(email or "").strip().lower()
 
 
 # =========================================================
 # MODELOS
 # =========================================================
 
-class ContaPRO(BaseModel):
+class CreateAccount(BaseModel):
 
     email: str
     password: str
 
 
-class LoginPRO(BaseModel):
+class LoginData(BaseModel):
 
     email: str
     password: str
 
 
-class SessaoPRO(BaseModel):
+class SessionData(BaseModel):
 
     token: str
 
 
 # =========================================================
-# UTILIDADES
+# ROTAS BÁSICAS
 # =========================================================
 
-def normalizar_email(
-    email: str
-) -> str:
+@app.get("/")
+def root():
 
-    return str(
-        email or ""
-    ).strip().lower()
-
-
-def agora_utc():
-
-    return datetime.now(
-        timezone.utc
-    )
+    return {
+        "app": "Minha Meta PRO API",
+        "status": "online"
+    }
 
 
-def gerar_token():
+@app.get("/health")
+def health():
 
-    return secrets.token_urlsafe(
-        48
-    )
-
-
-def status_pro_ativo(
-    status
-) -> bool:
-
-    return str(
-        status or ""
-    ).strip().lower() in {
-        "authorized",
-        "active"
+    return {
+        "ok": True
     }
 
 
 # =========================================================
-# MERCADO PAGO
+# CONSULTAR MERCADO PAGO PELO E-MAIL
 # =========================================================
 
-async def mp_get(
-    path: str,
-    params=None
-):
+async def buscar_assinatura_por_email(email):
 
     if not MP_ACCESS_TOKEN:
 
         raise Exception(
-            "MP_ACCESS_TOKEN não configurado."
+            "MP_ACCESS_TOKEN não configurado"
         )
 
+    email = normalize_email(email)
+
     url = (
-        "https://api.mercadopago.com"
-        + path
+        "https://api.mercadopago.com/"
+        "preapproval/search"
     )
 
     headers = {
         "Authorization":
             f"Bearer {MP_ACCESS_TOKEN}",
+
+        "Content-Type":
+            "application/json"
+    }
+
+    params = {
+        "payer_email": email
+    }
+
+    async with httpx.AsyncClient(
+        timeout=20
+    ) as client:
+
+        response = await client.get(
+            url,
+            headers=headers,
+            params=params
+        )
+
+    if response.status_code >= 400:
+
+        raise Exception(
+            f"Mercado Pago HTTP "
+            f"{response.status_code}: "
+            f"{response.text}"
+        )
+
+    data = response.json()
+
+    return data.get(
+        "results",
+        []
+    )
+
+
+# =========================================================
+# CONSULTAR ASSINATURA PELO ID
+# =========================================================
+
+async def buscar_assinatura_por_id(
+    subscription_id
+):
+
+    if not MP_ACCESS_TOKEN:
+
+        raise Exception(
+            "MP_ACCESS_TOKEN não configurado"
+        )
+
+    url = (
+        "https://api.mercadopago.com/"
+        f"preapproval/{subscription_id}"
+    )
+
+    headers = {
+        "Authorization":
+            f"Bearer {MP_ACCESS_TOKEN}",
+
         "Content-Type":
             "application/json"
     }
@@ -176,500 +232,219 @@ async def mp_get(
         timeout=20
     ) as client:
 
-        resposta = await client.get(
+        response = await client.get(
             url,
-            headers=headers,
-            params=params
+            headers=headers
         )
 
-    if resposta.status_code >= 400:
+    if response.status_code >= 400:
 
         raise Exception(
             f"Mercado Pago HTTP "
-            f"{resposta.status_code}: "
-            f"{resposta.text}"
+            f"{response.status_code}: "
+            f"{response.text}"
         )
 
-    return resposta.json()
+    return response.json()
 
 
 # =========================================================
-# BUSCAR ASSINATURAS NO MERCADO PAGO
+# VERIFICAR STATUS ATUAL DA ASSINATURA
 # =========================================================
 
-async def buscar_assinaturas_por_email(
-    email: str
-):
+async def verificar_assinatura_atual(email, subscription_id=None):
 
-    email = normalizar_email(
-        email
-    )
+    email = normalize_email(email)
 
-    if not email:
-        return []
-
-    resultados_finais = []
-
-    # -----------------------------------------------------
-    # TENTATIVA 1
-    # payer_email
-    # -----------------------------------------------------
-
-    try:
-
-        dados = await mp_get(
-            "/preapproval/search",
-            params={
-                "payer_email": email,
-                "limit": 50
-            }
-        )
-
-        resultados = (
-            dados.get("results")
-            or []
-        )
-
-        for item in resultados:
-
-            payer_email = normalizar_email(
-                item.get("payer_email")
-            )
-
-            if payer_email == email:
-
-                resultados_finais.append(
-                    item
-                )
-
-                continue
-
-            payer = item.get(
-                "payer"
-            )
-
-            if isinstance(
-                payer,
-                dict
-            ):
-
-                nested_email = normalizar_email(
-                    payer.get("email")
-                )
-
-                if nested_email == email:
-
-                    resultados_finais.append(
-                        item
-                    )
-
-    except Exception as erro:
-
-        print(
-            "Busca payer_email falhou:",
-            erro
-        )
-
-    # -----------------------------------------------------
-    # TENTATIVA 2
-    # q
-    # -----------------------------------------------------
-
-    try:
-
-        dados = await mp_get(
-            "/preapproval/search",
-            params={
-                "q": email,
-                "limit": 50
-            }
-        )
-
-        resultados = (
-            dados.get("results")
-            or []
-        )
-
-        for item in resultados:
-
-            payer_email = normalizar_email(
-                item.get("payer_email")
-            )
-
-            if payer_email == email:
-
-                resultados_finais.append(
-                    item
-                )
-
-                continue
-
-            payer = item.get(
-                "payer"
-            )
-
-            if isinstance(
-                payer,
-                dict
-            ):
-
-                nested_email = normalizar_email(
-                    payer.get("email")
-                )
-
-                if nested_email == email:
-
-                    resultados_finais.append(
-                        item
-                    )
-
-    except Exception as erro:
-
-        print(
-            "Busca q falhou:",
-            erro
-        )
-
-    # -----------------------------------------------------
-    # REMOVER DUPLICADOS
-    # -----------------------------------------------------
-
-    unicos = {}
-
-    for item in resultados_finais:
-
-        identificador = (
-            item.get("id")
-            or item.get("preapproval_id")
-        )
-
-        if identificador:
-
-            unicos[
-                str(identificador)
-            ] = item
-
-    return list(
-        unicos.values()
-    )
-
-
-# =========================================================
-# BUSCAR ASSINATURA POR ID
-# =========================================================
-
-async def buscar_assinatura_por_id(
-    subscription_id
-):
-
-    if not subscription_id:
-
-        return None
-
-    try:
-
-        return await mp_get(
-            f"/preapproval/{subscription_id}"
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro buscando assinatura por ID:",
-            erro
-        )
-
-        return None
-
-
-# =========================================================
-# VERIFICAR ASSINATURA
-# =========================================================
-
-async def verificar_assinatura_atual(
-    email: str,
-    subscription_id=None
-):
-
-    email = normalizar_email(
-        email
-    )
-
-    # -----------------------------------------------------
-    # 1 — TENTAR PELO ID SALVO
-    # -----------------------------------------------------
+    assinatura = None
 
     if subscription_id:
 
-        assinatura = (
-            await buscar_assinatura_por_id(
+        try:
+
+            assinatura = await buscar_assinatura_por_id(
                 subscription_id
             )
-        )
 
-        if assinatura:
+        except Exception:
 
-            payer_email = normalizar_email(
-                assinatura.get(
-                    "payer_email"
-                )
-            )
+            assinatura = None
 
-            if not payer_email:
+    if not assinatura:
 
-                payer = assinatura.get(
-                    "payer"
-                )
-
-                if isinstance(
-                    payer,
-                    dict
-                ):
-
-                    payer_email = normalizar_email(
-                        payer.get(
-                            "email"
-                        )
-                    )
-
-            # Se o ID pertence ao mesmo e-mail,
-            # podemos usar imediatamente.
-
-            if (
-                not payer_email
-                or payer_email == email
-            ):
-
-                status = str(
-                    assinatura.get(
-                        "status"
-                    )
-                    or ""
-                ).lower()
-
-                subscription_id_found = (
-                    assinatura.get("id")
-                    or assinatura.get(
-                        "preapproval_id"
-                    )
-                    or subscription_id
-                )
-
-                next_payment_date = (
-                    assinatura.get(
-                        "next_payment_date"
-                    )
-                    or assinatura.get(
-                        "date_next_billing"
-                    )
-                )
-
-                ativo = status_pro_ativo(
-                    status
-                )
-
-                return {
-                    "pro": ativo,
-                    "status": status,
-                    "subscription_id":
-                        subscription_id_found,
-                    "next_payment_date":
-                        next_payment_date,
-                    "subscription":
-                        assinatura
-                }
-
-    # -----------------------------------------------------
-    # 2 — BUSCAR PELO E-MAIL
-    # -----------------------------------------------------
-
-    assinaturas = (
-        await buscar_assinaturas_por_email(
+        assinaturas = await buscar_assinatura_por_email(
             email
         )
-    )
 
-    if not assinaturas:
+        for item in assinaturas:
+
+            status = item.get("status")
+
+            if status == "authorized":
+
+                assinatura = item
+                break
+
+        if not assinatura and assinaturas:
+
+            assinatura = assinaturas[0]
+
+    if not assinatura:
 
         return {
             "pro": False,
             "status": "inactive",
-            "subscription_id": None,
-            "next_payment_date": None,
-            "subscription": None
+            "subscription_id": None
         }
 
-    # -----------------------------------------------------
-    # PRIMEIRO: PROCURAR UMA ATIVA
-    # -----------------------------------------------------
-
-    for assinatura in assinaturas:
-
-        status = str(
-            assinatura.get(
-                "status"
-            )
-            or ""
-        ).lower()
-
-        if status_pro_ativo(
-            status
-        ):
-
-            subscription_id_found = (
-                assinatura.get("id")
-                or assinatura.get(
-                    "preapproval_id"
-                )
-            )
-
-            next_payment_date = (
-                assinatura.get(
-                    "next_payment_date"
-                )
-                or assinatura.get(
-                    "date_next_billing"
-                )
-            )
-
-            return {
-                "pro": True,
-                "status": status,
-                "subscription_id":
-                    subscription_id_found,
-                "next_payment_date":
-                    next_payment_date,
-                "subscription":
-                    assinatura
-            }
-
-    # -----------------------------------------------------
-    # EXISTE ASSINATURA, MAS ESTÁ INATIVA
-    # -----------------------------------------------------
-
-    primeira = assinaturas[0]
-
-    status = str(
-        primeira.get(
-            "status"
-        )
-        or "inactive"
-    ).lower()
-
-    subscription_id_found = (
-        primeira.get("id")
-        or primeira.get(
-            "preapproval_id"
-        )
+    status = assinatura.get(
+        "status",
+        "inactive"
     )
 
-    next_payment_date = (
-        primeira.get(
-            "next_payment_date"
-        )
-        or primeira.get(
-            "date_next_billing"
-        )
+    subscription_id = assinatura.get(
+        "id"
     )
+
+    active_statuses = {
+        "authorized",
+        "active"
+    }
 
     return {
-        "pro": False,
+        "pro": status in active_statuses,
         "status": status,
-        "subscription_id":
-            subscription_id_found,
+        "subscription_id": subscription_id,
         "next_payment_date":
-            next_payment_date,
-        "subscription":
-            primeira
+            assinatura.get(
+                "next_payment_date"
+            )
     }
 
 
 # =========================================================
-# ATUALIZAR USUÁRIO NO SUPABASE
+# ATUALIZAÇÃO DA ASSINATURA EM SEGUNDO PLANO
 # =========================================================
 
 async def atualizar_assinatura_usuario(
-    email: str
+    user_id,
+    email,
+    subscription_id=None
 ):
-
-    if not supabase:
-        return None
-
-    email = normalizar_email(
-        email
-    )
 
     try:
 
-        resultado = (
-            supabase
-            .table("pro_users")
-            .select("*")
-            .eq("email", email)
-            .limit(1)
-            .execute()
+        verificacao = await verificar_assinatura_atual(
+            email,
+            subscription_id
         )
 
-        usuarios = (
-            resultado.data
-            or []
+        supabase = get_supabase()
+
+        agora = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+        novo_status = verificacao.get(
+            "status",
+            "inactive"
         )
 
-        if not usuarios:
-            return None
-
-        usuario = usuarios[0]
-
-        subscription_id = (
-            usuario.get(
-                "subscription_id"
-            )
+        novo_id = verificacao.get(
+            "subscription_id"
         )
 
-        verificacao = (
-            await verificar_assinatura_atual(
-                email,
-                subscription_id
-            )
+        ativo = bool(
+            verificacao.get("pro")
         )
 
-        dados_update = {
-
-            "active":
-                verificacao["pro"],
-
-            "status":
-                verificacao["status"],
-
-            "subscription_id":
-                verificacao[
-                    "subscription_id"
-                ],
-
-            "next_payment_date":
-                verificacao[
-                    "next_payment_date"
-                ]
+        dados = {
+            "active": ativo,
+            "mp_status": novo_status,
+            "mp_checked_at": agora
         }
 
-        (
-            supabase
-            .table("pro_users")
-            .update(dados_update)
-            .eq("email", email)
-            .execute()
-        )
+        if novo_id:
 
-        return verificacao
+            dados[
+                "mercado_pago_subscription_id"
+            ] = novo_id
 
-    except Exception as erro:
+        supabase.table(
+            "pro_users"
+        ).update(
+            dados
+        ).eq(
+            "id",
+            user_id
+        ).execute()
 
         print(
-            "Erro atualizando usuário:",
-            erro
+            "Verificação Mercado Pago concluída:",
+            email,
+            novo_status
         )
 
-        return None
+    except Exception as e:
+
+        print(
+            "Erro na verificação Mercado Pago:",
+            str(e)
+        )
+
+
+# =========================================================
+# VERIFICAR PRO PELO E-MAIL
+# =========================================================
+
+@app.get("/verificar-pro")
+async def verificar_pro(email: str):
+
+    email = normalize_email(email)
+
+    if not email:
+
+        raise HTTPException(
+            status_code=400,
+            detail="E-mail obrigatório"
+        )
+
+    try:
+
+        verificacao = await verificar_assinatura_atual(
+            email
+        )
+
+        return {
+            "pro":
+                verificacao.get("pro"),
+
+            "status":
+                verificacao.get("status"),
+
+            "subscription_id":
+                verificacao.get(
+                    "subscription_id"
+                ),
+
+            "email":
+                email,
+
+            "next_payment_date":
+                verificacao.get(
+                    "next_payment_date"
+                )
+        }
+
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Erro ao consultar Mercado Pago: "
+                + str(e)
+            )
+        )
 
 
 # =========================================================
@@ -678,22 +453,20 @@ async def atualizar_assinatura_usuario(
 
 @app.post("/criar-conta-pro")
 async def criar_conta_pro(
-    dados: ContaPRO
+    data: CreateAccount
 ):
 
-    email = normalizar_email(
-        dados.email
+    email = normalize_email(
+        data.email
     )
 
-    password = str(
-        dados.password or ""
-    )
+    password = data.password
 
     if not email:
 
         raise HTTPException(
             status_code=400,
-            detail="Digite seu e-mail."
+            detail="E-mail obrigatório"
         )
 
     if len(password) < 6:
@@ -701,222 +474,105 @@ async def criar_conta_pro(
         raise HTTPException(
             status_code=400,
             detail=(
-                "A senha precisa ter "
-                "pelo menos 6 caracteres."
+                "A senha deve ter pelo menos "
+                "6 caracteres"
             )
         )
 
-    if not supabase:
+    verificacao = await verificar_assinatura_atual(
+        email
+    )
 
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Banco de dados não configurado."
-            )
-        )
-
-    # -----------------------------------------------------
-    # VERIFICAR MERCADO PAGO
-    # -----------------------------------------------------
-
-    try:
-
-        verificacao = (
-            await verificar_assinatura_atual(
-                email
-            )
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro Mercado Pago:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "Não foi possível verificar "
-                "sua assinatura agora."
-            )
-        )
-
-    if not verificacao["pro"]:
+    if not verificacao.get("pro"):
 
         raise HTTPException(
             status_code=403,
             detail=(
-                "Sua assinatura PRO não está ativa. "
-                "Use o mesmo e-mail utilizado "
-                "no Mercado Pago."
+                "Não encontramos uma assinatura "
+                "PRO ativa para este e-mail."
             )
         )
 
-    # -----------------------------------------------------
-    # VERIFICAR CONTA EXISTENTE
-    # -----------------------------------------------------
+    supabase = get_supabase()
 
-    try:
+    existente = (
+        supabase
+        .table("pro_users")
+        .select("id")
+        .eq("email", email)
+        .execute()
+    )
 
-        existente = (
-            supabase
-            .table("pro_users")
-            .select("*")
-            .eq("email", email)
-            .limit(1)
-            .execute()
-        )
-
-        if existente.data:
-
-            raise HTTPException(
-                status_code=400,
-                detail=(
-                    "Já existe uma conta PRO "
-                    "com este e-mail. "
-                    "Entre normalmente."
-                )
-            )
-
-    except HTTPException:
-
-        raise
-
-    except Exception as erro:
-
-        print(
-            "Erro verificando conta:",
-            erro
-        )
+    if existente.data:
 
         raise HTTPException(
-            status_code=500,
+            status_code=409,
             detail=(
-                "Erro ao consultar sua conta."
+                "Já existe uma conta PRO "
+                "com este e-mail."
             )
         )
 
-    # -----------------------------------------------------
-    # CRIAR CONTA
-    # -----------------------------------------------------
+    password_hash = hash_password(
+        password
+    )
 
-    try:
+    token = create_session()
 
-        password_hash = (
-            pwd_context.hash(
-                password
-            )
-        )
+    expires = (
+        datetime.now(timezone.utc)
+        + timedelta(days=30)
+    )
 
-    except Exception as erro:
+    resultado = (
+        supabase
+        .table("pro_users")
+        .insert({
+            "email": email,
+            "password_hash": password_hash,
+            "active": True,
 
-        print(
-            "Erro gerando senha:",
-            erro
-        )
+            "session_token_hash":
+                hashlib.sha256(
+                    token.encode()
+                ).hexdigest(),
 
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Erro ao proteger sua senha."
-            )
-        )
+            "session_expires_at":
+                expires.isoformat(),
 
-    token = gerar_token()
+            "mercado_pago_subscription_id":
+                verificacao.get(
+                    "subscription_id"
+                ),
 
-    registro = {
+            "mp_status":
+                verificacao.get(
+                    "status"
+                ),
 
-        "email":
-            email,
+            "mp_checked_at":
+                datetime.now(
+                    timezone.utc
+                ).isoformat()
+        })
+        .execute()
+    )
 
-        "password_hash":
-            password_hash,
-
-        "active":
-            True,
-
-        "status":
-            verificacao[
-                "status"
-            ],
-
-        "subscription_id":
-            verificacao[
-                "subscription_id"
-            ],
-
-        "next_payment_date":
-            verificacao[
-                "next_payment_date"
-            ],
-
-        "token":
-            token,
-
-        "token_created_at":
-            agora_utc().isoformat()
-    }
-
-    try:
-
-        insercao = (
-            supabase
-            .table("pro_users")
-            .insert(registro)
-            .execute()
-        )
-
-        if not insercao.data:
-
-            raise Exception(
-                "Supabase não retornou "
-                "o registro criado."
-            )
-
-    except Exception as erro:
-
-        print(
-            "Erro criando conta:",
-            erro
-        )
+    if not resultado.data:
 
         raise HTTPException(
             status_code=500,
             detail=(
                 "Não foi possível criar "
-                "sua conta PRO."
+                "sua conta."
             )
         )
 
     return {
-
-        "ok":
-            True,
-
-        "pro":
-            True,
-
-        "status":
-            verificacao[
-                "status"
-            ],
-
-        "email":
-            email,
-
-        "subscription_id":
-            verificacao[
-                "subscription_id"
-            ],
-
-        "next_payment_date":
-            verificacao[
-                "next_payment_date"
-            ],
-
-        "token":
-            token
+        "ok": True,
+        "pro": True,
+        "email": email,
+        "token": token
     }
 
 
@@ -926,117 +582,35 @@ async def criar_conta_pro(
 
 @app.post("/login-pro")
 async def login_pro(
-    dados: LoginPRO
+    data: LoginData,
+    background_tasks: BackgroundTasks
 ):
 
-    email = normalizar_email(
-        dados.email
+    email = normalize_email(
+        data.email
     )
 
-    password = str(
-        dados.password or ""
-    )
-
-    if not email:
+    if not email or not data.password:
 
         raise HTTPException(
             status_code=400,
-            detail="Digite seu e-mail."
-        )
-
-    if not password:
-
-        raise HTTPException(
-            status_code=400,
-            detail="Digite sua senha."
-        )
-
-    if not supabase:
-
-        raise HTTPException(
-            status_code=500,
             detail=(
-                "Banco de dados não configurado."
+                "E-mail e senha são obrigatórios."
             )
         )
 
-    # -----------------------------------------------------
-    # BUSCAR CONTA
-    # -----------------------------------------------------
+    supabase = get_supabase()
 
-    try:
-
-        resultado = (
-            supabase
-            .table("pro_users")
-            .select("*")
-            .eq("email", email)
-            .limit(1)
-            .execute()
-        )
-
-        usuarios = (
-            resultado.data
-            or []
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro buscando usuário:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Erro ao consultar sua conta."
-            )
-        )
-
-    if not usuarios:
-
-        raise HTTPException(
-            status_code=401,
-            detail=(
-                "Conta PRO não encontrada. "
-                "Use 'Criar minha conta PRO' "
-                "no primeiro acesso."
-            )
-        )
-
-    usuario = usuarios[0]
-
-    # -----------------------------------------------------
-    # CONFERIR SENHA
-    # -----------------------------------------------------
-
-    password_hash = (
-        usuario.get(
-            "password_hash"
-        )
-        or ""
+    resultado = (
+        supabase
+        .table("pro_users")
+        .select("*")
+        .eq("email", email)
+        .limit(1)
+        .execute()
     )
 
-    try:
-
-        senha_correta = (
-            pwd_context.verify(
-                password,
-                password_hash
-            )
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro verificando senha:",
-            erro
-        )
-
-        senha_correta = False
-
-    if not senha_correta:
+    if not resultado.data:
 
         raise HTTPException(
             status_code=401,
@@ -1045,167 +619,138 @@ async def login_pro(
             )
         )
 
-    # -----------------------------------------------------
-    # VERIFICAR MERCADO PAGO DIRETAMENTE
-    # -----------------------------------------------------
+    usuario = resultado.data[0]
 
-    try:
+    if not check_password(
+        data.password,
+        usuario.get(
+            "password_hash",
+            ""
+        )
+    ):
+
+        raise HTTPException(
+            status_code=401,
+            detail=(
+                "E-mail ou senha incorretos."
+            )
+        )
+
+    if not usuario.get("active"):
 
         verificacao = (
             await verificar_assinatura_atual(
                 email,
                 usuario.get(
+                    "mercado_pago_subscription_id"
+                )
+            )
+        )
+
+        if not verificacao.get("pro"):
+
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    "Sua assinatura PRO "
+                    "não está ativa."
+                )
+            )
+
+        supabase.table(
+            "pro_users"
+        ).update({
+            "active": True,
+
+            "mercado_pago_subscription_id":
+                verificacao.get(
                     "subscription_id"
+                ),
+
+            "mp_status":
+                verificacao.get(
+                    "status"
+                ),
+
+            "mp_checked_at":
+                datetime.now(
+                    timezone.utc
+                ).isoformat()
+        }).eq(
+            "id",
+            usuario["id"]
+        ).execute()
+
+    token = create_session()
+
+    expires = (
+        datetime.now(timezone.utc)
+        + timedelta(days=30)
+    )
+
+    supabase.table(
+        "pro_users"
+    ).update({
+
+        "session_token_hash":
+            hashlib.sha256(
+                token.encode()
+            ).hexdigest(),
+
+        "session_expires_at":
+            expires.isoformat()
+
+    }).eq(
+        "id",
+        usuario["id"]
+    ).execute()
+
+    usuario_mp_checked = usuario.get(
+        "mp_checked_at"
+    )
+
+    precisa_verificar = True
+
+    if usuario_mp_checked:
+
+        try:
+
+            ultima_verificacao = datetime.fromisoformat(
+                usuario_mp_checked.replace(
+                    "Z",
+                    "+00:00"
                 )
             )
-        )
 
-        # -------------------------------------------------
-        # SE NÃO ACHOU PELO ID,
-        # FAZ UMA NOVA BUSCA EXCLUSIVA PELO E-MAIL
-        # -------------------------------------------------
-
-        if not verificacao["pro"]:
-
-            verificacao = (
-                await verificar_assinatura_atual(
-                    email
-                )
+            limite = (
+                datetime.now(timezone.utc)
+                - timedelta(days=1)
             )
 
-    except Exception as erro:
+            if ultima_verificacao > limite:
 
-        print(
-            "Erro verificando Mercado Pago:",
-            erro
-        )
+                precisa_verificar = False
 
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "Não foi possível verificar "
-                "sua assinatura no Mercado Pago."
-            )
-        )
+        except Exception:
 
-    # -----------------------------------------------------
-    # ASSINATURA NÃO ATIVA
-    # -----------------------------------------------------
+            precisa_verificar = True
 
-    if not verificacao["pro"]:
+    if precisa_verificar:
 
-        print(
-            "Login recusado:",
+        background_tasks.add_task(
+            atualizar_assinatura_usuario,
+            usuario["id"],
             email,
-            "| status:",
-            verificacao.get(
-                "status"
-            ),
-            "| assinatura:",
-            verificacao.get(
-                "subscription_id"
-            )
-        )
-
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                "Sua assinatura PRO não está ativa."
-            )
-        )
-
-    # -----------------------------------------------------
-    # GERAR NOVO TOKEN
-    # -----------------------------------------------------
-
-    token = gerar_token()
-
-    # -----------------------------------------------------
-    # ATUALIZAR CONTA
-    # -----------------------------------------------------
-
-    try:
-
-        (
-            supabase
-            .table("pro_users")
-            .update({
-
-                "active":
-                    True,
-
-                "status":
-                    verificacao[
-                        "status"
-                    ],
-
-                "subscription_id":
-                    verificacao[
-                        "subscription_id"
-                    ],
-
-                "next_payment_date":
-                    verificacao[
-                        "next_payment_date"
-                    ],
-
-                "token":
-                    token,
-
-                "token_created_at":
-                    agora_utc().isoformat()
-
-            })
-            .eq(
-                "email",
-                email
-            )
-            .execute()
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro atualizando login:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Não foi possível iniciar "
-                "sua sessão."
+            usuario.get(
+                "mercado_pago_subscription_id"
             )
         )
 
     return {
-
-        "ok":
-            True,
-
-        "pro":
-            True,
-
-        "status":
-            verificacao[
-                "status"
-            ],
-
-        "email":
-            email,
-
-        "subscription_id":
-            verificacao[
-                "subscription_id"
-            ],
-
-        "next_payment_date":
-            verificacao[
-                "next_payment_date"
-            ],
-
-        "token":
-            token
+        "ok": True,
+        "pro": True,
+        "email": email,
+        "token": token
     }
 
 
@@ -1215,447 +760,133 @@ async def login_pro(
 
 @app.post("/verificar-sessao")
 async def verificar_sessao(
-    dados: SessaoPRO
+    data: SessionData,
+    background_tasks: BackgroundTasks
 ):
 
-    token = str(
-        dados.token or ""
-    ).strip()
-
-    if not token:
+    if not data.token:
 
         raise HTTPException(
             status_code=401,
             detail="Sessão inválida."
         )
 
-    if not supabase:
+    token_hash = hashlib.sha256(
+        data.token.encode()
+    ).hexdigest()
 
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Banco de dados não configurado."
-            )
+    supabase = get_supabase()
+
+    resultado = (
+        supabase
+        .table("pro_users")
+        .select(
+            "id, email, active, "
+            "session_expires_at, "
+            "mercado_pago_subscription_id, "
+            "mp_checked_at"
         )
-
-    try:
-
-        resultado = (
-            supabase
-            .table("pro_users")
-            .select("*")
-            .eq("token", token)
-            .limit(1)
-            .execute()
+        .eq(
+            "session_token_hash",
+            token_hash
         )
+        .limit(1)
+        .execute()
+    )
 
-        usuarios = (
-            resultado.data
-            or []
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro verificando sessão:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Erro ao verificar sessão."
-            )
-        )
-
-    if not usuarios:
+    if not resultado.data:
 
         raise HTTPException(
             status_code=401,
             detail=(
-                "Sessão inválida ou expirada."
+                "Sessão inválida "
+                "ou expirada."
             )
         )
 
-    usuario = usuarios[0]
+    usuario = resultado.data[0]
 
-    email = normalizar_email(
-        usuario.get(
-            "email"
-        )
-    )
-
-    # -----------------------------------------------------
-    # CONFIRMAR NOVAMENTE NO MERCADO PAGO
-    # -----------------------------------------------------
-
-    try:
-
-        verificacao = (
-            await verificar_assinatura_atual(
-                email,
-                usuario.get(
-                    "subscription_id"
-                )
-            )
-        )
-
-        if not verificacao["pro"]:
-
-            verificacao = (
-                await verificar_assinatura_atual(
-                    email
-                )
-            )
-
-    except Exception as erro:
-
-        print(
-            "Erro verificando sessão no MP:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "Não foi possível verificar "
-                "sua assinatura."
-            )
-        )
-
-    if not verificacao["pro"]:
+    if not usuario.get("active"):
 
         raise HTTPException(
             status_code=403,
-            detail=(
-                "Sua assinatura PRO não está ativa."
-            )
+            detail="Conta PRO inativa."
         )
 
-    # -----------------------------------------------------
-    # ATUALIZAR BANCO
-    # -----------------------------------------------------
-
-    try:
-
-        (
-            supabase
-            .table("pro_users")
-            .update({
-
-                "active":
-                    True,
-
-                "status":
-                    verificacao[
-                        "status"
-                    ],
-
-                "subscription_id":
-                    verificacao[
-                        "subscription_id"
-                    ],
-
-                "next_payment_date":
-                    verificacao[
-                        "next_payment_date"
-                    ]
-
-            })
-            .eq(
-                "email",
-                email
-            )
-            .execute()
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro atualizando sessão:",
-            erro
-        )
-
-    return {
-
-        "ok":
-            True,
-
-        "pro":
-            True,
-
-        "status":
-            verificacao[
-                "status"
-            ],
-
-        "email":
-            email,
-
-        "subscription_id":
-            verificacao[
-                "subscription_id"
-            ],
-
-        "next_payment_date":
-            verificacao[
-                "next_payment_date"
-            ]
-    }
-
-
-# =========================================================
-# VERIFICAR PRO POR E-MAIL
-# =========================================================
-
-@app.get("/verificar-pro")
-async def verificar_pro(
-    email: str
-):
-
-    email = normalizar_email(
-        email
+    expires = usuario.get(
+        "session_expires_at"
     )
 
-    if not email:
+    if expires:
 
-        raise HTTPException(
-            status_code=400,
-            detail="Informe o e-mail."
-        )
+        try:
 
-    try:
-
-        verificacao = (
-            await verificar_assinatura_atual(
-                email
-            )
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro verificando PRO:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "Erro ao consultar "
-                "o Mercado Pago."
-            )
-        )
-
-    return {
-
-        "pro":
-            verificacao[
-                "pro"
-            ],
-
-        "status":
-            verificacao[
-                "status"
-            ],
-
-        "subscription_id":
-            verificacao[
-                "subscription_id"
-            ],
-
-        "email":
-            email,
-
-        "next_payment_date":
-            verificacao[
-                "next_payment_date"
-            ]
-    }
-
-
-# =========================================================
-# SINCRONIZAR PRO
-# =========================================================
-
-@app.post("/sincronizar-pro")
-async def sincronizar_pro(
-    dados: SessaoPRO
-):
-
-    token = str(
-        dados.token or ""
-    ).strip()
-
-    if not token:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Sessão inválida."
-        )
-
-    if not supabase:
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Banco de dados não configurado."
-            )
-        )
-
-    try:
-
-        resultado = (
-            supabase
-            .table("pro_users")
-            .select("*")
-            .eq("token", token)
-            .limit(1)
-            .execute()
-        )
-
-        usuarios = (
-            resultado.data
-            or []
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro buscando sessão:",
-            erro
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Erro ao consultar sessão."
-            )
-        )
-
-    if not usuarios:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Sessão inválida."
-        )
-
-    usuario = usuarios[0]
-
-    email = normalizar_email(
-        usuario.get(
-            "email"
-        )
-    )
-
-    try:
-
-        verificacao = (
-            await verificar_assinatura_atual(
-                email,
-                usuario.get(
-                    "subscription_id"
-                )
-            )
-        )
-
-        if not verificacao["pro"]:
-
-            verificacao = (
-                await verificar_assinatura_atual(
-                    email
+            data_expiracao = datetime.fromisoformat(
+                expires.replace(
+                    "Z",
+                    "+00:00"
                 )
             )
 
-    except Exception as erro:
+            if (
+                data_expiracao
+                < datetime.now(timezone.utc)
+            ):
 
-        print(
-            "Erro sincronizando PRO:",
-            erro
-        )
+                raise HTTPException(
+                    status_code=401,
+                    detail="Sessão expirada."
+                )
 
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "Não foi possível verificar "
-                "sua assinatura."
+        except ValueError:
+
+            pass
+
+    precisa_verificar = True
+
+    ultima_verificacao = usuario.get(
+        "mp_checked_at"
+    )
+
+    if ultima_verificacao:
+
+        try:
+
+            ultima = datetime.fromisoformat(
+                ultima_verificacao.replace(
+                    "Z",
+                    "+00:00"
+                )
             )
-        )
 
-    if not verificacao["pro"]:
-
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                "Sua assinatura PRO não está ativa."
+            limite = (
+                datetime.now(timezone.utc)
+                - timedelta(days=1)
             )
-        )
 
-    try:
+            if ultima > limite:
 
-        (
-            supabase
-            .table("pro_users")
-            .update({
+                precisa_verificar = False
 
-                "active":
-                    True,
+        except Exception:
 
-                "status":
-                    verificacao[
-                        "status"
-                    ],
+            precisa_verificar = True
 
-                "subscription_id":
-                    verificacao[
-                        "subscription_id"
-                    ],
+    if precisa_verificar:
 
-                "next_payment_date":
-                    verificacao[
-                        "next_payment_date"
-                    ]
-
-            })
-            .eq(
-                "email",
-                email
+        background_tasks.add_task(
+            atualizar_assinatura_usuario,
+            usuario["id"],
+            usuario["email"],
+            usuario.get(
+                "mercado_pago_subscription_id"
             )
-            .execute()
-        )
-
-    except Exception as erro:
-
-        print(
-            "Erro atualizando sincronização:",
-            erro
         )
 
     return {
-
-        "ok":
-            True,
-
-        "pro":
-            True,
-
-        "status":
-            verificacao[
-                "status"
-            ],
-
-        "email":
-            email,
-
-        "subscription_id":
-            verificacao[
-                "subscription_id"
-            ],
-
-        "next_payment_date":
-            verificacao[
-                "next_payment_date"
-            ]
+        "ok": True,
+        "pro": True,
+        "email": usuario["email"]
     }
 
 
@@ -1670,163 +901,18 @@ async def webhook_mercadopago(
 
     try:
 
-        payload = await request.json()
+        data = await request.json()
 
-        print(
-            "Webhook Mercado Pago recebido:"
-        )
+    except Exception:
 
-        print(
-            payload
-        )
+        data = {}
 
-    except Exception as erro:
+    print(
+        "Webhook Mercado Pago recebido:"
+    )
 
-        print(
-            "Erro lendo webhook:",
-            erro
-        )
+    print(data)
 
     return {
-        "ok": True
+        "received": True
     }
-
-
-# =========================================================
-# HEALTH
-# =========================================================
-
-@app.get("/health")
-async def health():
-
-    return {
-
-        "ok":
-            True,
-
-        "app":
-            APP_NAME
-    }
-
-
-# =========================================================
-# ROOT
-# =========================================================
-
-@app.get("/")
-async def root():
-
-    return {
-
-        "app":
-            APP_NAME,
-
-        "status":
-            "online"
-    }
-
-
-# =========================================================
-# VERIFICAÇÃO AUTOMÁTICA
-# =========================================================
-
-async def verificar_usuarios_periodicamente():
-
-    while True:
-
-        try:
-
-            if supabase:
-
-                resultado = (
-                    supabase
-                    .table("pro_users")
-                    .select(
-                        "email,subscription_id"
-                    )
-                    .execute()
-                )
-
-                usuarios = (
-                    resultado.data
-                    or []
-                )
-
-                for usuario in usuarios:
-
-                    email = normalizar_email(
-                        usuario.get(
-                            "email"
-                        )
-                    )
-
-                    if email:
-
-                        try:
-
-                            await atualizar_assinatura_usuario(
-                                email
-                            )
-
-                        except Exception as erro:
-
-                            print(
-                                "Erro verificando",
-                                email,
-                                erro
-                            )
-
-                        await asyncio.sleep(
-                            1
-                        )
-
-        except Exception as erro:
-
-            print(
-                "Erro na verificação automática:",
-                erro
-            )
-
-        await asyncio.sleep(
-            60 * 60 * 24
-        )
-
-
-# =========================================================
-# STARTUP
-# =========================================================
-
-@app.on_event(
-    "startup"
-)
-async def startup_event():
-
-    print(
-        "===================================="
-    )
-
-    print(
-        f"{APP_NAME} iniciado."
-    )
-
-    print(
-        "Mercado Pago:",
-        "CONFIGURADO"
-        if MP_ACCESS_TOKEN
-        else "NÃO CONFIGURADO"
-    )
-
-    print(
-        "Supabase:",
-        "CONFIGURADO"
-        if supabase
-        else "NÃO CONFIGURADO"
-    )
-
-    print(
-        "===================================="
-    )
-
-    asyncio.create_task(
-        verificar_usuarios_periodicamente()
-        )
