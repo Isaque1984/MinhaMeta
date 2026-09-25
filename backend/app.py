@@ -53,7 +53,6 @@ SUPABASE_KEY = os.getenv(
 def get_supabase():
 
     if not SUPABASE_URL or not SUPABASE_KEY:
-
         raise HTTPException(
             status_code=500,
             detail="Supabase não configurado no Render"
@@ -171,15 +170,13 @@ def health():
 # MERCADO PAGO
 # =========================================================
 
-async def buscar_assinatura_por_email(email):
+async def requisitar_busca_mercado_pago(params):
 
     if not MP_ACCESS_TOKEN:
 
         raise Exception(
             "MP_ACCESS_TOKEN não configurado"
         )
-
-    email = normalize_email(email)
 
     url = (
         "https://api.mercadopago.com/"
@@ -192,10 +189,6 @@ async def buscar_assinatura_por_email(email):
 
         "Content-Type":
             "application/json"
-    }
-
-    params = {
-        "payer_email": email
     }
 
     async with httpx.AsyncClient(
@@ -218,10 +211,158 @@ async def buscar_assinatura_por_email(email):
 
     data = response.json()
 
-    return data.get(
-        "results",
-        []
-    )
+    return data
+
+
+# =========================================================
+# BUSCAR ASSINATURA PELO E-MAIL
+#
+# PRIMEIRA TENTATIVA:
+# payer_email
+#
+# SE O MERCADO PAGO DEVOLVER 400:
+# usa q=email como alternativa.
+# =========================================================
+
+async def buscar_assinatura_por_email(email):
+
+    if not MP_ACCESS_TOKEN:
+
+        raise Exception(
+            "MP_ACCESS_TOKEN não configurado"
+        )
+
+    email = normalize_email(email)
+
+    if not email:
+
+        raise Exception(
+            "E-mail inválido para consulta"
+        )
+
+    # -----------------------------------------------------
+    # TENTATIVA 1 — payer_email
+    # -----------------------------------------------------
+
+    try:
+
+        data = await requisitar_busca_mercado_pago({
+            "payer_email": email,
+            "limit": 50
+        })
+
+        resultados = data.get(
+            "results",
+            []
+        )
+
+        print(
+            "Mercado Pago payer_email encontrou:",
+            len(resultados),
+            "assinatura(s)"
+        )
+
+        return resultados
+
+    except Exception as erro_payer:
+
+        print(
+            "Busca por payer_email falhou:",
+            str(erro_payer)
+        )
+
+        # -------------------------------------------------
+        # TENTATIVA 2 — BUSCA LIVRE
+        # -------------------------------------------------
+
+        try:
+
+            data = await requisitar_busca_mercado_pago({
+                "q": email,
+                "limit": 50
+            })
+
+            resultados = data.get(
+                "results",
+                []
+            )
+
+            print(
+                "Mercado Pago busca livre encontrou:",
+                len(resultados),
+                "resultado(s)"
+            )
+
+            # ---------------------------------------------
+            # Conferir o e-mail dentro dos resultados
+            # ---------------------------------------------
+
+            resultados_email = []
+
+            for item in resultados:
+
+                payer = item.get(
+                    "payer_email"
+                )
+
+                payer_normalizado = normalize_email(
+                    payer
+                )
+
+                if payer_normalizado == email:
+
+                    resultados_email.append(
+                        item
+                    )
+                    continue
+
+                # Alguns retornos podem trazer o pagador
+                # como objeto.
+                payer_obj = item.get(
+                    "payer"
+                )
+
+                if isinstance(
+                    payer_obj,
+                    dict
+                ):
+
+                    payer_obj_email = normalize_email(
+                        payer_obj.get(
+                            "email"
+                        )
+                    )
+
+                    if payer_obj_email == email:
+
+                        resultados_email.append(
+                            item
+                        )
+
+            # Se encontrou correspondência exata,
+            # usamos somente essas assinaturas.
+            if resultados_email:
+
+                print(
+                    "Correspondência exata de e-mail encontrada:",
+                    len(resultados_email)
+                )
+
+                return resultados_email
+
+            # Caso o Mercado Pago não devolva o e-mail
+            # dentro do resultado, retornamos a busca.
+            return resultados
+
+        except Exception as erro_busca:
+
+            print(
+                "Busca livre também falhou:",
+                str(erro_busca)
+            )
+
+            # Mantém o erro original, que ajuda no diagnóstico.
+            raise erro_payer
 
 
 # =========================================================
@@ -306,6 +447,13 @@ async def verificar_assinatura_atual(
                 )
             )
 
+            if assinatura:
+
+                print(
+                    "Assinatura encontrada pelo ID:",
+                    subscription_id
+                )
+
         except Exception as e:
 
             print(
@@ -334,7 +482,10 @@ async def verificar_assinatura_atual(
             email
         )
 
-        # Procurar uma ativa primeiro
+        # -------------------------------------------------
+        # Procurar uma assinatura ativa primeiro
+        # -------------------------------------------------
+
         for item in assinaturas:
 
             status = str(
@@ -353,8 +504,11 @@ async def verificar_assinatura_atual(
 
                 break
 
-        # Se não encontrou ativa,
-        # guardar a primeira para sabermos o status
+        # -------------------------------------------------
+        # Se não encontrou ativa, guardar a primeira
+        # para podermos informar o status.
+        # -------------------------------------------------
+
         if not assinatura and assinaturas:
 
             assinatura = assinaturas[0]
@@ -493,10 +647,8 @@ async def atualizar_assinatura_usuario(
     except Exception as e:
 
         # -------------------------------------------------
-        # MUITO IMPORTANTE:
-        #
-        # Se o Mercado Pago der erro temporário,
-        # NÃO desativamos a conta.
+        # ERRO TEMPORÁRIO:
+        # NÃO DESATIVAR A CONTA.
         # -------------------------------------------------
 
         print(
@@ -603,7 +755,7 @@ async def criar_conta_pro(
         )
 
     # -----------------------------------------------------
-    # PRIMEIRA CRIAÇÃO PRECISA CONFIRMAR O PAGAMENTO
+    # PRIMEIRA CRIAÇÃO PRECISA CONFIRMAR PAGAMENTO
     # -----------------------------------------------------
 
     verificacao = (
@@ -660,6 +812,7 @@ async def criar_conta_pro(
         supabase
         .table("pro_users")
         .insert({
+
             "email":
                 email,
 
@@ -784,8 +937,7 @@ async def login_pro(
     # CONTA JÁ ATIVA
     #
     # LIBERA IMEDIATAMENTE.
-    #
-    # NÃO CONSULTA O MERCADO PAGO AQUI.
+    # NÃO ESPERA O MERCADO PAGO.
     # -----------------------------------------------------
 
     if usuario.get("active"):
@@ -859,10 +1011,6 @@ async def login_pro(
                 )
             )
 
-        # -------------------------------------------------
-        # LIBERA IMEDIATAMENTE
-        # -------------------------------------------------
-
         return {
             "ok": True,
             "pro": True,
@@ -873,7 +1021,7 @@ async def login_pro(
     # =====================================================
     # CONTA INATIVA
     #
-    # Aqui fazemos consulta imediata para tentar reativar.
+    # Aqui fazemos consulta imediata.
     # =====================================================
 
     verificacao = (
@@ -1156,4 +1304,4 @@ async def webhook_mercadopago(
 
     return {
         "received": True
-        }
+            }
