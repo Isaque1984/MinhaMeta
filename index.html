@@ -17,6 +17,22 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-seri
 .brand{font-size:25px;font-weight:850}
 .tag{font-size:12px;color:#dcfce7;margin-top:4px}
 .iconbtn{border:0;background:#ffffff20;color:#fff;width:42px;height:42px;border-radius:14px;font-size:19px}
+
+.install-btn{
+  display:none;
+  width:100%;
+  margin-top:12px;
+  border:0;
+  border-radius:14px;
+  padding:11px 14px;
+  background:#fff;
+  color:#15803d;
+  font-size:14px;
+  font-weight:850;
+  cursor:pointer;
+}
+.install-btn:active{transform:scale(.98)}
+
 .wrap{padding:16px}
 .screen{display:none}
 .screen.active{display:block}
@@ -292,6 +308,12 @@ function closePro(){
     </div><button class="iconbtn" onclick="openAbout()">?</button>
 
   </div>
+
+  <!-- BOTÃO DE INSTALAÇÃO DO PWA -->
+  <button id="installButton" class="install-btn" onclick="instalarMinhaMeta()">
+    📲 Instalar aplicativo
+  </button>
+
 </header><main class="wrap"><section id="home" class="screen active">
   <div id="homeContent"></div>  <div class="share-card">
     <div class="share-card-content">
@@ -1951,6 +1973,62 @@ try{
   };
 
 })();
+</script>
+
+<!-- INSTALAÇÃO PWA -->
+<script>
+let deferredInstallPrompt = null;
+
+window.addEventListener("beforeinstallprompt", function(event){
+  event.preventDefault();
+  deferredInstallPrompt = event;
+
+  const button = document.getElementById("installButton");
+
+  if(button){
+    button.style.display = "block";
+  }
+});
+
+async function instalarMinhaMeta(){
+
+  if(!deferredInstallPrompt){
+
+    alert(
+      'Se o botão de instalação não aparecer, abra o menu do navegador e escolha "Instalar aplicativo" ou "Adicionar à tela inicial".'
+    );
+
+    return;
+  }
+
+  deferredInstallPrompt.prompt();
+
+  try{
+    await deferredInstallPrompt.userChoice;
+  }catch(e){}
+
+  deferredInstallPrompt = null;
+
+  const button =
+    document.getElementById("installButton");
+
+  if(button){
+    button.style.display = "none";
+  }
+}
+
+window.addEventListener("appinstalled", function(){
+
+  deferredInstallPrompt = null;
+
+  const button =
+    document.getElementById("installButton");
+
+  if(button){
+    button.style.display = "none";
+  }
+
+});
 </script>
 
 <!-- CORREÇÃO PWA: REGISTRO DO SERVICE WORKER -->
