@@ -1,4 +1,4 @@
-const CACHE_NAME = "minha-meta-v2";
+const CACHE_NAME = "minha-meta-v3";
 
 const FILES_TO_CACHE = [
   "./",
@@ -38,6 +38,5 @@ self.addEventListener("fetch", event => {
       })
       .catch(() => {
         return caches.match(event.request);
-      })
-  );
+      });
 });
