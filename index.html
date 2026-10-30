@@ -268,549 +268,177 @@ label{color:#172033;font-weight:700}
 .share-home .share-icon{background:#21d47b;color:#062616}
 .share-home .share-btn{background:#21d47b;color:#062616;font-weight:900}
 
-/* NOVA IDENTIDADE VISUAL — versão gratuita, alinhada ao Minha Meta PRO */
+
+/* MINHA META — MINIMALISTA PREMIUM
+   Somente identidade visual. Nenhuma função, dado ou fluxo foi alterado. */
 :root{
-  --green:#16834a;
-  --green2:#11683b;
-  --dark:#0d3020;
-  --bg:#e8f1eb;
-  --card:#fbfefc;
-  --muted:#617568;
-  --line:#d7e5db;
+  --green:#18c978;
+  --green2:#0fa968;
+  --dark:#071b28;
+  --bg:#061521;
+  --card:#0a2635;
+  --muted:#a8bfce;
+  --line:#164457;
+}
+html,body{
+  min-height:100%;
+  background:#061521!important;
+  color:#eef7fb!important;
 }
 body{
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif!important;
   background:
-    radial-gradient(ellipse at 12% 0%,rgba(34,197,94,.10),transparent 34%),
-    linear-gradient(180deg,#e6f0e9 0%,#f1f6f2 48%,#e8f1eb 100%);
+    radial-gradient(ellipse at 85% 0%,rgba(17,169,104,.20),transparent 34%),
+    radial-gradient(ellipse at 0% 35%,rgba(14,75,98,.18),transparent 40%),
+    linear-gradient(180deg,#071b28 0%,#061521 58%,#04121d 100%)!important;
 }
-.top{
-  background:linear-gradient(145deg,#092719 0%,#105b36 58%,#16834a 100%);
-  box-shadow:0 12px 28px rgba(10,55,32,.18);
-}
-.pro-banner{
-  background:linear-gradient(135deg,#0b3020 0%,#11683b 58%,#16834a 100%);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 12px 28px rgba(10,55,32,.20);
-}
-.heroCard{
-  background:linear-gradient(145deg,#ffffff 0%,#f0f8f2 100%);
-  border:1px solid #dcebe0;
-  box-shadow:0 10px 28px rgba(16,60,35,.09);
-}
-.card,.goal,.quick-action{
-  background:linear-gradient(145deg,#ffffff 0%,#f8fcf9 100%);
-  border:1px solid #dce9df;
-  box-shadow:0 6px 18px rgba(16,60,35,.065);
-}
-.stat,.summary-tile,.badge{
-  background:linear-gradient(145deg,#eef7f0,#e5f1e8);
-  border:1px solid #d9e9de;
-}
-.emoji,.pill{
-  background:#e1f2e6;
-  color:#11683b;
-}
-.progress{background:#dce9df}
-.bar{background:linear-gradient(90deg,#36c875,#11683b)}
-.nav{
-  background:rgba(241,248,243,.96);
-  border-top:1px solid #d4e4d9;
-  box-shadow:0 -8px 24px rgba(16,60,35,.06);
-}
-.nav button.active{color:#11683b}
-.sectiontitle{color:#103b26}
-.section-kicker{color:#147544}
-.share-card:not(.share-home){
-  background:linear-gradient(135deg,#e2f3e7,#fbfefc);
-  border-color:#c7e5d0;
-}
-.input,select,textarea{
-  background:#fbfefc;
-  border-color:#cbdccf;
-}
-.install-btn{color:#11683b}
-@media(prefers-reduced-motion:no-preference){
-  .card,.goal,.quick-action,.heroCard{transition:transform .18s ease,box-shadow .18s ease}
-  .goal:active,.quick-action:active{transform:scale(.985)}
-}
-
-
-/* IDENTIDADE VISUAL PROFISSIONAL — alinhada ao Minha Meta PRO */
-:root{
-  --green:#16834a;
-  --green2:#11683b;
-  --dark:#102b3d;
-  --bg:#edf3f0;
-  --card:#fbfdfc;
-  --muted:#60717a;
-  --line:#d8e3df;
-}
-html{background:#edf3f0}
-body{
-  background:
-    radial-gradient(ellipse at 90% 0%,rgba(22,131,74,.12),transparent 34%),
-    linear-gradient(180deg,#eaf1ee 0%,#f3f6f4 52%,#e8efec 100%);
-  color:#172b32;
-}
-.top{
-  background:linear-gradient(135deg,#0d1b2a 0%,#102f3b 48%,#16834a 100%);
-  box-shadow:0 12px 30px rgba(13,27,42,.18);
-}
-.top .tag{color:#dceee4}
-.heroCard{
-  background:linear-gradient(145deg,#fbfdfc 0%,#edf5f0 100%);
-  border:1px solid #d4e4da;
-  box-shadow:0 10px 28px rgba(16,43,61,.09);
-}
-.card,.goal,.quick-action{
-  background:linear-gradient(145deg,#ffffff 0%,#f5f9f6 100%);
-  border:1px solid #d8e5de;
-  box-shadow:0 6px 20px rgba(16,43,61,.07);
-}
-.stat,.summary-tile,.badge{
-  background:linear-gradient(145deg,#e8f2ec,#dfece5);
-  border:1px solid #d1e2d7;
-  color:#183b2d;
-}
-.sectiontitle{color:#102f3b}
-.section-kicker{color:#16834a}
-.emoji,.pill{
-  background:#dceee3;
-  color:#11683b;
-}
-.progress{background:#d9e6df}
-.bar{background:linear-gradient(90deg,#35c879,#11683b)}
-.nav{
-  background:rgba(239,245,241,.97);
-  border-top:1px solid #d2dfd8;
-  box-shadow:0 -8px 24px rgba(16,43,61,.07);
-}
-.nav button{color:#62747b}
-.nav button.active{color:#11683b}
-.primary,.share-btn{background:linear-gradient(135deg,#16834a,#11683b)}
-.secondary{background:#e4ece7;color:#173b2d}
-.input,select,textarea{
-  background:#fbfdfc;
-  border-color:#c8d9d0;
-  color:#172b32;
-}
-.input:focus{border-color:#16834a;box-shadow:0 0 0 3px rgba(22,131,74,.14)}
-.pro-banner{
-  background:linear-gradient(135deg,#0d1b2a 0%,#103b36 52%,#16834a 100%);
-  border:1px solid rgba(255,255,255,.15);
-  box-shadow:0 12px 28px rgba(13,27,42,.20);
-}
-.share-card:not(.share-home){
-  background:linear-gradient(135deg,#e5f1ea,#fbfdfc);
-  border-color:#cbded2;
-}
-.sheet,.pro-card,.pay-box{
-  background:#f8fbf9;
-  color:#172b32;
-}
-.sheet h2,.pro-card h2,.pay-box h3{color:#102f3b}
-.choice button{background:#f1f6f3;border-color:#d3e1d9}
-.choice button.sel{background:#dceee3;border-color:#16834a;color:#105d36}
-.planbox{background:linear-gradient(135deg,#e4f1e9,#f7faf8);border-color:#c9dfd0}
-.tool-result,.success{background:#e0f0e6;color:#125c37}
-@media(prefers-reduced-motion:no-preference){
-  .card,.goal,.quick-action,.heroCard{transition:transform .18s ease,box-shadow .18s ease}
-  .goal:active,.quick-action:active{transform:translateY(1px) scale(.99)}
-}
-
-
-/* PALETA OFICIAL DO MINHA META PRO — aplicada também à versão gratuita */
-:root{
-  --green:#16834a;
-  --green2:#126b3b;
-  --dark:#0d1b2a;
-  --bg:#f4f8f5;
-  --card:#ffffff;
-  --muted:#66736b;
-  --line:#dfe8e2;
-}
-html,body{background:#f4f8f5;color:#17221b}
-body{
-  background:linear-gradient(180deg,#f4f8f5 0%,#eef3ef 100%);
-}
-.top{
-  background:linear-gradient(135deg,#0d1b2a 0%,#102f3b 52%,#16834a 100%);
-  color:#fff;
-  box-shadow:0 10px 26px rgba(13,27,42,.16);
-}
-.top .tag{color:#e8f0eb}
-.heroCard,.card,.goal,.quick-action{
-  background:#fff;
-  border:1px solid #dfe8e2;
-  box-shadow:0 5px 18px rgba(13,27,42,.07);
-}
-.sectiontitle,.card h2,.heroCard h2{color:#0d1b2a}
-.section-kicker{color:#16834a}
-.stat,.summary-tile,.badge{
-  background:#f4f8f5;
-  border:1px solid #e5ede8;
-  color:#17221b;
-}
-.emoji,.pill{
-  background:#e8f0eb;
-  color:#126b3b;
-}
-.progress,.mini-ring{background-color:#e8f0eb}
-.bar{background:linear-gradient(90deg,#16834a,#126b3b)}
-.primary,.share-btn,.pro-cta{
-  background:#16834a;
-  color:#fff;
-}
-.secondary,.mutedbtn{
-  background:#e8f0eb;
-  color:#0d1b2a;
-}
-.input,select,textarea,.timeinput{
-  background:#fff;
-  border:1px solid #ccd5cf;
-  color:#17221b;
-}
-.input:focus,select:focus,textarea:focus{
-  border-color:#16834a;
-  box-shadow:0 0 0 3px rgba(22,131,74,.12);
-}
-.nav{
-  background:rgba(244,248,245,.97);
-  border-top:1px solid #dfe8e2;
-  box-shadow:0 -5px 18px rgba(13,27,42,.05);
-}
-.nav button{color:#66736b}
-.nav button.active{color:#16834a}
-.pro-banner{
-  background:linear-gradient(135deg,#0d1b2a,#16834a);
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 8px 22px rgba(13,27,42,.16);
-}
-.pro-btn{background:#fff;color:#126b3b}
-.share-card:not(.share-home){
-  background:#f4f8f5;
-  border:1px solid #dfe8e2;
-}
-.sheet,.pro-card,.pay-box{
-  background:#fff;
-  color:#17221b;
-}
-.sheet h2,.pro-card h2,.pay-box h3{color:#0d1b2a}
-.choice button{background:#f4f8f5;border-color:#dfe8e2;color:#17221b}
-.choice button.sel{background:#e8f0eb;border-color:#16834a;color:#126b3b}
-.planbox{background:#f4f8f5;border-color:#dfe8e2}
-.tool-result,.success{background:#e5f7eb;color:#126b3b}
-.notice{background:#eef3ef}
-.splash{background:linear-gradient(135deg,#0d1b2a,#16834a)}
-.switch.on{background:#16834a}
-.install-btn{color:#16834a}
-
-
-/* IDENTIDADE VISUAL OFICIAL — alinhamento completo com Minha Meta PRO */
-:root{
-  --green:#16834a !important;
-  --green2:#126b3b !important;
-  --dark:#0d1b2a !important;
-  --bg:#f4f8f5 !important;
-  --card:#ffffff !important;
-  --muted:#64736b !important;
-  --line:#dfe8e2 !important;
-}
-body{background:#f4f8f5 !important;color:#17221b !important}
-.top,.splash{background:linear-gradient(135deg,#0d1b2a 0%,#16834a 100%) !important}
-.top{color:#fff !important}
-.tag{color:#e2eee7 !important}
-.heroCard,.card,.goal,.quick-action,.sheet,.pro-card{background:#fff !important;border-color:#dfe8e2 !important}
-.stat,.summary-tile,.badge,.calendar-day,.quick-action{background:#e8f0eb !important}
-.progress,.mini-ring{background-color:#e8f0eb}
-.bar{background:linear-gradient(90deg,#16834a,#0d1b2a) !important}
-.btn.primary,.primary,.nav button.active{background-color:#16834a !important;color:#fff !important}
-.btn.secondary,.secondary,.hist-edit{background:#e8f0eb !important;color:#0d1b2a !important}
-.input,select,textarea,.timeinput{border-color:#cbd9d0 !important}
-.input:focus{border-color:#16834a !important;box-shadow:0 0 0 3px #16834a20 !important}
-.emoji,.pill,.choice button.sel,.tool-result,.success,.challenge.done{background:#e8f0eb !important;color:#126b3b !important;border-color:#c9ddcf !important}
-.section-kicker,.percent,.pro-card h2{color:#16834a !important}
-.pro-banner{background:linear-gradient(135deg,#0d1b2a 0%,#16834a 100%) !important;color:#fff !important;box-shadow:0 8px 24px #0d1b2a24 !important}
-.pro-btn{color:#0d1b2a !important}
-.pro-cta{background:#16834a !important;color:#fff !important}
-.planbox{background:#f4f8f5 !important;border-color:#dfe8e2 !important}
-.planbox b,.planbig{color:#16834a !important}
-.nav{background:#ffffffed !important;border-color:#dfe8e2 !important}
-.nav button{color:#64736b !important}
-.nav button.active{color:#16834a !important;background:transparent !important}
-.install-btn{color:#16834a !important}
-.switch.on{background:#16834a !important}
-.ring{background:conic-gradient(#16834a var(--p),#e8f0eb 0) !important}
-.toast{background:#0d1b2a !important}
-.notice{background:#f4f8f5 !important;color:#46574d !important}
-.danger,.hist button{background:#fcebea !important;color:#a33232 !important}
-
-
-/* ===== REDESIGN COMPLETO — MINHA META GRATUITO / IDENTIDADE PRO ===== */
-:root{
-  --green:#16834a;--green2:#116b3b;--dark:#0d1b2a;
-  --bg:#f4f8f5;--card:#ffffff;--muted:#687780;--line:#e1e9e4;
-  --gold:#c99735;--red:#b42332;
-}
-html{background:#f4f8f5}
-body{
-  color:#172b32;
-  background:linear-gradient(180deg,#edf4ef 0,#f4f8f5 260px,#f4f8f5 100%);
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
-}
-.app{max-width:600px;background:transparent}
-.top{
-  position:relative;overflow:hidden;
-  padding:27px 20px 34px;
-  border-radius:0 0 28px 28px;
-  background:linear-gradient(135deg,#0d1b2a 0%,#123b3b 52%,#16834a 100%);
-  box-shadow:0 14px 32px rgba(13,27,42,.18);
-}
-.top:after{
-  content:"";position:absolute;width:230px;height:230px;border-radius:50%;
-  right:-95px;top:-125px;border:1px solid rgba(255,255,255,.13);
-  box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 50px rgba(255,255,255,.025);
-  pointer-events:none;
-}
-.toprow{position:relative;z-index:1}
-.brand{font-size:26px;letter-spacing:-.7px;font-weight:850}
-.tag{color:#d7e9df;font-size:13px;letter-spacing:.1px}
-.iconbtn{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px)}
-.wrap{padding:19px 16px 24px}
-.sectiontitle{font-size:20px;font-weight:800;letter-spacing:-.35px;color:#0d1b2a;margin:12px 2px 14px}
-.sub{color:#687780;line-height:1.45}
-.heroCard{
-  position:relative;background:linear-gradient(145deg,#fff 0%,#f8fbf9 100%);
-  border:1px solid #e0eae3;border-radius:22px;padding:20px;
-  box-shadow:0 9px 26px rgba(13,27,42,.07);margin:0 0 16px;
-}
-.big{font-size:34px;letter-spacing:-1px;color:#0d1b2a;font-weight:850}
-.progress{height:10px;background:#e7eee9;border-radius:99px;margin:16px 0 9px}
-.bar{background:linear-gradient(90deg,#16834a,#36a96d);border-radius:99px}
-.stats{gap:9px}
-.stat{background:#f1f6f3;border:1px solid #e4ece7;border-radius:15px;padding:12px 10px}
-.stat b{color:#102f3b;font-size:16px}
-.card,.goal,.quick-action{
-  background:#fff;border:1px solid #e1e9e4;border-radius:19px;
-  box-shadow:0 5px 18px rgba(13,27,42,.055);
-}
-.card{padding:18px;margin:12px 0}
-.goal{padding:17px;min-height:116px}
-.goal strong,.quick-action b{color:#102f3b;font-size:15px}
-.goal small,.quick-action small{color:#718078;line-height:1.4}
-.goal span,.quick-action span{filter:saturate(.9)}
-.emoji{background:#e8f2ec;color:#16834a;border:1px solid #dce9e1}
-.percent{color:#16834a}
-.btn{border-radius:13px;font-weight:800;transition:transform .16s,box-shadow .16s}
-.primary{background:linear-gradient(135deg,#16834a,#116b3b);color:#fff;box-shadow:0 5px 12px rgba(22,131,74,.18)}
-.secondary{background:#eaf1ed;color:#173b2d;border:1px solid #dce7e0}
-.danger{background:#fff0f0;color:#a32232;border:1px solid #f2d6d8}
-.input,select,textarea{
-  background:#fff;border:1px solid #d5e1da;border-radius:13px;color:#172b32;
-  box-shadow:inset 0 1px 2px rgba(13,27,42,.025)
-}
-.input:focus{border-color:#16834a;box-shadow:0 0 0 3px rgba(22,131,74,.12)}
-input::placeholder,textarea::placeholder{color:#94a29a}
-label,.label{color:#263d35}
-.pill{background:#e8f2ec;color:#116b3b;border:1px solid #dce9e1}
-.nav{
-  background:rgba(255,255,255,.96);border-top:1px solid #e0e8e3;
-  box-shadow:0 -7px 24px rgba(13,27,42,.07);backdrop-filter:blur(16px);
-  padding-top:9px;
-}
-.nav button{color:#788780;font-weight:750}
-.nav button.active{color:#16834a}
-.nav span{font-size:21px}
-.quick-grid{gap:11px}
-.quick-action{padding:16px;min-height:105px}
-.quick-values .btn{border-radius:11px}
-.section-kicker{color:#16834a;letter-spacing:.1em}
-.summary-tile,.badge{background:#f0f5f2;border:1px solid #e1eae4;border-radius:15px}
-.summary-tile b{color:#102f3b}
-.tool-result,.success{background:#e8f3ec;color:#126b3b;border:1px solid #d5e8dc}
-.notice{background:#fff7e8;color:#875d17;border:1px solid #f0e2c3}
-.history{border-color:#e5ece7}
-.hist{border-color:#edf1ee}
-.hist button,.hist-edit{background:#eaf1ed;color:#315a46;border-radius:9px}
-.empty{color:#718078}
-.sheet,.pro-card,.pay-box{
-  background:#fff;border:1px solid #e1e9e4;color:#172b32;
-  box-shadow:0 18px 50px rgba(13,27,42,.18)
-}
-.modal,.welcome{backdrop-filter:blur(4px)}
-.choice button{border-color:#dce7e0;border-radius:11px;color:#173b2d}
-.choice button.sel{background:#e8f2ec;border-color:#16834a;color:#116b3b}
-.toast{background:#0d1b2a;box-shadow:0 8px 24px rgba(13,27,42,.22)}
-.ring{background:conic-gradient(#16834a var(--p),#e7eee9 0)}
-.badgegrid{gap:10px}
-.badge{color:#173b2d}
-.locked{opacity:.48}
-.challenge{border-color:#e1e9e4;border-radius:14px;background:#fff}
-.challenge.done{background:#e8f3ec;border-color:#c9e3d2}
-.planbox{background:linear-gradient(135deg,#edf5f0,#fff);border:1px solid #dce9e1}
-.planbox b,.planbig{color:#16834a}
-.check{background:#f0f5f2;border:1px solid #e1eae4}
-.reminderbox{background:#f8fbf9;border-color:#dce7e0;border-radius:15px}
-.reminderbox b{color:#102f3b}
-.switch.on{background:#16834a}
-.timeinput{border-color:#d5e1da;border-radius:12px}
-.pro-banner{
-  background:linear-gradient(135deg,#0d1b2a 0%,#123b3b 52%,#16834a 100%);
-  border:1px solid rgba(255,255,255,.14);border-radius:21px;
-  box-shadow:0 12px 28px rgba(13,27,42,.18)
-}
-.pro-btn{color:#116b3b;border-radius:13px}
-.share-card:not(.share-home){background:linear-gradient(145deg,#f1f7f3,#fff);border-color:#dce9e1}
-.share-icon{background:#16834a}
-.pro-modal,.pay-modal{backdrop-filter:blur(5px)}
-.pro-card h2,.pay-box h3{color:#0d1b2a}
-.pro-cta,.pay-real{background:linear-gradient(135deg,#16834a,#116b3b)}
-.pro-plan{border-color:#16834a;border-radius:17px}
-.pro-plan .best{background:#16834a}
-.pro-active{background:#e8f3ec;border-color:#cfe5d7;color:#116b3b}
-.splash{background:linear-gradient(135deg,#0d1b2a 0%,#123b3b 54%,#16834a 100%)}
-.splash p{color:#d7e9df}
-.logoMark{border-radius:25px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
-.install-btn{color:#116b3b;border-radius:12px}
-button:disabled{opacity:.58;cursor:not-allowed}
-@media(hover:hover){
-  .card,.goal,.quick-action{transition:transform .18s ease,box-shadow .18s ease}
-  .goal:hover,.quick-action:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(13,27,42,.09)}
-}
-@media(max-width:380px){
-  .wrap{padding:15px 12px 22px}
-  .heroCard{padding:17px}
-  .stat{padding:10px 7px}
-  .stat b{font-size:14px}
-  .big{font-size:30px}
-}
-
-
-/* PALETA GRATUITA: identidade visual alinhada à área PRO */
-:root{--green:#16834a!important;--green2:#126b3b!important;--dark:#0d1b2a!important;--bg:#f4f8f5!important;--card:#fff!important;--muted:#64736b!important;--line:#dfe8e2!important}
-html,body{background:#f4f8f5!important;color:#17221b!important}
-.top,.splash{background:linear-gradient(135deg,#0d1b2a 0%,#16834a 100%)!important;color:#fff!important}
-.sectiontitle,.big,.sheet h2,.pro-card h2,.pay-box h3{color:#0d1b2a!important}
-.heroCard,.card,.goal,.quick-action,.sheet,.pro-card,.pay-box,.challenge{background:#fff!important;border-color:#dfe8e2!important;color:#17221b!important}
-.stat,.summary-tile,.badge,.calendar-day,.check,.reminderbox{background:#e8f0eb!important;border-color:#dfe8e2!important}
-.btn.primary,.primary,.pro-cta,.pay-real,.switch.on{background:#16834a!important;color:#fff!important}
-.btn.secondary,.secondary,.hist-edit,.hist button,.install-btn{background:#e8f0eb!important;color:#16834a!important;border-color:#dfe8e2!important}
-.nav{background:rgba(255,255,255,.97)!important;border-color:#dfe8e2!important}
-.nav button.active{color:#16834a!important}
-.progress,.mini-ring{background-color:#e8f0eb!important}
-.bar{background:linear-gradient(90deg,#16834a,#0d1b2a)!important}
-.input,select,textarea,.timeinput{border-color:#d5e1da!important}
-.input:focus{border-color:#16834a!important}
-.section-kicker,.percent,.planbig,.planbox b{color:#16834a!important}
-.pro-banner{background:linear-gradient(135deg,#0d1b2a 0%,#16834a 100%)!important}
-.toast{background:#0d1b2a!important;color:#fff!important}
-
-
-/* REDESIGN VISUAL REAL — GRATUITO, sem alterar a PRO */
-/* Base e identidade */
-html,body{min-height:100%;background:#f4f8f5!important;color:#17221b!important}
-body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif!important}
-.app{max-width:600px!important;min-height:100vh;background:#f4f8f5!important}
+.app{max-width:600px!important;min-height:100vh;background:transparent!important}
 .top{
   position:relative;isolation:isolate;overflow:hidden;
-  background:linear-gradient(120deg,#0d1b2a 0%,#123b3b 58%,#16834a 100%)!important;
-  color:#fff!important;padding:26px 20px 30px!important;
-  border-radius:0 0 28px 28px!important;
-  box-shadow:0 12px 28px rgba(13,27,42,.18)!important
+  padding:25px 19px 28px!important;
+  border-radius:0 0 27px 27px!important;
+  color:#f4fbff!important;
+  background:linear-gradient(135deg,#061521 0%,#0b3040 58%,#075c43 100%)!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.24)!important;
 }
-.top:before{content:"";position:absolute;z-index:-1;width:220px;height:220px;right:-100px;top:-130px;border:1px solid #ffffff35;border-radius:50%;box-shadow:0 0 0 24px #ffffff0d,0 0 0 50px #ffffff08}
-.brand{font-size:25px!important;font-weight:850!important;letter-spacing:-.6px!important;color:#fff!important}
-.tag{color:#e0eee6!important;font-size:13px!important}
-.iconbtn{background:#ffffff20!important;color:#fff!important;border:1px solid #ffffff38!important;border-radius:12px!important}
-.install-btn{background:#ffffff!important;color:#126b3b!important;border:0!important;padding:10px 14px!important;font-weight:750!important}
-.wrap{padding:20px 16px 30px!important;background:#f4f8f5!important}
-.sectiontitle{color:#0d1b2a!important;font-size:20px!important;font-weight:800!important;letter-spacing:-.3px!important}
-.sub,.empty{color:#68776f!important}
-.heroCard{
- background:linear-gradient(140deg,#fff 0%,#edf5f0 100%)!important;
- border:1px solid #d8e6dd!important;border-radius:22px!important;
- box-shadow:0 9px 26px rgba(13,27,42,.08)!important;padding:20px!important
+.top:before{
+  content:"";position:absolute;z-index:-1;width:230px;height:230px;
+  right:-100px;top:-145px;border:1px solid rgba(24,201,120,.25);
+  border-radius:50%;box-shadow:0 0 0 25px rgba(24,201,120,.05),0 0 0 54px rgba(24,201,120,.035)
 }
-.big{color:#0d1b2a!important;font-size:34px!important;font-weight:850!important;letter-spacing:-1px!important}
-.section-kicker{color:#16834a!important;font-weight:800!important;letter-spacing:.08em!important}
+.brand{color:#f4fbff!important;font-weight:850!important;letter-spacing:-.55px}
+.tag{color:#9fdcc1!important}
+.iconbtn{background:rgba(24,201,120,.12)!important;color:#42e49a!important;border:1px solid rgba(24,201,120,.25)!important;border-radius:13px!important}
+.install-btn{background:#18c978!important;color:#05251b!important;border:0!important;border-radius:12px!important;font-weight:850!important}
+.wrap{padding:19px 16px 30px!important;background:transparent!important}
+.screen{background:transparent!important}
+.sectiontitle{color:#f0f7fb!important;font-weight:820!important;letter-spacing:-.35px}
+.sub,.empty{color:#a8bfce!important}
+.heroCard,.card,.goal,.quick-action,.challenge,.share-card:not(.share-home){
+  color:#eef7fb!important;
+  background:linear-gradient(145deg,rgba(10,38,53,.98),rgba(7,29,43,.98))!important;
+  border:1px solid #16485a!important;
+  border-radius:19px!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.16)!important;
+}
+.heroCard{padding:20px!important;border-color:#13745c!important}
+.big{color:#f4fbff!important;font-weight:900!important;letter-spacing:-1px!important}
+.section-kicker{color:#38dc91!important;font-weight:850!important;letter-spacing:.09em!important}
 .summary-grid{gap:9px!important}
 .summary-tile,.stat,.badge,.calendar-day,.check{
- background:#e8f0eb!important;border:1px solid #d8e6dd!important;
- border-radius:14px!important;color:#173b2d!important
+  color:#eaf6fb!important;
+  background:#0d3040!important;
+  border:1px solid #16485a!important;
+  border-radius:14px!important;
 }
-.summary-tile b,.stat b{color:#0d1b2a!important}
-.card,.goal,.quick-action,.challenge{
- background:#fff!important;border:1px solid #dfe8e2!important;
- border-radius:18px!important;box-shadow:0 5px 18px rgba(13,27,42,.055)!important;
- color:#17221b!important
-}
-.card{padding:18px!important}
-.goal,.quick-action{padding:16px!important}
-.quick-action b,.goal strong{color:#0d1b2a!important}
-.quick-action small,.goal small{color:#68776f!important}
-.quick-action span,.emoji{color:#16834a!important}
-.btn{border-radius:12px!important;font-weight:800!important}
+.summary-tile b,.stat b,.calendar-day b{color:#f4fbff!important}
+.quick-action{min-height:96px!important}
+.quick-action b,.goal strong,.card h2,.card h3{color:#f2f8fb!important}
+.quick-action small,.goal small{color:#a8bfce!important}
+.quick-action span,.emoji{color:#35df91!important}
+.emoji{background:rgba(24,201,120,.13)!important}
+.btn{border-radius:13px!important;font-weight:820!important}
 .btn.primary,.primary,.share-btn,.pro-cta,.pay-real{
- background:linear-gradient(135deg,#16834a,#126b3b)!important;color:#fff!important;
- border:0!important;box-shadow:0 5px 13px rgba(22,131,74,.17)!important
+  color:#03251a!important;
+  background:linear-gradient(135deg,#25df8c,#0fa968)!important;
+  border:0!important;
+  box-shadow:0 6px 18px rgba(17,169,104,.18)!important;
 }
-.btn.secondary,.secondary,.hist-edit,.hist button{
- background:#e8f0eb!important;color:#126b3b!important;border:1px solid #d4e3d9!important
+.btn.secondary,.secondary,.hist-edit,.hist button,.choice button{
+  color:#a9f3d0!important;background:#0d3040!important;
+  border:1px solid #1b5964!important;
 }
-.danger{background:#fff0f0!important;color:#a33232!important;border:1px solid #f1d6d8!important}
+.danger{color:#ffb8b8!important;background:#351e29!important;border:1px solid #633543!important}
 .input,select,textarea,.timeinput{
- background:#fff!important;color:#17221b!important;border:1px solid #d2dfd7!important;border-radius:12px!important
+  color:#eef7fb!important;background:#081f2d!important;
+  border:1px solid #205064!important;border-radius:12px!important;
 }
+.input::placeholder,textarea::placeholder{color:#829dad!important}
+option{color:#eef7fb!important;background:#081f2d!important}
+label,.label{color:#dceaf0!important}
 .input:focus,select:focus,textarea:focus,.timeinput:focus{
- outline:none!important;border-color:#16834a!important;box-shadow:0 0 0 3px #16834a20!important
+  outline:none!important;border-color:#18c978!important;
+  box-shadow:0 0 0 3px rgba(24,201,120,.16)!important;
 }
-label,.label{color:#263d35!important;font-weight:650!important}
-.progress{background:#e1ebe4!important;border-radius:99px!important}
-.bar{background:linear-gradient(90deg,#16834a,#35a66b)!important;border-radius:99px!important}
-.ring{background:conic-gradient(#16834a var(--p),#e5eee8 0)!important}
-.pill,.emoji,.choice button.sel,.tool-result,.success,.challenge.done{
- background:#e8f0eb!important;color:#126b3b!important;border-color:#d2e3d8!important
+.progress{background:#173b4c!important;border-radius:99px!important}
+.bar{background:linear-gradient(90deg,#35e99a,#0fa968)!important;border-radius:99px!important}
+.ring{background:conic-gradient(#18c978 var(--p),#173b4c 0)!important}
+.ring:after{background:#0a2635!important}
+.pill,.choice button.sel,.tool-result,.success,.challenge.done{
+  color:#8ef0bd!important;background:#103d39!important;border-color:#1b7057!important;
 }
 .nav{
- background:rgba(255,255,255,.97)!important;border-top:1px solid #dfe8e2!important;
- box-shadow:0 -7px 22px rgba(13,27,42,.07)!important;backdrop-filter:blur(14px)!important
+  background:rgba(5,22,33,.97)!important;
+  border-top:1px solid #164457!important;
+  box-shadow:0 -9px 28px rgba(0,0,0,.24)!important;
+  backdrop-filter:blur(16px)!important;
 }
-.nav button{color:#738078!important;font-weight:750!important}
-.nav button.active{color:#16834a!important}
-.pro-banner{background:linear-gradient(120deg,#0d1b2a,#16834a)!important;border-radius:18px!important}
-.toast{background:#0d1b2a!important;color:#fff!important}
-.notice{background:#fff7e8!important;color:#805b1c!important;border:1px solid #efdfbd!important}
-.sheet,.pro-card,.pay-box{background:#fff!important;color:#17221b!important;border:1px solid #dfe8e2!important}
-@media(max-width:380px){.wrap{padding:16px 12px 26px!important}.heroCard{padding:17px!important}.big{font-size:30px!important}}
-
-
-/* AJUSTE FINAL DE IDENTIDADE — GRATUITO IGUAL AO PRO */
-/* Mesma identidade visual da tela PRO, aplicada também à entrada e ao conteúdo gratuito */
-html,body{background:#f4f8f5!important;color:#17221b!important}
-.app,.wrap,.screen{background:#f4f8f5!important}
-.top{background:linear-gradient(135deg,#0d1b2a 0%,#16834a 100%)!important;color:#fff!important}
-.brand,.tag{color:#fff!important}
-.sectiontitle,.screen h2,.screen h3{color:#0d1b2a!important}
-.section-kicker,.screen a:not(.btn){color:#16834a!important}
-.heroCard{background:linear-gradient(135deg,#0d1b2a 0%,#16834a 100%)!important;color:#fff!important;border:0!important}
-.heroCard :is(h1,h2,h3,p,span,strong,b,small,div){color:#fff!important}
-.big{color:#fff!important}
-.summary-tile,.stat,.badge,.check,.calendar-day{background:#e8f0eb!important;color:#17221b!important;border:1px solid #dfe8e2!important}
-.summary-tile b,.stat b{color:#0d1b2a!important}
-.card,.goal,.quick-action,.sheet,.pro-card,.pay-box{background:#fff!important;color:#17221b!important;border:1px solid #dfe8e2!important;box-shadow:0 5px 18px rgba(13,27,42,.08)!important}
-.card h2,.card h3,.sheet h2,.pro-card h2{color:#16834a!important}
-.btn.primary,.primary,.share-btn,.pro-cta,.pay-real,.pro-btn{background:#16834a!important;color:#fff!important;border:0!important}
-.btn.secondary,.secondary,.hist-edit,.hist button{background:#e8f0eb!important;color:#16834a!important;border:1px solid #dfe8e2!important}
-.input,select,textarea,.timeinput{background:#fff!important;color:#17221b!important;border:1px solid #ccd5cf!important}
-.nav{background:#0d1b2a!important;border-top:0!important}
-.nav button,.nav button.active{color:#fff!important}
-.splash,.welcome{background:#f4f8f5!important;color:#17221b!important}
-.splash h1,.welcome h2{color:#0d1b2a!important}
-.splash p,.welcome .sub{color:#66736b!important}
-.logoMark{background:#e8f0eb!important;border:1px solid #dfe8e2!important;color:#16834a!important}
-.checklist .check{background:#e8f0eb!important;color:#17221b!important}
-@media(max-width:380px){.top{padding:24px 16px 28px!important}}
+.nav button{color:#91aabb!important}
+.nav button.active{color:#28df91!important}
+.nav button.active span{color:#28df91!important}
+.pro-banner{background:linear-gradient(135deg,#071b28,#075c43)!important;border:1px solid #167657!important;border-radius:19px!important}
+.pro-banner h2,.pro-banner p{color:#f2fbf6!important}
+.pro-btn{background:#18c978!important;color:#03251a!important}
+.share-home{
+  background:linear-gradient(135deg,#092638,#07503f)!important;
+  border:1px solid #16815f!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.2)!important;
+}
+.share-home h3{color:#f4fbff!important}
+.share-home p{color:#b7cbd6!important}
+.share-home .share-icon{background:#18c978!important;color:#05251b!important}
+.share-home .share-btn{background:#18c978!important;color:#05251b!important}
+.history{border-color:#174457!important}
+.hist{border-color:#173d4d!important}
+.hist button{background:#173b49!important;color:#a7efcb!important}
+.empty{color:#9db4c2!important}
+.notice{background:#392f20!important;color:#f5dca8!important;border:1px solid #66502b!important}
+.notice.success{background:#103d39!important;color:#9af0c3!important;border-color:#1b7057!important}
+.sheet,.pro-card,.pay-box{
+  color:#eef7fb!important;background:#092331!important;
+  border:1px solid #1a4a5d!important;
+}
+.sheet h2,.pro-card h2,.pay-box h3,.pro-plan h3{color:#f2f8fb!important}
+.sheet .sub,.pro-note{color:#a8bfce!important}
+.pro-card p,.pro-feature,.pay-method{color:#dceaf0!important}
+.pro-feature{border-color:#174457!important}
+.pro-icon{background:#103d39!important;color:#48e69b!important}
+.pro-plan{background:#0d3040!important;border-color:#18c978!important}
+.pro-plan-price,.pro-plan h3{color:#f2f8fb!important}
+.pro-plan-price small,.pay-method span{color:#a8bfce!important}
+.pro-plan .best{background:#18c978!important;color:#03251a!important}
+.pro-active{background:#103d39!important;border-color:#1b7057!important;color:#9af0c3!important}
+.planbox{background:#0d3040!important;border:1px solid #1a4a5d!important}
+.planbox b,.planbig{color:#55e6a0!important}
+.planline{border-color:#174457!important;color:#eaf6fb!important}
+.check{background:#0d3040!important;color:#dceaf0!important}
+.reminderbox{background:#0d3040!important;border-color:#1a4a5d!important}
+.reminderbox b,.reminderbox .sub{color:#eaf6fb!important}
+.switch{background:#456171!important}
+.switch.on{background:#18c978!important}
+.timeinput{color:#eef7fb!important}
+.choice button{color:#dceaf0!important}
+.choice button.sel{color:#8ef0bd!important}
+.toast{background:#0d1b2a!important;color:#fff!important;border:1px solid #1c5260!important}
+.splash{
+  background:radial-gradient(ellipse at 80% 20%,#075c43 0%,transparent 38%),linear-gradient(145deg,#061521,#0b3040 65%,#07503f)!important;
+  color:#f4fbff!important;
+}
+.splash p{color:#b8d7ca!important}
+.logoMark{background:rgba(24,201,120,.12)!important;border:1px solid rgba(24,201,120,.3)!important;color:#4be79f!important}
+.welcome{background:rgba(0,8,14,.78)!important}
+.welcome .sheet{background:#092331!important}
+.pro-modal,.pay-modal{background:rgba(0,8,14,.78)!important;backdrop-filter:blur(8px)!important}
+button:disabled{opacity:.5!important}
+@media(hover:hover){
+  .card,.goal,.quick-action{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+  .goal:hover,.quick-action:hover{transform:translateY(-2px);border-color:#20815f!important;box-shadow:0 12px 28px rgba(0,0,0,.22)!important}
+}
+@media(max-width:380px){
+  .wrap{padding:16px 12px 25px!important}
+  .heroCard,.card{padding:16px!important}
+  .big{font-size:30px!important}
+}
 
 </style></head><body><div class="pro-banner">
   <h2>⭐ Minha Meta PRO</h2>
