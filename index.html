@@ -340,19 +340,7 @@ function closePro(){
   </button>
 
 </header><main class="wrap"><section id="home" class="screen active">
-  <div id="homeContent"></div>  <div class="share-card">
-    <div class="share-card-content">
-      <div class="share-icon">📤</div>  <div>
-    <h3>Compartilhe o Minha Meta</h3>
-    <p>Convide alguém para começar a guardar dinheiro também.</p>
-  </div>
-</div>
-
-<button class="share-btn" onclick="compartilharMinhaMeta()">
-  📤 Compartilhar
-</button>
-
-  </div>
+  <div id="homeContent"></div>
 </section><section id="goals" class="screen">
   <div class="row">
     <div>
@@ -492,11 +480,13 @@ function closePro(){
   </div>
   <div class="card"><b>💡 Uma dica</b><p class="sub">Escolha um valor que caiba no seu bolso. Se precisar, ajuste o prazo para manter uma rotina possível.</p></div>
 </section>
-s<section id="calendar" class="screen"><h2 class="sectiontitle">🗓️ Calendário</h2><p class="sub">Acompanhe os dias em que conseguiu guardar dinheiro.</p><div class="card"><div id="depositCalendarFull" class="deposit-calendar"></div></div></section>
+<section id="calendar" class="screen"><h2 class="sectiontitle">🗓️ Calendário</h2><p class="sub">Acompanhe os dias em que conseguiu guardar dinheiro.</p><div class="card"><div id="depositCalendarFull" class="deposit-calendar"></div></div></section>
 <section id="more" class="screen">
   <h2 class="sectiontitle">Mais ferramentas</h2>
   <p class="sub">Continue desenvolvendo seu hábito de economizar.</p>
-  d<button class="quick-action" onclick="show('calendar')"><span>🗓️</span><b>Calendário</b><small>Veja seus dias de economia</small></button>i<span>🔥</span><b>Desafios</b><small>Experimente novos ritmos</small></button>
+  <div class="quick-grid">
+    <button class="quick-action" onclick="show('calendar')"><span>🗓️</span><b>Calendário</b><small>Veja seus dias de economia</small></button>
+    <button class="quick-action" onclick="show('challenges')"><span>🔥</span><b>Desafios</b><small>Experimente novos ritmos</small></button>
     <button class="quick-action" onclick="show('achievements')"><span>🏆</span><b>Conquistas</b><small>Veja seus marcos</small></button>
     <button class="quick-action" onclick="show('reminders')"><span>🔔</span><b>Lembretes</b><small>Cuide da sua rotina</small></button>
     <button class="quick-action" onclick="show('ranking')"><span>🥇</span><b>Ranking</b><small>Veja a classificação demonstrativa</small></button>
