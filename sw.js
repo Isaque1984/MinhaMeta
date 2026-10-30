@@ -1,4 +1,4 @@
-const CACHE_NAME = "minha-meta-v10";
+const CACHE_NAME = "minha-meta-v11";
 
 const FILES_TO_CACHE = [
   "./",
