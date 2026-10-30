@@ -1062,10 +1062,13 @@ async function verificarSessao() {
 
     if (!resposta.ok) {
 
-      throw new Error(
+      const erro = new Error(
         dados.detail ||
         "Sessão inválida."
       );
+
+      erro.status = resposta.status;
+      throw erro;
 
     }
 
@@ -1102,29 +1105,48 @@ async function verificarSessao() {
     );
 
 
-    try {
+    if (erro.status === 401 || erro.status === 403) {
 
-      localStorage.removeItem(
-        TOKEN_KEY
+      try {
+
+        localStorage.removeItem(
+          TOKEN_KEY
+        );
+
+      } catch (e) {}
+
+      document.getElementById(
+        "checkingText"
+      ).textContent =
+        "Sua sessão expirou. Entre novamente.";
+
+      setTimeout(
+        function() {
+          mostrarLogin();
+        },
+        300
       );
 
-    } catch (e) {}
+      return;
+    }
 
-
+    // Erros temporários de rede/API não devem apagar a sessão.
     document.getElementById(
       "checkingText"
     ).textContent =
-      "Sua sessão expirou. Entre novamente.";
+      "Não foi possível confirmar sua sessão agora. Sua conta continua salva. Tente novamente.";
 
+    let retryButton = document.getElementById("retrySessionButton");
 
-    setTimeout(
-      function() {
-
-        mostrarLogin();
-
-      },
-      300
-    );
+    if (!retryButton) {
+      retryButton = document.createElement("button");
+      retryButton.id = "retrySessionButton";
+      retryButton.className = "btn-green";
+      retryButton.textContent = "TENTAR NOVAMENTE";
+      retryButton.style.marginTop = "16px";
+      retryButton.onclick = verificarSessao;
+      document.getElementById("checking").appendChild(retryButton);
+    }
 
   }
 
