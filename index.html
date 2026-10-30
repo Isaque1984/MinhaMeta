@@ -545,6 +545,147 @@ body{background:#f4f8f5 !important;color:#17221b !important}
 .notice{background:#f4f8f5 !important;color:#46574d !important}
 .danger,.hist button{background:#fcebea !important;color:#a33232 !important}
 
+
+/* ===== REDESIGN COMPLETO — MINHA META GRATUITO / IDENTIDADE PRO ===== */
+:root{
+  --green:#16834a;--green2:#116b3b;--dark:#0d1b2a;
+  --bg:#f4f8f5;--card:#ffffff;--muted:#687780;--line:#e1e9e4;
+  --gold:#c99735;--red:#b42332;
+}
+html{background:#f4f8f5}
+body{
+  color:#172b32;
+  background:linear-gradient(180deg,#edf4ef 0,#f4f8f5 260px,#f4f8f5 100%);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.app{max-width:600px;background:transparent}
+.top{
+  position:relative;overflow:hidden;
+  padding:27px 20px 34px;
+  border-radius:0 0 28px 28px;
+  background:linear-gradient(135deg,#0d1b2a 0%,#123b3b 52%,#16834a 100%);
+  box-shadow:0 14px 32px rgba(13,27,42,.18);
+}
+.top:after{
+  content:"";position:absolute;width:230px;height:230px;border-radius:50%;
+  right:-95px;top:-125px;border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 0 0 24px rgba(255,255,255,.035),0 0 0 50px rgba(255,255,255,.025);
+  pointer-events:none;
+}
+.toprow{position:relative;z-index:1}
+.brand{font-size:26px;letter-spacing:-.7px;font-weight:850}
+.tag{color:#d7e9df;font-size:13px;letter-spacing:.1px}
+.iconbtn{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px)}
+.wrap{padding:19px 16px 24px}
+.sectiontitle{font-size:20px;font-weight:800;letter-spacing:-.35px;color:#0d1b2a;margin:12px 2px 14px}
+.sub{color:#687780;line-height:1.45}
+.heroCard{
+  position:relative;background:linear-gradient(145deg,#fff 0%,#f8fbf9 100%);
+  border:1px solid #e0eae3;border-radius:22px;padding:20px;
+  box-shadow:0 9px 26px rgba(13,27,42,.07);margin:0 0 16px;
+}
+.big{font-size:34px;letter-spacing:-1px;color:#0d1b2a;font-weight:850}
+.progress{height:10px;background:#e7eee9;border-radius:99px;margin:16px 0 9px}
+.bar{background:linear-gradient(90deg,#16834a,#36a96d);border-radius:99px}
+.stats{gap:9px}
+.stat{background:#f1f6f3;border:1px solid #e4ece7;border-radius:15px;padding:12px 10px}
+.stat b{color:#102f3b;font-size:16px}
+.card,.goal,.quick-action{
+  background:#fff;border:1px solid #e1e9e4;border-radius:19px;
+  box-shadow:0 5px 18px rgba(13,27,42,.055);
+}
+.card{padding:18px;margin:12px 0}
+.goal{padding:17px;min-height:116px}
+.goal strong,.quick-action b{color:#102f3b;font-size:15px}
+.goal small,.quick-action small{color:#718078;line-height:1.4}
+.goal span,.quick-action span{filter:saturate(.9)}
+.emoji{background:#e8f2ec;color:#16834a;border:1px solid #dce9e1}
+.percent{color:#16834a}
+.btn{border-radius:13px;font-weight:800;transition:transform .16s,box-shadow .16s}
+.primary{background:linear-gradient(135deg,#16834a,#116b3b);color:#fff;box-shadow:0 5px 12px rgba(22,131,74,.18)}
+.secondary{background:#eaf1ed;color:#173b2d;border:1px solid #dce7e0}
+.danger{background:#fff0f0;color:#a32232;border:1px solid #f2d6d8}
+.input,select,textarea{
+  background:#fff;border:1px solid #d5e1da;border-radius:13px;color:#172b32;
+  box-shadow:inset 0 1px 2px rgba(13,27,42,.025)
+}
+.input:focus{border-color:#16834a;box-shadow:0 0 0 3px rgba(22,131,74,.12)}
+input::placeholder,textarea::placeholder{color:#94a29a}
+label,.label{color:#263d35}
+.pill{background:#e8f2ec;color:#116b3b;border:1px solid #dce9e1}
+.nav{
+  background:rgba(255,255,255,.96);border-top:1px solid #e0e8e3;
+  box-shadow:0 -7px 24px rgba(13,27,42,.07);backdrop-filter:blur(16px);
+  padding-top:9px;
+}
+.nav button{color:#788780;font-weight:750}
+.nav button.active{color:#16834a}
+.nav span{font-size:21px}
+.quick-grid{gap:11px}
+.quick-action{padding:16px;min-height:105px}
+.quick-values .btn{border-radius:11px}
+.section-kicker{color:#16834a;letter-spacing:.1em}
+.summary-tile,.badge{background:#f0f5f2;border:1px solid #e1eae4;border-radius:15px}
+.summary-tile b{color:#102f3b}
+.tool-result,.success{background:#e8f3ec;color:#126b3b;border:1px solid #d5e8dc}
+.notice{background:#fff7e8;color:#875d17;border:1px solid #f0e2c3}
+.history{border-color:#e5ece7}
+.hist{border-color:#edf1ee}
+.hist button,.hist-edit{background:#eaf1ed;color:#315a46;border-radius:9px}
+.empty{color:#718078}
+.sheet,.pro-card,.pay-box{
+  background:#fff;border:1px solid #e1e9e4;color:#172b32;
+  box-shadow:0 18px 50px rgba(13,27,42,.18)
+}
+.modal,.welcome{backdrop-filter:blur(4px)}
+.choice button{border-color:#dce7e0;border-radius:11px;color:#173b2d}
+.choice button.sel{background:#e8f2ec;border-color:#16834a;color:#116b3b}
+.toast{background:#0d1b2a;box-shadow:0 8px 24px rgba(13,27,42,.22)}
+.ring{background:conic-gradient(#16834a var(--p),#e7eee9 0)}
+.badgegrid{gap:10px}
+.badge{color:#173b2d}
+.locked{opacity:.48}
+.challenge{border-color:#e1e9e4;border-radius:14px;background:#fff}
+.challenge.done{background:#e8f3ec;border-color:#c9e3d2}
+.planbox{background:linear-gradient(135deg,#edf5f0,#fff);border:1px solid #dce9e1}
+.planbox b,.planbig{color:#16834a}
+.check{background:#f0f5f2;border:1px solid #e1eae4}
+.reminderbox{background:#f8fbf9;border-color:#dce7e0;border-radius:15px}
+.reminderbox b{color:#102f3b}
+.switch.on{background:#16834a}
+.timeinput{border-color:#d5e1da;border-radius:12px}
+.pro-banner{
+  background:linear-gradient(135deg,#0d1b2a 0%,#123b3b 52%,#16834a 100%);
+  border:1px solid rgba(255,255,255,.14);border-radius:21px;
+  box-shadow:0 12px 28px rgba(13,27,42,.18)
+}
+.pro-btn{color:#116b3b;border-radius:13px}
+.share-card:not(.share-home){background:linear-gradient(145deg,#f1f7f3,#fff);border-color:#dce9e1}
+.share-icon{background:#16834a}
+.pro-modal,.pay-modal{backdrop-filter:blur(5px)}
+.pro-card h2,.pay-box h3{color:#0d1b2a}
+.pro-cta,.pay-real{background:linear-gradient(135deg,#16834a,#116b3b)}
+.pro-plan{border-color:#16834a;border-radius:17px}
+.pro-plan .best{background:#16834a}
+.pro-active{background:#e8f3ec;border-color:#cfe5d7;color:#116b3b}
+.splash{background:linear-gradient(135deg,#0d1b2a 0%,#123b3b 54%,#16834a 100%)}
+.splash p{color:#d7e9df}
+.logoMark{border-radius:25px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+.install-btn{color:#116b3b;border-radius:12px}
+button:disabled{opacity:.58;cursor:not-allowed}
+@media(hover:hover){
+  .card,.goal,.quick-action{transition:transform .18s ease,box-shadow .18s ease}
+  .goal:hover,.quick-action:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(13,27,42,.09)}
+}
+@media(max-width:380px){
+  .wrap{padding:15px 12px 22px}
+  .heroCard{padding:17px}
+  .stat{padding:10px 7px}
+  .stat b{font-size:14px}
+  .big{font-size:30px}
+}
+
 </style></head><body><div class="pro-banner">
   <h2>⭐ Minha Meta PRO</h2>
   <p>Tenha mais controle, mais metas e um plano completo para chegar onde você quer.</p>
