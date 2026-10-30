@@ -95,7 +95,7 @@ label{color:#172033;font-weight:700}
 .nav span{display:block;font-size:20px;margin-bottom:2px}
 .quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
 .quick-action{background:#fff;border:1px solid #e4e9e5;border-radius:17px;padding:14px;text-align:left;min-height:96px;cursor:pointer;box-shadow:0 3px 12px #10251b08}
-.quick-action span{display:block;font-size:25px;margin-bottom:7px}
+.quick-action span{display:block;font-size:25px;margin-bottom:7px}.quick-values{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}.quick-values .btn{padding:12px 4px;font-size:13px}.mini-ring{width:64px;height:64px;margin:0;position:relative;background:conic-gradient(var(--green) var(--p),#e8eee9 0)}.mini-ring:after{width:48px;height:48px}.mini-ring .ringtxt{font-size:13px}.deposit-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}.calendar-day{text-align:center;border-radius:10px;padding:8px 2px;background:#f1f5f2;font-size:12px;color:#64748b}.calendar-day b{display:block;font-size:13px;color:#172033;margin-bottom:3px}.calendar-day.has-deposit{background:#dcfce7;color:#166534;font-weight:800}.hist-edit{border:0;background:#e8eee9;color:#173021;border-radius:8px;padding:5px 8px;margin-right:4px}
 .quick-action b{display:block;font-size:14px;color:#172033}
 .quick-action small{display:block;color:#64748b;margin-top:3px;font-size:11px}
 .section-kicker{font-size:11px;letter-spacing:.08em;font-weight:850;color:#15803d}
@@ -394,7 +394,7 @@ function closePro(){
 </section><section id="challenges" class="screen">
   <h2 class="sectiontitle">🔥 Desafios</h2>
   <div class="sub">Escolha um ritmo e comece sem esperar sobrar dinheiro.</div>
-  <div id="challengeList"></div>  <div class="card">
+  <div id="challengeList"></div><div class="card"><b>🚀 Desafios de 30 dias</b><div class="sub">Escolha um valor diário para preparar seu plano.</div><div class="quick-values"><button class="btn secondary" onclick="startSavingsChallenge(1)">R$ 1/dia</button><button class="btn secondary" onclick="startSavingsChallenge(5)">R$ 5/dia</button><button class="btn secondary" onclick="startSavingsChallenge(10)">R$ 10/dia</button><button class="btn secondary" onclick="startSavingsChallenge(20)">R$ 20/dia</button></div></div>  <div class="card">
     <h3 style="margin-top:0">💡 Dica</h3>
     <p class="sub">
       Você não precisa começar alto. R$ 5 por dia já são R$ 150 em 30 dias.
@@ -492,16 +492,11 @@ function closePro(){
   </div>
   <div class="card"><b>💡 Uma dica</b><p class="sub">Escolha um valor que caiba no seu bolso. Se precisar, ajuste o prazo para manter uma rotina possível.</p></div>
 </section>
-<section id="summary" class="screen">
-  <h2 class="sectiontitle">📅 Minha evolução</h2>
-  <p class="sub">Acompanhe o que você conseguiu guardar neste mês.</p>
-  <div id="monthlySummary"></div>
-</section>
+s<section id="calendar" class="screen"><h2 class="sectiontitle">🗓️ Calendário</h2><p class="sub">Acompanhe os dias em que conseguiu guardar dinheiro.</p><div class="card"><div id="depositCalendarFull" class="deposit-calendar"></div></div></section>
 <section id="more" class="screen">
   <h2 class="sectiontitle">Mais ferramentas</h2>
   <p class="sub">Continue desenvolvendo seu hábito de economizar.</p>
-  <div class="quick-grid">
-    <button class="quick-action" onclick="show('challenges')"><span>🔥</span><b>Desafios</b><small>Experimente novos ritmos</small></button>
+  d<button class="quick-action" onclick="show('calendar')"><span>🗓️</span><b>Calendário</b><small>Veja seus dias de economia</small></button>i<span>🔥</span><b>Desafios</b><small>Experimente novos ritmos</small></button>
     <button class="quick-action" onclick="show('achievements')"><span>🏆</span><b>Conquistas</b><small>Veja seus marcos</small></button>
     <button class="quick-action" onclick="show('reminders')"><span>🔔</span><b>Lembretes</b><small>Cuide da sua rotina</small></button>
     <button class="quick-action" onclick="show('ranking')"><span>🥇</span><b>Ranking</b><small>Veja a classificação demonstrativa</small></button>
@@ -648,7 +643,7 @@ function show(id){
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   $(id).classList.add('active');
 
-  if(id==='home')renderHome();
+  if(id==='home'){renderHome();renderQuickGoal();}
   if(id==='goals')renderGoals();
   if(id==='create')renderChoices();
   if(id==='detail'&&window.currentId)renderDetail();
@@ -656,7 +651,8 @@ function show(id){
   if(id==='achievements')renderAchievements();
   if(id==='ranking')renderRanking();
   if(id==='simulator')simulateSavings();
-  if(id==='summary')renderMonthlySummary();
+  if(id==='summary'){renderMonthlySummary();renderDepositCalendar();}
+  if(id==='calendar')renderDepositCalendar();
 
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
 
@@ -944,68 +940,14 @@ function totalSaved(){
   return goals.reduce((s,g)=>s+g.saved,0)
 }
 
-function renderHome(){
-
-  const total=totalSaved();
-  const target=goals.reduce((s,g)=>s+Number(g.target||0),0);
-  const main=goals.filter(g=>g.saved<g.target).sort((a,b)=>pct(b)-pct(a))[0]||goals[0];
-  const done=goals.filter(g=>g.saved>=g.target).length;
-  const now=new Date();
-  const monthItems=goals.flatMap(g=>(g.history||[]).map(x=>x));
-  const monthHistory=monthItems.filter(x=>{
-    const d=new Date(x.date);
-    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-  });
-  const monthTotal=monthHistory.reduce((s,x)=>s+Number(x.value||0),0);
-  const monthCount=monthHistory.length;
-  const remaining=goals.reduce((s,g)=>s+Math.max(0,Number(g.target||0)-Number(g.saved||0)),0);
-
-  $('homeContent').innerHTML=
-    `<div class="heroCard">
-      <div class="row">
-        <div>
-          <div class="section-kicker">SEU DINHEIRO, SEUS PLANOS</div>
-          <div class="big">${money(total)}</div>
-          <div class="sub">Total guardado em todas as metas</div>
-        </div>
-        <div style="font-size:38px">💰</div>
-      </div>
-      <div class="summary-grid" style="margin-top:15px">
-        <div class="summary-tile"><span class="sub">Metas ativas</span><b>${goals.filter(g=>g.saved<g.target).length}</b></div>
-        <div class="summary-tile"><span class="sub">Metas concluídas</span><b>${done}</b></div>
-        <div class="summary-tile"><span class="sub">Guardado este mês</span><b>${money(monthTotal)}</b></div>
-        <div class="summary-tile"><span class="sub">Falta alcançar</span><b>${money(remaining)}</b></div>
-      </div>
-    </div>
-
-    <h2 class="sectiontitle" style="margin-top:22px">O que você quer fazer?</h2>
-    <div class="quick-grid">
-      <button class="quick-action" onclick="openCreate()"><span>🎯</span><b>Criar uma meta</b><small>Defina seu próximo objetivo</small></button>
-      <button class="quick-action" onclick="show('goals')"><span>💵</span><b>Registrar dinheiro</b><small>Atualize uma meta existente</small></button>
-      <button class="quick-action" onclick="show('simulator')"><span>🧮</span><b>Simular economia</b><small>Descubra quanto guardar</small></button>
-      <button class="quick-action" onclick="show('summary')"><span>📅</span><b>Minha evolução</b><small>Veja seu resumo mensal</small></button>
-    </div>
-
-    <div class="card">
-      <div class="row">
-        <div><b>📆 Seu mês até agora</b><div class="sub">${monthCount} depósito(s) registrado(s)</div></div>
-        <b style="color:var(--green2)">${money(monthTotal)}</b>
-      </div>
-      <button class="btn secondary full" onclick="show('summary')">Ver resumo completo</button>
-    </div>
-
-    ${main?`<h2 class="sectiontitle">Continue de onde parou</h2>${goalCard(main,true)}`:
-      `<div class="card" style="text-align:center"><div style="font-size:35px">🌱</div><b>Sua primeira conquista começa com uma meta</b><p class="sub">Escolha algo que deseja realizar e acompanhe seu progresso por aqui.</p><button class="btn primary full" onclick="openCreate()">Criar minha primeira meta</button></div>`}
-
-    <div class="card">
-      <div class="row">
-        <div><b>🔥 Sua sequência</b><div class="sub">${streakAll()} dia(s) com depósito</div></div>
-        <span style="font-size:28px">${streakAll()>=7?'🔥':'⚡'}</span>
-      </div>
-      <button class="btn secondary full" onclick="show('more')">Explorar desafios e conquistas</button>
-    </div>`;
+function renderHome(){u
+ renderHomeProgress();
 }
 
+function renderQuickGoal(){const el=$('quickGoal');if(!el)return;const prev=el.value;el.innerHTML=goals.length?goals.map(g=>'<option value="'+g.id+'">'+g.emoji+' '+g.name+' — falta '+money(Math.max(0,g.target-g.saved))+'</option>').join(''):'<option value="">Crie uma meta primeiro</option>';if(goals.some(g=>String(g.id)===prev))el.value=prev;}
+function quickDeposit(value){const id=Number(($('quickGoal')||{}).value),g=goals.find(x=>x.id===id),v=value||Number(($('quickCustom')||{}).value||0);if(!g)return toast('Crie uma meta antes de registrar.');if(!v||v<=0)return toast('Digite um valor válido.');const real=Math.min(v,Math.max(0,g.target-g.saved));if(!real)return toast('Essa meta já foi concluída!');g.saved+=real;g.history.unshift({value:real,date:new Date().toISOString()});save();if($('quickCustom'))$('quickCustom').value='';renderHome();renderQuickGoal();toast('Depósito de '+money(real)+' registrado!');}
+function renderHomeProgress(){const p=goals.length?goals.reduce((s,g)=>s+pct(g),0)/goals.length:0;const r=$('homeProgressRing'),t=$('homeProgressText');if(r)r.style.setProperty('--p',p+'%');if(t)t.textContent=p.toFixed(0)+'%';}
+function renderDepositCalendar(){const ids=['depositCalendar','depositCalendarFull'],now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),sums={};goals.forEach(g=>(g.history||[]).forEach(x=>{const d=new Date(x.date);if(d.getFullYear()===y&&d.getMonth()===m)sums[d.getDate()]=(sums[d.getDate()]||0)+Number(x.value||0);}));const labels=['D','S','T','Q','Q','S','S'];const html=labels.map(x=>'<div class="calendar-day"><b>'+x+'</b></div>').join('')+Array.from({length:first},()=>'<div></div>').join('')+Array.from({length:days},(_,i)=>{const d=i+1;return '<div class="calendar-day '+(sums[d]?'has-deposit':'')+'" title="'+(sums[d]?money(sums[d])+' guardados':'Sem depósito')+'"><b>'+d+'</b>'+(sums[d]?'✓':'·')+'</div>';}).join('');ids.forEach(id=>{const el=$(id);if(el)el.innerHTML=html;});}
 function simulateSavings(){
   const target=Number(($('simTarget')||{}).value||0);
   const length=Math.max(1,Number(($('simLength')||{}).value||1));
@@ -1286,7 +1228,7 @@ function renderDetail(){
               <span>
                 <b>+ ${money(x.value)}</b>
 
-                <button onclick="removeDeposit(event,${g.id},${i})">
+                <button onclick="editDeposit(event,${g.id},${i})">✏️</button><button onclick="removeDeposit(event,${g.id},${i})">
                   ↶
                 </button>
 
@@ -1343,6 +1285,7 @@ function deposit(id){
   renderDetail()
 }
 
+function editDeposit(e,id,index){e.stopPropagation();const g=goals.find(x=>x.id===id),item=g&&g.history[index];if(!item)return;const raw=prompt('Corrigir o valor deste depósito:',String(item.value).replace('.',','));if(raw===null)return;const value=Number(raw.replace(',','.'));if(!Number.isFinite(value)||value<=0)return toast('Digite um valor válido.');const delta=value-Number(item.value||0);if(g.saved+delta<0)return toast('A correção deixaria o total negativo.');g.saved=Math.min(g.target,g.saved+delta);item.value=value;save();renderDetail();toast('Depósito corrigido.');}
 function removeDeposit(e,id,index){
 
   e.stopPropagation();
@@ -1423,6 +1366,7 @@ function renderChallenges(){
     </div>`
 }
 
+function startSavingsChallenge(daily){$('simTarget').value=daily*30;$('simPeriod').value='30';$('simLength').value='30';$('simSaved').value='0';show('simulator');simulateSavings();toast('Plano de '+money(daily)+' por dia preparado.');}
 function toggleChallenge(i){
 
   const key='challenge_'+i;
