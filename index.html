@@ -267,6 +267,73 @@ label{color:#172033;font-weight:700}
 .share-home p{color:#c1cfdd!important}
 .share-home .share-icon{background:#21d47b;color:#062616}
 .share-home .share-btn{background:#21d47b;color:#062616;font-weight:900}
+
+/* NOVA IDENTIDADE VISUAL — versão gratuita, alinhada ao Minha Meta PRO */
+:root{
+  --green:#16834a;
+  --green2:#11683b;
+  --dark:#0d3020;
+  --bg:#e8f1eb;
+  --card:#fbfefc;
+  --muted:#617568;
+  --line:#d7e5db;
+}
+body{
+  background:
+    radial-gradient(ellipse at 12% 0%,rgba(34,197,94,.10),transparent 34%),
+    linear-gradient(180deg,#e6f0e9 0%,#f1f6f2 48%,#e8f1eb 100%);
+}
+.top{
+  background:linear-gradient(145deg,#092719 0%,#105b36 58%,#16834a 100%);
+  box-shadow:0 12px 28px rgba(10,55,32,.18);
+}
+.pro-banner{
+  background:linear-gradient(135deg,#0b3020 0%,#11683b 58%,#16834a 100%);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 12px 28px rgba(10,55,32,.20);
+}
+.heroCard{
+  background:linear-gradient(145deg,#ffffff 0%,#f0f8f2 100%);
+  border:1px solid #dcebe0;
+  box-shadow:0 10px 28px rgba(16,60,35,.09);
+}
+.card,.goal,.quick-action{
+  background:linear-gradient(145deg,#ffffff 0%,#f8fcf9 100%);
+  border:1px solid #dce9df;
+  box-shadow:0 6px 18px rgba(16,60,35,.065);
+}
+.stat,.summary-tile,.badge{
+  background:linear-gradient(145deg,#eef7f0,#e5f1e8);
+  border:1px solid #d9e9de;
+}
+.emoji,.pill{
+  background:#e1f2e6;
+  color:#11683b;
+}
+.progress{background:#dce9df}
+.bar{background:linear-gradient(90deg,#36c875,#11683b)}
+.nav{
+  background:rgba(241,248,243,.96);
+  border-top:1px solid #d4e4d9;
+  box-shadow:0 -8px 24px rgba(16,60,35,.06);
+}
+.nav button.active{color:#11683b}
+.sectiontitle{color:#103b26}
+.section-kicker{color:#147544}
+.share-card:not(.share-home){
+  background:linear-gradient(135deg,#e2f3e7,#fbfefc);
+  border-color:#c7e5d0;
+}
+.input,select,textarea{
+  background:#fbfefc;
+  border-color:#cbdccf;
+}
+.install-btn{color:#11683b}
+@media(prefers-reduced-motion:no-preference){
+  .card,.goal,.quick-action,.heroCard{transition:transform .18s ease,box-shadow .18s ease}
+  .goal:active,.quick-action:active{transform:scale(.985)}
+}
+
 </style></head><body><div class="pro-banner">
   <h2>⭐ Minha Meta PRO</h2>
   <p>Tenha mais controle, mais metas e um plano completo para chegar onde você quer.</p>
