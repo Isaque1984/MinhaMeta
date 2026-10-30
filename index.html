@@ -89,10 +89,21 @@ label{color:#172033;font-weight:700}
 .hist:last-child{border:0}
 .hist button{border:0;background:#fee2e2;color:#b91c1c;border-radius:8px;padding:5px 8px}
 .empty{text-align:center;padding:28px 12px;color:var(--muted)}
-.nav{position:sticky;bottom:0;background:#ffffffef;backdrop-filter:blur(12px);border-top:1px solid #e5e7eb;display:grid;grid-template-columns:repeat(3,1fr);padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:5}
-.nav button{border:0;background:none;padding:8px 2px;color:#64748b;font-weight:700}
+.nav{position:sticky;bottom:0;background:#ffffffef;backdrop-filter:blur(12px);border-top:1px solid #e5e7eb;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:7px 5px calc(7px + env(safe-area-inset-bottom));z-index:5}
+.nav button{border:0;background:none;padding:7px 1px;color:#64748b;font-weight:750;font-size:11px;min-width:0}
 .nav button.active{color:var(--green2)}
-.nav span{display:block;font-size:20px}
+.nav span{display:block;font-size:20px;margin-bottom:2px}
+.quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.quick-action{background:#fff;border:1px solid #e4e9e5;border-radius:17px;padding:14px;text-align:left;min-height:96px;cursor:pointer;box-shadow:0 3px 12px #10251b08}
+.quick-action span{display:block;font-size:25px;margin-bottom:7px}
+.quick-action b{display:block;font-size:14px;color:#172033}
+.quick-action small{display:block;color:#64748b;margin-top:3px;font-size:11px}
+.section-kicker{font-size:11px;letter-spacing:.08em;font-weight:850;color:#15803d}
+.summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.summary-tile{background:#f7faf8;border-radius:14px;padding:12px}
+.summary-tile b{display:block;font-size:18px;margin-top:4px}
+.tool-input{margin-top:8px}
+.tool-result{padding:14px;border-radius:14px;background:#ecfdf3;color:#14532d;margin-top:12px;line-height:1.55}
 .modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;align-items:flex-end}
 .sheet{width:min(600px,100%);background:#fff;border-radius:26px 26px 0 0;padding:20px;max-height:90vh;overflow:auto}
 .sheet h2{margin:0 0 5px}
@@ -462,14 +473,48 @@ function closePro(){
       Progresso de todas as suas metas
     </p>
   </div>  <div class="badgegrid" id="badges"></div>
-</section></main><nav class="nav">
+</section>
+<section id="simulator" class="screen">
+  <h2 class="sectiontitle">🧮 Simulador de economia</h2>
+  <p class="sub">Faça uma conta rápida antes de começar a guardar.</p>
+  <div class="card">
+    <label class="label">Quanto você quer juntar?</label>
+    <input class="input tool-input" id="simTarget" type="number" min="1" step="0.01" placeholder="Ex.: 3000" oninput="simulateSavings()">
+    <label class="label">Em quanto tempo?</label>
+    <div class="formrow">
+      <div><select class="input" id="simPeriod" onchange="simulateSavings()"><option value="30">Dias</option><option value="12">Meses</option><option value="52">Semanas</option></select></div>
+      <div><input class="input" id="simLength" type="number" min="1" value="30" oninput="simulateSavings()"></div>
+    </div>
+    <label class="label">Quanto já tem guardado? (opcional)</label>
+    <input class="input tool-input" id="simSaved" type="number" min="0" step="0.01" placeholder="0" oninput="simulateSavings()">
+    <div id="simResult" class="tool-result">Preencha o valor e o prazo para ver seu planejamento.</div>
+    <button class="btn primary full" onclick="createGoalFromSimulator()">Transformar em uma meta</button>
+  </div>
+  <div class="card"><b>💡 Uma dica</b><p class="sub">Escolha um valor que caiba no seu bolso. Se precisar, ajuste o prazo para manter uma rotina possível.</p></div>
+</section>
+<section id="summary" class="screen">
+  <h2 class="sectiontitle">📅 Minha evolução</h2>
+  <p class="sub">Acompanhe o que você conseguiu guardar neste mês.</p>
+  <div id="monthlySummary"></div>
+</section>
+<section id="more" class="screen">
+  <h2 class="sectiontitle">Mais ferramentas</h2>
+  <p class="sub">Continue desenvolvendo seu hábito de economizar.</p>
+  <div class="quick-grid">
+    <button class="quick-action" onclick="show('challenges')"><span>🔥</span><b>Desafios</b><small>Experimente novos ritmos</small></button>
+    <button class="quick-action" onclick="show('achievements')"><span>🏆</span><b>Conquistas</b><small>Veja seus marcos</small></button>
+    <button class="quick-action" onclick="show('reminders')"><span>🔔</span><b>Lembretes</b><small>Cuide da sua rotina</small></button>
+    <button class="quick-action" onclick="show('ranking')"><span>🥇</span><b>Ranking</b><small>Veja a classificação demonstrativa</small></button>
+  </div>
+  <div class="card"><b>📤 Compartilhe o Minha Meta</b><p class="sub">Convide alguém para organizar seus objetivos também.</p><button class="btn primary full" onclick="compartilharMinhaMeta()">Compartilhar aplicativo</button></div>
+  <div class="card"><b>⭐ Quer ir além?</b><p class="sub">Conheça os recursos extras do Minha Meta PRO.</p><button class="btn secondary full" onclick="openPro()">Conhecer o PRO</button></div>
+</section>
+</main><nav class="nav">
   <button id="navHome" onclick="show('home')"><span>🏠</span>Início</button>
   <button id="navGoals" onclick="show('goals')"><span>🎯</span>Metas</button>
-  <button id="navChallenges" onclick="show('challenges')"><span>🔥</span>Desafios</button>
-  <button id="navReminders" onclick="show('reminders')"><span>🔔</span>Lembretes</button>
-  <button id="navAchievements" onclick="show('achievements')"><span>🏆</span>Conquistas</button>
-  <button id="navRanking" onclick="show('ranking')"><span>🏅</span>Ranking</button>
-  <button onclick="openCreate()"><span>➕</span>Nova</button>
+  <button id="navSimulator" onclick="show('simulator')"><span>🧮</span>Simular</button>
+  <button id="navSummary" onclick="show('summary')"><span>📈</span>Evolução</button>
+  <button id="navMore" onclick="show('more')"><span>☰</span>Mais</button>
 </nav></div><div class="modal" id="modal">
   <div class="sheet">
     <h2>Sobre o Minha Meta</h2>
@@ -610,15 +655,17 @@ function show(id){
   if(id==='challenges')renderChallenges();
   if(id==='achievements')renderAchievements();
   if(id==='ranking')renderRanking();
+  if(id==='simulator')simulateSavings();
+  if(id==='summary')renderMonthlySummary();
 
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
 
   const nav={
     home:'navHome',
     goals:'navGoals',
-    challenges:'navChallenges',
-    achievements:'navAchievements',
-    ranking:'navRanking'
+    simulator:'navSimulator',
+    summary:'navSummary',
+    more:'navMore'
   };
 
   if(nav[id]&&$(nav[id])){
@@ -899,89 +946,121 @@ function totalSaved(){
 
 function renderHome(){
 
-  if(!goals.length){
-
-    $('homeContent').innerHTML=
-      `<div class="heroCard">
-        <div class="sub">COMECE HOJE</div>
-        <h1 style="margin:5px 0 8px">Qual é o seu próximo sonho?</h1>
-        <p class="sub">
-          Crie uma meta, escolha uma data e acompanhe cada real guardado até chegar lá.
-        </p>
-        <button class="btn primary full" onclick="openCreate()">
-          🎯 Criar minha primeira meta
-        </button>
-      </div>
-
-      <h2 class="sectiontitle" style="margin-top:25px">
-        Exemplos de metas
-      </h2>
-
-      <div class="grid">
-        ${types.slice(0,6).map(t=>
-          `<div class="goal">
-            <span>${t[0]}</span>
-            <strong>${t[1]}</strong>
-            <small>Comece com o que puder.</small>
-          </div>`
-        ).join('')}
-      </div>`;
-
-    return
-  }
-
   const total=totalSaved();
-  const target=goals.reduce((s,g)=>s+g.target,0);
-  const main=goals.slice().sort((a,b)=>pct(b)-pct(a))[0];
+  const target=goals.reduce((s,g)=>s+Number(g.target||0),0);
+  const main=goals.filter(g=>g.saved<g.target).sort((a,b)=>pct(b)-pct(a))[0]||goals[0];
   const done=goals.filter(g=>g.saved>=g.target).length;
+  const now=new Date();
+  const monthItems=goals.flatMap(g=>(g.history||[]).map(x=>x));
+  const monthHistory=monthItems.filter(x=>{
+    const d=new Date(x.date);
+    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  });
+  const monthTotal=monthHistory.reduce((s,x)=>s+Number(x.value||0),0);
+  const monthCount=monthHistory.length;
+  const remaining=goals.reduce((s,g)=>s+Math.max(0,Number(g.target||0)-Number(g.saved||0)),0);
 
   $('homeContent').innerHTML=
     `<div class="heroCard">
       <div class="row">
         <div>
-          <div class="sub">TOTAL GUARDADO</div>
+          <div class="section-kicker">SEU DINHEIRO, SEUS PLANOS</div>
           <div class="big">${money(total)}</div>
+          <div class="sub">Total guardado em todas as metas</div>
         </div>
-        <div style="font-size:34px">${done?'🏆':'💚'}</div>
+        <div style="font-size:38px">💰</div>
       </div>
-
-      <div class="stats">
-        <div class="stat">
-          <span class="sub">Metas</span>
-          <b>${goals.length}</b>
-        </div>
-        <div class="stat">
-          <span class="sub">Concluídas</span>
-          <b>${done}</b>
-        </div>
-        <div class="stat">
-          <span class="sub">Progresso</span>
-          <b>${target?((total/target)*100).toFixed(0):0}%</b>
-        </div>
+      <div class="summary-grid" style="margin-top:15px">
+        <div class="summary-tile"><span class="sub">Metas ativas</span><b>${goals.filter(g=>g.saved<g.target).length}</b></div>
+        <div class="summary-tile"><span class="sub">Metas concluídas</span><b>${done}</b></div>
+        <div class="summary-tile"><span class="sub">Guardado este mês</span><b>${money(monthTotal)}</b></div>
+        <div class="summary-tile"><span class="sub">Falta alcançar</span><b>${money(remaining)}</b></div>
       </div>
     </div>
 
-    <h2 class="sectiontitle" style="margin-top:22px">
-      Continue sua conquista
-    </h2>
-
-    ${goalCard(main,true)}
+    <h2 class="sectiontitle" style="margin-top:22px">O que você quer fazer?</h2>
+    <div class="quick-grid">
+      <button class="quick-action" onclick="openCreate()"><span>🎯</span><b>Criar uma meta</b><small>Defina seu próximo objetivo</small></button>
+      <button class="quick-action" onclick="show('goals')"><span>💵</span><b>Registrar dinheiro</b><small>Atualize uma meta existente</small></button>
+      <button class="quick-action" onclick="show('simulator')"><span>🧮</span><b>Simular economia</b><small>Descubra quanto guardar</small></button>
+      <button class="quick-action" onclick="show('summary')"><span>📅</span><b>Minha evolução</b><small>Veja seu resumo mensal</small></button>
+    </div>
 
     <div class="card">
       <div class="row">
-        <div>
-          <b>🔥 Sua sequência</b>
-          <div class="sub">${streakAll()} dia(s) com depósito</div>
-        </div>
-        <span style="font-size:30px">
-          ${streakAll()>=7?'🔥':'⚡'}
-        </span>
+        <div><b>📆 Seu mês até agora</b><div class="sub">${monthCount} depósito(s) registrado(s)</div></div>
+        <b style="color:var(--green2)">${money(monthTotal)}</b>
       </div>
+      <button class="btn secondary full" onclick="show('summary')">Ver resumo completo</button>
     </div>
 
-    <button class="btn secondary full" onclick="show('goals')">
-      Ver todas as metas
-    </button>`
+    ${main?`<h2 class="sectiontitle">Continue de onde parou</h2>${goalCard(main,true)}`:
+      `<div class="card" style="text-align:center"><div style="font-size:35px">🌱</div><b>Sua primeira conquista começa com uma meta</b><p class="sub">Escolha algo que deseja realizar e acompanhe seu progresso por aqui.</p><button class="btn primary full" onclick="openCreate()">Criar minha primeira meta</button></div>`}
+
+    <div class="card">
+      <div class="row">
+        <div><b>🔥 Sua sequência</b><div class="sub">${streakAll()} dia(s) com depósito</div></div>
+        <span style="font-size:28px">${streakAll()>=7?'🔥':'⚡'}</span>
+      </div>
+      <button class="btn secondary full" onclick="show('more')">Explorar desafios e conquistas</button>
+    </div>`;
+}
+
+function simulateSavings(){
+  const target=Number(($('simTarget')||{}).value||0);
+  const length=Math.max(1,Number(($('simLength')||{}).value||1));
+  const period=(($('simPeriod')||{}).value||'30');
+  const saved=Number(($('simSaved')||{}).value||0);
+  const remaining=Math.max(0,target-saved);
+  let days=length;
+  let label='dia';
+  if(period==='12'){days=length*30.4375;label='mês';}
+  if(period==='52'){days=length*7;label='semana';}
+  const perDay=remaining/days;
+  const perWeek=perDay*7;
+  const perMonth=perDay*30.4375;
+  const result=$('simResult');
+  if(!result)return;
+  if(!target||target<=0){result.textContent='Preencha o valor que deseja juntar para ver a simulação.';return;}
+  result.innerHTML='<b>Seu plano estimado:</b><br>'+
+    money(remaining)+' restantes<br>'+
+    '<b>'+money(perDay)+'</b> por dia<br>'+
+    money(perWeek)+' por semana<br>'+
+    money(perMonth)+' por mês';
+}
+
+function createGoalFromSimulator(){
+  const target=Number(($('simTarget')||{}).value||0);
+  const saved=Number(($('simSaved')||{}).value||0);
+  const length=Math.max(1,Number(($('simLength')||{}).value||1));
+  const period=(($('simPeriod')||{}).value||'30');
+  if(!target||target<=0)return toast('Informe quanto deseja juntar.');
+  const days=period==='12'?Math.round(length*30.4375):period==='52'?length*7:length;
+  const date=new Date(Date.now()+days*86400000);
+  const dateText=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+  show('create');
+  $('goalName').value='Minha nova meta';
+  $('goalTarget').value=target;
+  $('goalInitial').value=saved;
+  $('goalDate').value=dateText;
+  previewPlan();
+  toast('Simulação pronta! Dê um nome à sua meta.');
+}
+
+function renderMonthlySummary(){
+  const now=new Date();
+  const all=goals.flatMap(g=>(g.history||[]).map(x=>({...x,goalName:g.name,emoji:g.emoji})));
+  const month=all.filter(x=>{
+    const d=new Date(x.date);
+    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const total=month.reduce((s,x)=>s+Number(x.value||0),0);
+  const el=$('monthlySummary');
+  if(!el)return;
+  el.innerHTML='<div class="heroCard"><div class="section-kicker">TOTAL GUARDADO NO MÊS</div><div class="big">'+money(total)+'</div><div class="sub">'+month.length+' depósito(s) registrado(s)</div><div class="summary-grid" style="margin-top:14px"><div class="summary-tile"><span class="sub">Metas cadastradas</span><b>'+goals.length+'</b></div><div class="summary-tile"><span class="sub">Metas concluídas</span><b>'+goals.filter(g=>g.saved>=g.target).length+'</b></div></div></div>'+
+    '<div class="card"><b>Últimos depósitos do mês</b>'+
+    (month.length?month.slice(0,12).map(x=>'<div class="hist"><span>'+x.emoji+' '+x.goalName+'<br><small class="sub">'+new Date(x.date).toLocaleDateString('pt-BR')+'</small></span><b>+ '+money(x.value)+'</b></div>').join(''):'<div class="empty">Ainda não há depósitos neste mês. Seu primeiro registro aparecerá aqui.</div>')+
+    '</div><div class="card"><b>Seu progresso geral</b><div class="sub" style="margin-top:6px">'+money(totalSaved())+' guardados no total em '+goals.length+' meta(s).</div><button class="btn secondary full" onclick="show(\'goals\')">Ver minhas metas</button></div>';
 }
 
 function streakAll(){
