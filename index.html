@@ -12,7 +12,7 @@
 (function(){
   try {
     var token = localStorage.getItem("minha_meta_pro_token");
-    if (token) {
+    if (token && new URLSearchParams(window.location.search).get("previa") !== "gratis") {
       window.location.replace("./meta-pro.html");
     }
   } catch (e) {
