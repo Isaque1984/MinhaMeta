@@ -650,6 +650,29 @@ body{background:#07111f!important;color:#f4f7fb!important}
 .toast{background:#153a31!important;color:#d8ffea!important}
 .avatar-upload{border-color:#21d47b!important}
 @media(max-width:390px){.container{width:92%!important}.welcome-profile h1{font-size:23px}}
+
+/* BOTÃO DE FECHAR MODAIS — ALTO CONTRASTE */
+.modal-box .close{
+  display:grid!important;
+  place-items:center!important;
+  float:right;
+  width:38px!important;
+  height:38px!important;
+  min-width:38px;
+  margin:-5px -5px 8px 12px;
+  border:2px solid #35e58b!important;
+  border-radius:12px!important;
+  background:#21d47b!important;
+  color:#062616!important;
+  font-size:27px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  text-shadow:none!important;
+  box-shadow:0 3px 12px rgba(33,212,123,.25)!important;
+  opacity:1!important;
+}
+.modal-box .close:active{transform:scale(.94)}
+.modal-box .close:focus-visible{outline:3px solid #8cf5bd!important;outline-offset:3px}
 </style></head><body><header class="header">
   <div class="header-top">
     <div class="logo">🎯 Minha Meta</div>
@@ -837,7 +860,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
   </section></main><div class="footer">
   Minha Meta PRO
 </div><!-- DEPÓSITO --><div class="modal" id="depositModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('depositModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('depositModal')">×</button>
 
 <div class="modal-title">💰 Guardar dinheiro</div>
 
@@ -866,7 +889,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- META --><div class="modal" id="goalModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('goalModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('goalModal')">×</button>
 
 <div class="modal-title">🎯 Criar nova meta</div>
 
@@ -902,7 +925,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- ENTRADA --><div class="modal" id="incomeModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('incomeModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('incomeModal')">×</button>
 
 <div class="modal-title">💵 Registrar entrada</div>
 
@@ -943,7 +966,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- GASTO --><div class="modal" id="expenseModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('expenseModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('expenseModal')">×</button>
 
 <div class="modal-title">💸 Registrar gasto</div>
 
@@ -988,7 +1011,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- MAPA FINANCEIRO --><div class="modal" id="financeModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('financeModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('financeModal')">×</button>
 
 <div class="modal-title">🗺️ Mapa Financeiro</div>
 
@@ -1006,7 +1029,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- ANÁLISE --><div class="modal" id="analysisModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('analysisModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('analysisModal')">×</button>
 
 <div class="modal-title">📊 Sua análise</div>
 
@@ -1014,7 +1037,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- DESAFIOS --><div class="modal" id="challengeModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('challengeModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('challengeModal')">×</button>
 
 <div class="modal-title">🔥 Desafios</div>
 
@@ -1022,7 +1045,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- SIMULADOR --><div class="modal" id="simulatorModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('simulatorModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('simulatorModal')">×</button>
 
 <div class="modal-title">🧮 Simulador</div>
 
@@ -1053,7 +1076,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- HISTÓRICO --><div class="modal" id="historyModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('historyModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('historyModal')">×</button>
 
 <div class="modal-title">📅 Histórico</div>
 
@@ -1061,7 +1084,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- CONQUISTAS --><div class="modal" id="achievementsModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('achievementsModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('achievementsModal')">×</button>
 
 <div class="modal-title">🏆 Conquistas</div>
 
@@ -1069,7 +1092,7 @@ body{background:#07111f!important;color:#f4f7fb!important}
 
   </div>
 </div><!-- COMUNIDADE --><div class="modal" id="communityModal">
-  <div class="modal-box"><button type="button" class="close" onclick="closeModal('communityModal')">×</button>
+  <div class="modal-box"><button type="button" class="close" aria-label="Fechar janela" title="Fechar janela" onclick="closeModal('communityModal')">×</button>
 
 <div class="modal-title">👥 Comunidade</div>
 
