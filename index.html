@@ -940,8 +940,25 @@ function totalSaved(){
   return goals.reduce((s,g)=>s+g.saved,0)
 }
 
-function renderHome(){u
- renderHomeProgress();
+function renderHome(){
+  const total=totalSaved();
+  const main=goals.filter(g=>g.saved<g.target).sort((a,b)=>pct(b)-pct(a))[0]||goals[0];
+  const done=goals.filter(g=>g.saved>=g.target).length;
+  const now=new Date();
+  const monthHistory=goals.flatMap(g=>(g.history||[])).filter(x=>{const d=new Date(x.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const monthTotal=monthHistory.reduce((s,x)=>s+Number(x.value||0),0);
+  const remaining=goals.reduce((s,g)=>s+Math.max(0,Number(g.target||0)-Number(g.saved||0)),0);
+  $('homeContent').innerHTML=
+    `<div class="heroCard"><div class="row"><div><div class="section-kicker">SEU DINHEIRO, SEUS PLANOS</div><div class="big">${money(total)}</div><div class="sub">Total guardado em todas as metas</div></div><div style="font-size:38px">💰</div></div>
+    <div class="summary-grid" style="margin-top:15px"><div class="summary-tile"><span class="sub">Metas ativas</span><b>${goals.filter(g=>g.saved<g.target).length}</b></div><div class="summary-tile"><span class="sub">Metas concluídas</span><b>${done}</b></div><div class="summary-tile"><span class="sub">Guardado este mês</span><b>${money(monthTotal)}</b></div><div class="summary-tile"><span class="sub">Falta alcançar</span><b>${money(remaining)}</b></div></div></div>
+    <h2 class="sectiontitle" style="margin-top:22px">O que você quer fazer?</h2>
+    <div class="card quick-register"><b>⚡ Registro rápido</b><div class="sub">Escolha uma meta e registre em segundos.</div><select class="input tool-input" id="quickGoal"></select><div class="quick-values"><button class="btn secondary" onclick="quickDeposit(5)">+ R$ 5</button><button class="btn secondary" onclick="quickDeposit(10)">+ R$ 10</button><button class="btn secondary" onclick="quickDeposit(20)">+ R$ 20</button><button class="btn secondary" onclick="quickDeposit(50)">+ R$ 50</button></div><div class="formrow"><input class="input" id="quickCustom" type="number" min="0.01" step="0.01" placeholder="Outro valor"><button class="btn primary" onclick="quickDeposit()">Registrar valor</button></div></div>
+    <div class="quick-grid"><button class="quick-action" onclick="openCreate()"><span>🎯</span><b>Criar uma meta</b><small>Defina seu próximo objetivo</small></button><button class="quick-action" onclick="show('goals')"><span>💵</span><b>Registrar dinheiro</b><small>Atualize uma meta existente</small></button><button class="quick-action" onclick="show('simulator')"><span>🧮</span><b>Simular economia</b><small>Descubra quanto guardar</small></button><button class="quick-action" onclick="show('summary')"><span>📅</span><b>Minha evolução</b><small>Veja seu resumo mensal</small></button></div>
+    <div class="card"><div class="row"><div><b>🎯 Progresso geral</b><div class="sub">Evolução das suas metas</div></div><div class="ring mini-ring" id="homeProgressRing"><div class="ringtxt" id="homeProgressText">0%</div></div></div></div>
+    <div class="card"><div class="row"><div><b>📆 Seu mês até agora</b><div class="sub">${monthHistory.length} depósito(s) registrado(s)</div></div><b style="color:var(--green2)">${money(monthTotal)}</b></div><button class="btn secondary full" onclick="show('summary')">Ver resumo completo</button></div>
+    ${main?`<h2 class="sectiontitle">Continue de onde parou</h2>${goalCard(main,true)}`:`<div class="card" style="text-align:center"><div style="font-size:35px">🌱</div><b>Sua primeira conquista começa com uma meta</b><p class="sub">Escolha algo que deseja realizar e acompanhe seu progresso por aqui.</p><button class="btn primary full" onclick="openCreate()">Criar minha primeira meta</button></div>`}
+    <div class="card"><div class="row"><div><b>🔥 Sua sequência</b><div class="sub">${streakAll()} dia(s) com depósito</div></div><span style="font-size:28px">${streakAll()>=7?'🔥':'⚡'}</span></div><button class="btn secondary full" onclick="show('more')">Explorar desafios e conquistas</button></div>`;
+  renderHomeProgress();
 }
 
 function renderQuickGoal(){const el=$('quickGoal');if(!el)return;const prev=el.value;el.innerHTML=goals.length?goals.map(g=>'<option value="'+g.id+'">'+g.emoji+' '+g.name+' — falta '+money(Math.max(0,g.target-g.saved))+'</option>').join(''):'<option value="">Crie uma meta primeiro</option>';if(goals.some(g=>String(g.id)===prev))el.value=prev;}
