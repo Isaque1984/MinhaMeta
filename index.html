@@ -7,6 +7,19 @@
 <meta name="theme-color" content="#16a34a">
 <meta name="description" content="Minha Meta: guarde um pouco por dia e acompanhe seus sonhos.">
 <link rel="manifest" href="manifest.json">
+<script>
+/* Retoma automaticamente a sessão PRO ao abrir o app instalado. */
+(function(){
+  try {
+    var token = localStorage.getItem("minha_meta_pro_token");
+    if (token) {
+      window.location.replace("./meta-pro.html");
+    }
+  } catch (e) {
+    console.log("Não foi possível consultar a sessão PRO salva.", e);
+  }
+})();
+</script>
 <title>Minha Meta</title><style>
 :root{--green:#16a34a;--green2:#15803d;--dark:#10251b;--bg:#f3f7f4;--card:#fff;--muted:#64748b;--line:#e5e7eb;--gold:#f59e0b;--red:#b91c1c}
 *{box-sizing:border-box}
