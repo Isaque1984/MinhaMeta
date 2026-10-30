@@ -579,6 +579,34 @@ input:focus,select:focus{
 .footer{padding-bottom:35px}
 @media(max-width:390px){.header-actions{gap:4px}.header-btn{font-size:9px;padding:6px 7px}.hero-balance{padding:20px 17px}.stat-card{padding:12px}.stat-card .stat-value{font-size:20px}}
 
+/* PERFIL, NÍVEIS, HÁBITOS E PLANO AUTOMÁTICO */
+.welcome-profile{display:flex;align-items:center;gap:14px}
+.avatar-upload{width:62px;height:62px;flex:0 0 62px;border-radius:50%;border:2px solid rgba(255,255,255,.65);background:linear-gradient(135deg,#d6f8e4,#20d878);display:grid;place-items:center;color:#07351f;font-size:25px;overflow:hidden;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.2)}
+.avatar-upload img{width:100%;height:100%;object-fit:cover}
+.welcome-profile .welcome-kicker{margin-bottom:3px}
+.welcome-profile h1{font-size:clamp(23px,5vw,31px);margin-top:5px}
+.welcome-profile p{margin-top:5px}
+.level-strip{display:flex;justify-content:space-between;gap:10px;margin-top:20px;font-size:10px;font-weight:800;letter-spacing:.7px;color:#c6f5dc}
+.level-track{height:6px;background:rgba(255,255,255,.17);border-radius:20px;margin-top:8px;overflow:hidden}
+.level-track div{height:100%;width:0;background:#54e69b;border-radius:20px;transition:width .3s}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.extras-grid .section-title{margin-bottom:4px}
+.extras-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.extras-heading p,.auto-plan-card p{font-size:12px;color:#7b8793;line-height:1.4;margin-top:4px}
+.habit-icon{font-size:23px}
+.habit-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px;font-size:12px;font-weight:700}
+.habit-row .btn{white-space:nowrap;padding:9px 10px}
+.habit-foot{font-size:10px;color:#82909c;margin-top:10px}
+.badge-list{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}
+.achievement-chip{background:#f0f8f3;border:1px solid #dcefe4;border-radius:12px;padding:8px 9px;font-size:11px;color:#17633d;font-weight:700}
+.achievement-chip.locked{background:#f4f6f7;border-color:#e8ecef;color:#9aa4ad;opacity:.8}
+.auto-plan-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px;border-radius:20px;background:linear-gradient(120deg,#10233e,#15543e);color:white;box-shadow:0 10px 25px rgba(10,35,50,.12)}
+.auto-plan-kicker{font-size:9px;letter-spacing:1.6px;font-weight:800;color:#78e6ad}
+.auto-plan-card h2{font-size:20px;margin-top:7px}
+.auto-plan-card p{color:rgba(255,255,255,.72);max-width:330px}
+.auto-plan-card .btn{white-space:nowrap}
+.auto-plan-result{margin-top:10px;line-height:1.6}
+@media(max-width:620px){.extras-grid{grid-template-columns:1fr}.auto-plan-card{align-items:flex-start;flex-direction:column}.auto-plan-card .btn{width:100%}}
 </style></head><body><header class="header">
   <div class="header-top">
     <div class="logo">🎯 Minha Meta</div>
@@ -589,17 +617,46 @@ input:focus,select:focus{
     </div>
   </div>
   <div class="welcome">
-    <div class="welcome-kicker">SEU ESPAÇO EXCLUSIVO</div>
-    <h1>Seu dinheiro, seus planos.</h1>
-    <p>Acompanhe sua evolução e transforme cada depósito em uma conquista.</p>
+    <div class="welcome-profile">
+      <label class="avatar-upload" for="profilePhotoInput" title="Alterar foto de perfil">
+        <img id="profilePhoto" alt="Foto de perfil" src="" style="display:none">
+        <span id="profileInitials">👤</span>
+        <input id="profilePhotoInput" type="file" accept="image/*" hidden>
+      </label>
+      <div><div class="welcome-kicker" id="greetingText">SEU ESPAÇO EXCLUSIVO</div>
+      <h1 id="greetingName">Bom dia!</h1>
+      <p>Acompanhe sua evolução e transforme cada depósito em uma conquista.</p></div>
+    </div>
+    <div class="level-strip"><span id="levelName">NÍVEL 1 · INICIANTE</span><span id="levelProgressText">0 / 100 XP</span></div>
+    <div class="level-track"><div id="levelProgress"></div></div>
   </div>
 </header><main class="container">
   <section class="hero-balance">
-    <div class="hero-balance-top"><span>💎 PATRIMÔNIO CONSTRUÍDO</span><span class="hero-live">● EM EVOLUÇÃO</span></div>
+    <div class="hero-balance-top"><span>💎 TOTAL BALANCE · SALDO TOTAL GUARDADO</span><span class="hero-live">● EM EVOLUÇÃO</span></div>
     <div class="hero-total" id="totalSaved">R$ 0,00</div>
     <div class="hero-foot"><span>Guardado neste mês</span><strong id="monthSaved">R$ 0,00</strong></div>
     <div class="hero-glow"></div>
-  </section>  <section class="stats premium-stats">
+  </section>
+  <section class="section extras-grid">
+    <div class="card daily-card">
+      <div class="extras-heading"><div><div class="section-title">Daily Habits</div><p>Pequenos passos, todos os dias.</p></div><span class="habit-icon">☀️</span></div>
+      <div class="habit-row"><span>Guardar algum valor hoje</span><button type="button" id="habitCheckBtn" class="btn btn-green" onclick="toggleDailyHabit()">Marcar feito</button></div>
+      <div class="habit-foot" id="habitStatus">Seu hábito diário começa com uma decisão.</div>
+    </div>
+    <div class="card badges-card">
+      <div class="extras-heading"><div><div class="section-title">Badges & Conquistas</div><p>Suas vitórias em destaque.</p></div><span class="habit-icon">🏅</span></div>
+      <div id="dashboardBadges" class="badge-list"></div>
+      <button type="button" class="btn btn-light" onclick="openAchievements()">Ver todas as conquistas</button>
+    </div>
+  </section>
+  <section class="section">
+    <div class="auto-plan-card">
+      <div><div class="auto-plan-kicker">PLANEJAMENTO INTELIGENTE</div><h2>Auto Plan Builder</h2><p>Monte um plano para chegar à sua próxima meta.</p></div>
+      <button type="button" class="btn btn-green" onclick="openAutoPlan()">Criar meu plano <span aria-hidden="true">→</span></button>
+    </div>
+    <div id="autoPlanResult" class="card auto-plan-result" style="display:none"></div>
+  </section>
+  <section class="stats premium-stats">
   <div class="card stat-card"><div class="stat-icon">🎯</div><div class="stat-title">Metas ativas</div><div class="stat-value" id="goalCount">0</div><div class="stat-note">Objetivos em andamento</div></div>
   <div class="card stat-card"><div class="stat-icon">🔥</div><div class="stat-title">Sequência atual</div><div class="stat-value" id="streak">0 dias</div><div class="stat-note">Consistência que transforma</div></div>
   <div class="card stat-card"><div class="stat-icon">📈</div><div class="stat-title">Média diária</div><div class="stat-value" id="avgDaily">R$ 0,00</div><div class="stat-note">Seu ritmo de economia</div></div>
@@ -1172,6 +1229,99 @@ function showToast(message){
 
 
 /* =========================
+   RECURSOS DO DASHBOARD PRO
+========================= */
+const PROFILE_PHOTO_KEY="minha_meta_pro_profile_photo";
+const DAILY_HABIT_KEY="minha_meta_pro_daily_habit";
+function renderWelcome(){
+  const hour=new Date().getHours();
+  const greeting=hour<12?"Bom dia":hour<18?"Boa tarde":"Boa noite";
+  const email=localStorage.getItem("minha_meta_email")||"";
+  const display=(email.split("@")[0]||"").replace(/[._-]+/g," ").trim();
+  const name=display?display.split(" ").map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(" "):"bem-vindo";
+  document.getElementById("greetingText").textContent="SEU ESPAÇO EXCLUSIVO";
+  document.getElementById("greetingName").textContent=greeting+", "+name+"!";
+  const saved=totalSaved();
+  const levels=[["Iniciante",0],["Organizador",100],["Disciplinado",500],["Estrategista",1500],["Investidor",5000],["Mestre das Metas",10000]];
+  let idx=0;
+  levels.forEach((level,i)=>{if(saved>=level[1])idx=i;});
+  const current=levels[idx],next=levels[Math.min(idx+1,levels.length-1)];
+  const span=next[1]-current[1];
+  const pct=span?Math.min(100,Math.max(0,(saved-current[1])/span*100)):100;
+  document.getElementById("levelName").textContent="NÍVEL "+(idx+1)+" · "+current[0].toUpperCase();
+  document.getElementById("levelProgressText").textContent=idx===levels.length-1?"NÍVEL MÁXIMO":money(saved)+" / "+money(next[1]);
+  document.getElementById("levelProgress").style.width=pct+"%";
+  const photo=localStorage.getItem(PROFILE_PHOTO_KEY);
+  const img=document.getElementById("profilePhoto"),initial=document.getElementById("profileInitials");
+  if(photo){img.src=photo;img.style.display="block";initial.style.display="none";}
+  else{img.style.display="none";initial.style.display="block";initial.textContent=name!=="bem-vindo"?name.split(" ").map(x=>x[0]).slice(0,2).join("").toUpperCase():"👤";}
+  renderDailyHabit();renderDashboardBadges();
+}
+function renderDailyHabit(){
+  const done=localStorage.getItem(DAILY_HABIT_KEY)===todayKey();
+  const btn=document.getElementById("habitCheckBtn");
+  const status=document.getElementById("habitStatus");
+  btn.textContent=done?"✓ Feito hoje":"Marcar feito";
+  btn.classList.toggle("btn-light",done);
+  btn.classList.toggle("btn-green",!done);
+  status.textContent=done?"Parabéns! Você cumpriu seu hábito de hoje.":"Marque quando guardar dinheiro ou cumprir seu compromisso de economia.";
+}
+function toggleDailyHabit(){
+  if(localStorage.getItem(DAILY_HABIT_KEY)===todayKey())localStorage.removeItem(DAILY_HABIT_KEY);
+  else localStorage.setItem(DAILY_HABIT_KEY,todayKey());
+  renderDailyHabit();
+}
+function renderDashboardBadges(){
+  const total=totalSaved(),streak=calculateStreak();
+  const items=[
+    ["🌱","Primeiro depósito",data.deposits.length>=1],
+    ["💵","R$ 100 guardados",total>=100],
+    ["🔥","7 dias seguidos",streak>=7],
+    ["💎","R$ 1.000 guardados",total>=1000],
+    ["🏆","Meta concluída",data.goals.some(g=>goalSaved(g.id)>=Number(g.target||0))]
+  ];
+  document.getElementById("dashboardBadges").innerHTML=items.map(x=>'<span class="achievement-chip '+(x[2]?"":"locked")+'">'+x[0]+" "+x[1]+"</span>").join("");
+}
+function openAutoPlan(){
+  const pending=data.goals.filter(g=>goalSaved(g.id)<Number(g.target||0));
+  if(!pending.length){showToast("Crie uma meta ou conclua as metas atuais para montar um plano.");return;}
+  const options=pending.map((g,i)=>(i+1)+". "+g.name+" — faltam "+money(Math.max(0,g.target-goalSaved(g.id)))).join("\n");
+  const choice=prompt("Escolha a meta pelo número:\n"+options,"1");
+  if(choice===null)return;
+  const goal=pending[Number(choice)-1];
+  if(!goal){showToast("Escolha inválida.");return;}
+  const remaining=Math.max(0,Number(goal.target)-goalSaved(goal.id));
+  const deadline=new Date(String(goal.deadline)+"T12:00:00");
+  const days=Math.max(1,daysBetween(new Date(),deadline)+1);
+  const daily=remaining/days;
+  const weekly=daily*7;
+  const monthly=daily*30;
+  const result=document.getElementById("autoPlanResult");
+  result.style.display="block";
+  result.innerHTML='<strong>Plano para: '+escapeHTML(goal.name)+'</strong><p style="margin-top:8px">Faltam <strong>'+money(remaining)+'</strong> em '+days+' dias.</p><div class="finance-summary" style="margin-top:12px"><div class="finance-box"><span>Por dia</span><strong>'+money(daily)+'</strong></div><div class="finance-box"><span>Por semana</span><strong>'+money(weekly)+'</strong></div><div class="finance-box"><span>Por mês</span><strong>'+money(monthly)+'</strong></div></div><p style="font-size:11px;color:#788391;margin-top:10px">Plano calculado com base no valor restante e no prazo cadastrado da sua meta.</p>';
+  result.scrollIntoView({behavior:"smooth",block:"center"});
+}
+document.getElementById("profilePhotoInput").addEventListener("change",function(event){
+  const file=event.target.files&&event.target.files[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/")){showToast("Escolha uma imagem válida.");return;}
+  if(file.size>5*1024*1024){showToast("Escolha uma foto de até 5 MB.");return;}
+  const reader=new FileReader();
+  reader.onload=function(){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement("canvas"),max=240,scale=Math.min(1,max/Math.max(img.width,img.height));
+      canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+      try{localStorage.setItem(PROFILE_PHOTO_KEY,canvas.toDataURL("image/jpeg",.78));renderWelcome();showToast("Foto de perfil atualizada.");}
+      catch(e){showToast("Não foi possível salvar essa foto. Escolha outra imagem menor.");}
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+/* =========================
    DADOS
 ========================= */
 
@@ -1374,6 +1524,8 @@ function updateDashboard(){
 
   document.getElementById("depositCount").textContent=
     data.deposits.length;
+
+  renderWelcome();
 }
 
 function daysSinceStart(){
