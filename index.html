@@ -449,7 +449,7 @@ button:disabled{opacity:.5!important}
 
 /* REGISTRO RÁPIDO: manter o seletor da meta dentro do cartão */
 .quick-register{min-width:0;overflow:hidden}
-.quick-register #quickGoal{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;font-size:14px;padding-left:12px;padding-right:28px;white-space:nowrap}
+.quick-register #quickGoal{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;font-size:12px!important;font-weight:600;padding:11px 26px 11px 10px;line-height:1.2;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
 </style></head><body><div class="pro-banner">
   <h2>⭐ Minha Meta PRO</h2>
   <p>Tenha mais controle, mais metas e um plano completo para chegar onde você quer.</p>
@@ -1160,7 +1160,7 @@ function renderHome(){
   renderHomeProgress();
 }
 
-function renderQuickGoal(){const el=$('quickGoal');if(!el)return;const prev=el.value;el.innerHTML=goals.length?goals.map(g=>'<option value="'+g.id+'">'+g.name+' — '+money(Math.max(0,g.target-g.saved))+'</option>').join(''):'<option value="">Crie uma meta primeiro</option>';if(goals.some(g=>String(g.id)===prev))el.value=prev;}
+function renderQuickGoal(){const el=$('quickGoal');if(!el)return;const prev=el.value;el.innerHTML=goals.length?goals.map(g=>'<option value="'+g.id+'">'+money(Math.max(0,g.target-g.saved))+' — '+g.name+'</option>').join(''):'<option value="">Crie uma meta primeiro</option>';if(goals.some(g=>String(g.id)===prev))el.value=prev;}
 function quickDeposit(value){const id=Number(($('quickGoal')||{}).value),g=goals.find(x=>x.id===id),v=value||Number(($('quickCustom')||{}).value||0);if(!g)return toast('Crie uma meta antes de registrar.');if(!v||v<=0)return toast('Digite um valor válido.');const real=Math.min(v,Math.max(0,g.target-g.saved));if(!real)return toast('Essa meta já foi concluída!');g.saved+=real;g.history.unshift({value:real,date:new Date().toISOString()});save();if($('quickCustom'))$('quickCustom').value='';renderHome();renderQuickGoal();toast('Depósito de '+money(real)+' registrado!');}
 function renderHomeProgress(){const p=goals.length?goals.reduce((s,g)=>s+pct(g),0)/goals.length:0;const r=$('homeProgressRing'),t=$('homeProgressText');if(r)r.style.setProperty('--p',p+'%');if(t)t.textContent=p.toFixed(0)+'%';}
 function renderDepositCalendar(){const ids=['depositCalendar','depositCalendarFull'],now=new Date(),y=now.getFullYear(),m=now.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),sums={};goals.forEach(g=>(g.history||[]).forEach(x=>{const d=new Date(x.date);if(d.getFullYear()===y&&d.getMonth()===m)sums[d.getDate()]=(sums[d.getDate()]||0)+Number(x.value||0);}));const labels=['D','S','T','Q','Q','S','S'];const html=labels.map(x=>'<div class="calendar-day"><b>'+x+'</b></div>').join('')+Array.from({length:first},()=>'<div></div>').join('')+Array.from({length:days},(_,i)=>{const d=i+1;return '<div class="calendar-day '+(sums[d]?'has-deposit':'')+'" title="'+(sums[d]?money(sums[d])+' guardados':'Sem depósito')+'"><b>'+d+'</b>'+(sums[d]?'✓':'·')+'</div>';}).join('');ids.forEach(id=>{const el=$(id);if(el)el.innerHTML=html;});}
