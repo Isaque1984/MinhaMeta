@@ -258,6 +258,15 @@ label{color:#172033;font-weight:700}
 .share-btn:active{
   transform:scale(.98);
 }
+.share-home{
+  background:linear-gradient(135deg,#102b3d,#123e35)!important;
+  border:1px solid #21d47b!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.24)!important;
+}
+.share-home h3{color:#f4f7fb!important}
+.share-home p{color:#c1cfdd!important}
+.share-home .share-icon{background:#21d47b;color:#062616}
+.share-home .share-btn{background:#21d47b;color:#062616;font-weight:900}
 </style></head><body><div class="pro-banner">
   <h2>⭐ Minha Meta PRO</h2>
   <p>Tenha mais controle, mais metas e um plano completo para chegar onde você quer.</p>
@@ -953,6 +962,13 @@ function renderHome(){
     <div class="summary-grid" style="margin-top:15px"><div class="summary-tile"><span class="sub">Metas ativas</span><b>${goals.filter(g=>g.saved<g.target).length}</b></div><div class="summary-tile"><span class="sub">Metas concluídas</span><b>${done}</b></div><div class="summary-tile"><span class="sub">Guardado este mês</span><b>${money(monthTotal)}</b></div><div class="summary-tile"><span class="sub">Falta alcançar</span><b>${money(remaining)}</b></div></div></div>
     <h2 class="sectiontitle" style="margin-top:22px">O que você quer fazer?</h2>
     <div class="card quick-register"><b>⚡ Registro rápido</b><div class="sub">Escolha uma meta e registre em segundos.</div><select class="input tool-input" id="quickGoal"></select><div class="quick-values"><button class="btn secondary" onclick="quickDeposit(5)">+ R$ 5</button><button class="btn secondary" onclick="quickDeposit(10)">+ R$ 10</button><button class="btn secondary" onclick="quickDeposit(20)">+ R$ 20</button><button class="btn secondary" onclick="quickDeposit(50)">+ R$ 50</button></div><div class="formrow"><input class="input" id="quickCustom" type="number" min="0.01" step="0.01" placeholder="Outro valor"><button class="btn primary" onclick="quickDeposit()">Registrar valor</button></div></div>
+    <div class="share-card share-home">
+      <div class="share-card-content">
+        <div class="share-icon">📤</div>
+        <div><h3>Compartilhe o Minha Meta</h3><p>Convide amigos e familiares para criarem suas metas também.</p></div>
+      </div>
+      <button class="share-btn" type="button" onclick="compartilharMinhaMeta()">Compartilhar aplicativo</button>
+    </div>
     <div class="quick-grid"><button class="quick-action" onclick="openCreate()"><span>🎯</span><b>Criar uma meta</b><small>Defina seu próximo objetivo</small></button><button class="quick-action" onclick="show('goals')"><span>💵</span><b>Registrar dinheiro</b><small>Atualize uma meta existente</small></button><button class="quick-action" onclick="show('simulator')"><span>🧮</span><b>Simular economia</b><small>Descubra quanto guardar</small></button><button class="quick-action" onclick="show('summary')"><span>📅</span><b>Minha evolução</b><small>Veja seu resumo mensal</small></button></div>
     <div class="card"><div class="row"><div><b>🎯 Progresso geral</b><div class="sub">Evolução das suas metas</div></div><div class="ring mini-ring" id="homeProgressRing"><div class="ringtxt" id="homeProgressText">0%</div></div></div></div>
     <div class="card"><div class="row"><div><b>📆 Seu mês até agora</b><div class="sub">${monthHistory.length} depósito(s) registrado(s)</div></div><b style="color:var(--green2)">${money(monthTotal)}</b></div><button class="btn secondary full" onclick="show('summary')">Ver resumo completo</button></div>
