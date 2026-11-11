@@ -23,6 +23,7 @@ app.add_middleware(
 
 
 MP_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN", "").strip()
+OWNER_EMAIL = os.getenv("OWNER_EMAIL", "").strip().lower()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip()
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "").strip()
@@ -100,6 +101,11 @@ def create_session():
 def normalize_email(email):
 
     return str(email or "").strip().lower()
+
+
+def is_owner_email(email):
+
+    return bool(OWNER_EMAIL) and normalize_email(email) == OWNER_EMAIL
 
 
 # =========================================================
@@ -344,6 +350,10 @@ async def atualizar_assinatura_usuario(
     subscription_id=None
 ):
 
+    if is_owner_email(email):
+        print("Verificação de assinatura ignorada para proprietário:", email)
+        return
+
     try:
 
         verificacao = await verificar_assinatura_atual(
@@ -420,6 +430,15 @@ async def verificar_pro(email: str):
             status_code=400,
             detail="E-mail obrigatório"
         )
+
+    if is_owner_email(email):
+        return {
+            "pro": True,
+            "status": "owner",
+            "subscription_id": None,
+            "email": email,
+            "next_payment_date": None
+        }
 
     try:
 
@@ -648,7 +667,14 @@ async def login_pro(
             )
         )
 
-    if not usuario.get("active"):
+    is_owner = is_owner_email(email)
+
+    if is_owner and not usuario.get("active"):
+        supabase.table("pro_users").update({
+            "active": True
+        }).eq("id", usuario["id"]).execute()
+
+    if not usuario.get("active") and not is_owner:
 
         verificacao = (
             await verificar_assinatura_atual(
@@ -747,7 +773,7 @@ async def login_pro(
 
             precisa_verificar = True
 
-    if precisa_verificar:
+    if precisa_verificar and not is_owner:
 
         background_tasks.add_task(
             atualizar_assinatura_usuario,
@@ -817,8 +843,9 @@ async def verificar_sessao(
         )
 
     usuario = resultado.data[0]
+    is_owner = is_owner_email(usuario.get("email"))
 
-    if not usuario.get("active"):
+    if not usuario.get("active") and not is_owner:
 
         raise HTTPException(
             status_code=403,
@@ -884,7 +911,7 @@ async def verificar_sessao(
 
             precisa_verificar = True
 
-    if precisa_verificar:
+    if precisa_verificar and not is_owner:
 
         background_tasks.add_task(
             atualizar_assinatura_usuario,
